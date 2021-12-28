@@ -335,7 +335,7 @@ public class DataBase
         return:
             result: true if the user could modify this value, false otherwise
          */
-        return true;
+        return false;
     }
 
 
