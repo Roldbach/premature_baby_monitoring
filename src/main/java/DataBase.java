@@ -30,13 +30,16 @@ public class DataBase
         permissionTime="5";
     }
 
-    public DataBase(String path)
+    public DataBase(String directory)
     {
         /*
             Initiate the class DataBase with given file path. The file is automatically loaded
 
         input:
-            path: String, the file path which contains the information about the database
+            directory: String, the file path which contains the information about the database
+
+        throws:
+            FileNotFoundException: file is not successfully loaded due to the incorrect path
          */
     }
 
@@ -46,14 +49,14 @@ public class DataBase
             Verify whether the ID and the password are matched and set the status and priority
         according to this result and the account
 
-         input:
+        input:
             userID: String, the unique ID for each user
             password: String, the password set by the user
 
-         return:
-            result: Boolean[], item 0 specifies whether the user could log in successfully
-        and item 1 specifies whether the user is an administrator or not
-         */
+        return:
+            result: Boolean[], item 0: whether the user could log in successfully
+                               item 1: whether the user is an administrator or not
+          */
         Boolean[] result={false, false};
         if (password.equals(user.get(userID))) {result[0]=true;}
         if (password.equals(administrator.get(userID)))
@@ -67,9 +70,9 @@ public class DataBase
     public Hashtable<String, String> getUser()
     {
         /*
-            Return the whole list of user id and matching password (Not sure whether we need this or not)
+            Return the whole list of user id and matching password (Might not be used until version 2)
 
-         return:
+        return:
             user: Hashtable<String, String>, key=user id, value=password
          */
         return user;
@@ -78,9 +81,9 @@ public class DataBase
     public Hashtable<String, String> getAdministrator()
     {
         /*
-            Return the whole list of administrator id and matching password (Not sure whether we need this or not)
+            Return the whole list of administrator id and matching password (Might not be used until version 2)
 
-         return:
+        return:
             administrator: Hashtable<String, String>, key=administrator id, value=password
          */
         return administrator;
@@ -89,9 +92,9 @@ public class DataBase
     public ArrayList<String> getBabyList()
     {
         /*
-            Return the whole list of baby id (Not sure whether we need this or not)
+            Return the whole list of baby id (Might not be used until version 2)
 
-         return:
+        return:
             result: ArrayList<String>, the list of ID of all babies saved in the database
          */
         ArrayList<String> result=new ArrayList<>();
@@ -118,6 +121,10 @@ public class DataBase
     {
         /*
             Return the calibration parameter which could be used for calibration of current reading
+
+            The calibration curve only supports polynomials with float coefficient/order for version 1+
+            The index of an element represents the order and the element represents the coefficient
+            For example, the function f(x)=1-2x+3x^2 is represented by {1.0,-2.0,3.0}
 
         return:
             calibrationParameter: ArrayList<Double>, the calibration curve which could be used to
@@ -170,6 +177,7 @@ public class DataBase
     {
         /*
             Return the skin current data with timestamp of the specific baby with the matched hospital number
+            (Might not be used until version 2)
 
         input:
             babyID: String, the unique ID (hospital number) of the baby
@@ -212,6 +220,8 @@ public class DataBase
     {
         /*
             Record the detailed modification to the database for management
+            The sentence is in the format: time,userID,babyID,action,result if related to baby data modification
+            The sentence is in the format: time,userID,None,action,result if related to user account management
 
         input:
             time: String, the time at which the user performed the action
@@ -224,36 +234,39 @@ public class DataBase
         logFile.add(sentence);
     }
 
-    public boolean addUser(String userID, String newID, String password, boolean givenPriority)
+    public boolean addUser(String userID, String newID, String password, boolean givePriority, String time)
     {
         /*
-            Add a new user to the system only if the given newID is not already in the database
-            The user would be an administrator if given priority
+            Add a new user to the system and update the log file only if the given newID is not already in the database
+            The user would become an administrator if given priority
 
         input:
             userID: String, the ID of the user who performed this action
             newID: String, the new ID that could be used in the future
             password: String, the matched password of the new ID
-            givenPriority: boolean, true if the new ID has the administrator priority, false otherwise
+            givePriority: boolean, true if the new ID has the administrator priority, false otherwise
+            time: String, the time at which the user performed the action
 
         return:
             result: boolean, true if added successfully, false otherwise
          */
 
         //Check whether the new ID is already been used within the database
-        boolean result;
-        if (givenPriority) result = administrator.containsKey(newID);
-        else result = user.containsKey(newID);
+        boolean status;
+        if (givePriority) status = administrator.containsKey(newID);
+        else status = user.containsKey(newID);
 
         //Add the new ID and the matched password into the database according to the result and the givenPriority
-        if (result&&givenPriority)
+        if (!status&&givePriority)
         {
             administrator.put(newID, password);
+            updateLogFile(time,userID,"None","Add Administrator",newID);
             return true;
         }
-        else if(result)
+        else if(!status)
         {
             user.put(newID, password);
+            updateLogFile(time,userID,"None","Add User",newID);
             return true;
         }
         else
@@ -262,11 +275,76 @@ public class DataBase
         }
     }
 
+    public void addGlucoseConcentration(String userID, String babyID, double value, String time)
+    {
+        /*
+            Add a glucose concentration reading with timestamp for the baby
+        with the matched hospital number and update the log file
+
+         input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            value: double, the glucose concentration reading
+            time: String, the time at which the user performed the action
+         */
+        babyList.get(babyID).addGlucoseConcentration(value,time);
+        updateLogFile(time, userID, babyID, "Add Glucose Concentration",Double.toString(value));
+    }
+
+    public void addSkinConcentration(String userID, String babyID, double current, double concentration, String time)
+    {
+        /*
+            Add both skin current/concentration reading with timestamp for the baby
+        with the matched hospital number and update the log file
+
+         input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            current: double, the skin current reading from the sensor directly
+            concentration: double, the skin concentration reading after skin current calibration
+            time: String, the time which has taken lag time into account
+         */
+        babyList.get(babyID).addSkinConcentration(current, concentration, time);
+        updateLogFile(time, userID, babyID, "Add Skin Current/Concentration", current +"/"+ concentration);
+    }
+
+    public void addEvent(String userID, String babyID, String detail, String time)
+    {
+        /*
+            Add an event with timestamp for the baby with the matched hospital number and update the log file
+
+         input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            detail: String, information about the event which might influence the concentration measurement
+            time: String, the time at which the user performed the action
+         */
+        babyList.get(babyID).addEvent(detail,time);
+        updateLogFile(time, userID, babyID, "Add Glucose Concentration",detail);
+    }
+
+    public boolean checkGlucoseConcentrationPermission(String babyID, double value)
+    {
+        /*
+            Verify whether the user could modify this specific glucose concentration value
+        by calculating the time difference between the current time and the input time
+
+        input:
+            value: double, the target value that the user is asking permission for
+
+        return:
+            result: true if the user could modify this value, false otherwise
+         */
+        LocalDateTime currentTime=LocalDateTime.now();
+        return true;
+    }
+
+
     public String formatTime(String minute)
     {
         /*
             Return the modified time in the format "yyyy/MM/dd HH:mm:ss"
-        Return the current local time if given "0"
+            Return the current local time if given "0"
 
         input:
             minute: String, the time difference between the target time and the current time
@@ -274,9 +352,9 @@ public class DataBase
         return:
             time: String, the target time in the format "yyyy/MM/dd HH:mm:ss"
          */
-        LocalDateTime now=LocalDateTime.now().minusMinutes(Long.parseLong(minute));
+        LocalDateTime time=LocalDateTime.now().minusMinutes(Long.parseLong(minute));
         DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        return formatter.format(now);
+        return formatter.format(time);
     }
 
 

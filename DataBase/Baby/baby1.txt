@@ -1,0 +1,13 @@
+id:Roldbach
+gc:Time 1,0.1
+gc:Time 2,0.2
+gc:Time 3,0.3
+sa:Time 1,0.01
+sa:Time 2,0.02
+sa:Time 3,0.03
+sc:Time 1,0.04
+sc:Time 2,0.05
+sc:Time 3,0.06
+ev:Time 1,nice
+ev:Time 2,very nice
+ev:Time 3,super nice
