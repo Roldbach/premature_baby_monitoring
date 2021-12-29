@@ -195,7 +195,7 @@ public class Baby {
         */
 
         //Find the first key that maps the oldValue and replace it with newValue
-        for (String key:glucoseConcentration.keySet())
+        for (String key:glucoseConcentration.keySet()) //what if same value is already recorded for another log? maybe more efficient if we start from the end?
         {
             if (oldValue==glucoseConcentration.get(key))
             {
@@ -417,5 +417,16 @@ public class Baby {
         {
             e.printStackTrace();
         }
+    }
+
+    public void resetAfter24h(){
+        /*
+            Resets all LinkedHashMaps after 24h to avoid duplicate keys
+        */
+        ID=null;
+        glucoseConcentration=new LinkedHashMap<>();
+        skinCurrent=new LinkedHashMap<>();
+        skinConcentration=new LinkedHashMap<>();
+        event=new LinkedHashMap<>();
     }
 }
