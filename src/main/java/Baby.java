@@ -85,7 +85,7 @@ public class Baby {
             }
             catch (FileNotFoundException e)
             {
-                System.out.println("File not loaded");
+                e.printStackTrace();
             }
         }
     }
@@ -384,7 +384,8 @@ public class Baby {
                 babyWriter.write("ev:"+pair.getKey()+","+pair.getValue()+"\n");
             }
             babyWriter.close();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
