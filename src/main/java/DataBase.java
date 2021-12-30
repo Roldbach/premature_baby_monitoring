@@ -1,5 +1,4 @@
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -31,17 +30,94 @@ public class DataBase
         permissionTime="5";
     }
 
-    public DataBase(String directory)
+    public DataBase(String directory, String babyDirectory)
     {
         /*
-            Initiate the class DataBase with given file path. The file is automatically loaded
+            Load the database from the given directory and the baby data
+        from the baby directory
+
+            By default, the database data could be found under: Base\DataBase and the baby data
+        could be found under: Base\Database\Baby
+
+            The user and administrator data is loaded from the "account.txt" file
+            The general setting containing lag time and permission time is loaded from the "setting.txt" file
+            Every file containing baby data is loaded within the baby directory
+            The log file data is loaded from the "log file.txt" file
 
         input:
-            directory: String, the file path which contains the information about the database
+            directory: String, the directory path where files except baby data could be loaded
+            babyDirectory: String, the directory path where all baby data could be loaded
 
         throws:
-            FileNotFoundException: file is not successfully loaded due to the incorrect path
+            FileNotFoundException, file is not successfully loaded due to the incorrect path
          */
+
+        //Reset the database
+        user=new Hashtable<>();
+        administrator=new Hashtable<>();
+        babyList=new Hashtable<>();
+        logFile=new ArrayList<>();
+        calibrationParameter=new ArrayList<>();
+        lagTime=null;
+        permissionTime=null;
+
+        //Load the user and administrator
+        try {
+            File userFile=new File(directory+"\\account.txt");
+            Scanner userReader=new Scanner(userFile);
+            //Read line by line and add formatted data according to the flag in each line
+            while (userReader.hasNextLine())
+            {
+                String content=userReader.nextLine();
+                int index=content.indexOf(",");
+                if (content.contains("us:")) {user.put(content.substring(3,index),content.substring(index+1));}
+                else if (content.contains("ad:")) {administrator.put(content.substring(3,index),content.substring(index+1));}
+            }
+            userReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //Load general settings
+        try
+        {
+            File settingFile=new File(directory+"\\setting.txt");
+            Scanner settingReader=new Scanner(settingFile);
+            while (settingReader.hasNextLine())
+            {
+                String content=settingReader.nextLine();
+                if (content.contains("cp:")) {calibrationParameter=loadCalibrationParameter(content.substring(3));}
+                else if (content.contains("lt:")) {lagTime=content.substring(3);}
+                else if (content.contains("pt:")) {permissionTime=content.substring(3);}
+            }
+            settingReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //Load every baby under the baby directory
+        File babyFile=new File(babyDirectory);
+        String[] babyNames=babyFile.list();
+        if (babyNames!=null)
+        {
+            for (String babyName:babyNames)
+            {
+                Baby baby=new Baby(babyDirectory+"\\"+babyName,true);
+                babyList.put(baby.getID(),baby);
+            }
+        }
+
+        //Load the log file
+        try
+        {
+            File log=new File(directory+"\\log file.txt");
+            Scanner logFileReader=new Scanner(log);
+            //Read line by line and directly save the content into the ArrayList
+            while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
+            logFileReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public Boolean[] logIn(String userID, String password)
@@ -666,6 +742,96 @@ public class DataBase
         }
     }
 
+    public void loadDataBase(String directory, String babyDirectory)
+    {
+        /*
+            Reset the database and load the database from the given directory and the baby data
+        from the baby directory
+
+            By default, the database data could be found under: Base\DataBase and the baby data
+        could be found under: Base\Database\Baby
+
+            The user and administrator data is loaded from the "account.txt" file
+            The general setting containing lag time and permission time is loaded from the "setting.txt" file
+            Every file containing baby data is loaded within the baby directory
+            The log file data is loaded from the "log file.txt" file
+
+        input:
+            directory: String, the directory path where files except baby data could be loaded
+            babyDirectory: String, the directory path where all baby data could be loaded
+
+        throws:
+            FileNotFoundException, file is not successfully loaded due to the incorrect path
+         */
+
+        //Reset the database
+        user=new Hashtable<>();
+        administrator=new Hashtable<>();
+        babyList=new Hashtable<>();
+        logFile=new ArrayList<>();
+        calibrationParameter=new ArrayList<>();
+        lagTime=null;
+        permissionTime=null;
+
+        //Load the user and administrator
+        try {
+            File userFile=new File(directory+"\\account.txt");
+            Scanner userReader=new Scanner(userFile);
+            //Read line by line and add formatted data according to the flag in each line
+            while (userReader.hasNextLine())
+            {
+                String content=userReader.nextLine();
+                int index=content.indexOf(",");
+                if (content.contains("us:")) {user.put(content.substring(3,index),content.substring(index+1));}
+                else if (content.contains("ad:")) {administrator.put(content.substring(3,index),content.substring(index+1));}
+            }
+            userReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //Load general settings
+        try
+        {
+            File settingFile=new File(directory+"\\setting.txt");
+            Scanner settingReader=new Scanner(settingFile);
+            while (settingReader.hasNextLine())
+            {
+                String content=settingReader.nextLine();
+                if (content.contains("cp:")) {calibrationParameter=loadCalibrationParameter(content.substring(3));}
+                else if (content.contains("lt:")) {lagTime=content.substring(3);}
+                else if (content.contains("pt:")) {permissionTime=content.substring(3);}
+            }
+            settingReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //Load every baby under the baby directory
+        File babyFile=new File(babyDirectory);
+        String[] babyNames=babyFile.list();
+        if (babyNames!=null)
+        {
+            for (String babyName:babyNames)
+            {
+                Baby baby=new Baby(babyDirectory+"\\"+babyName,true);
+                babyList.put(baby.getID(),baby);
+            }
+        }
+        
+        //Load the log file
+        try
+        {
+            File log=new File(directory+"\\log file.txt");
+            Scanner logFileReader=new Scanner(log);
+            //Read line by line and directly save the content into the ArrayList
+            while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
+            logFileReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String formatTime(String minute)
     {
         /*
@@ -681,6 +847,24 @@ public class DataBase
         LocalDateTime time=LocalDateTime.now().minusMinutes(Long.parseLong(minute));
         DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         return formatter.format(time);
+    }
+
+    public ArrayList<Double> loadCalibrationParameter(String content)
+    {
+        /*
+            Return an ArrayList<Double> after splitting the content and converting into Double,
+        a helper function of constructor and loadDataBase()
+
+        input:
+            content: String, the formatted data saved in the file
+
+        return:
+            result: ArrayList<Double>, the calibration parameter
+         */
+        String[] contentArray=content.split(",");
+        ArrayList<Double> result=new ArrayList<>();
+        for (String item:contentArray) {result.add(Double.parseDouble(item));}
+        return result;
     }
 
     public void addBaby(String hospitalNumber)

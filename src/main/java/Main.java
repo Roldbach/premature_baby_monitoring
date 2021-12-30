@@ -85,5 +85,8 @@ public class Main
         test.saveDataBase(System.getProperty("user.dir")+"\\DataBase",System.getProperty("user.dir")+"\\DataBase\\Baby");
         */
 
+        DataBase test=new DataBase();
+        test.loadDataBase(System.getProperty("user.dir")+"\\DataBase",System.getProperty("user.dir")+"\\DataBase\\Baby");
+        System.out.println(test.getLogFile());
     }
 }
