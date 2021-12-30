@@ -55,7 +55,6 @@ public class Main
         */
 
         /*
-        Test code for class DataBase
         DataBase test=new DataBase();
         ArrayList<Double> parameter=new ArrayList<>();
         parameter.add(0.01);
