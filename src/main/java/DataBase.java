@@ -818,7 +818,7 @@ public class DataBase
                 babyList.put(baby.getID(),baby);
             }
         }
-        
+
         //Load the log file
         try
         {
