@@ -85,7 +85,7 @@ public class Baby {
             }
             catch (FileNotFoundException e)
             {
-                System.out.println("File not loaded");
+                e.printStackTrace();
             }
         }
     }
@@ -384,20 +384,10 @@ public class Baby {
                 babyWriter.write("ev:"+pair.getKey()+","+pair.getValue()+"\n");
             }
             babyWriter.close();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
-    }
-
-    public void resetAfter24h(){
-        /*
-            Resets all LinkedHashMaps after 24h to avoid duplicate keys
-        */
-        ID=null;
-        glucoseConcentration=new LinkedHashMap<>();
-        skinCurrent=new LinkedHashMap<>();
-        skinConcentration=new LinkedHashMap<>();
-        event=new LinkedHashMap<>();
     }
 }
