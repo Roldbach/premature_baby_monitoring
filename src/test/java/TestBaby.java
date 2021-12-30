@@ -1,7 +1,10 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
+import java.util.Scanner;
 
 public class TestBaby {
 
@@ -58,10 +61,9 @@ public class TestBaby {
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:35");
         baby.addGlucoseConcentration(0.3,"10:40");
-        baby.changeGlucoseConcentration(0.4,0.2);
-        LinkedHashMap<String, Double> glucoseConcentration;
-        glucoseConcentration = baby.getGlucoseConcentration();
-        Assertions.assertEquals(0.2,glucoseConcentration.get("10:35")); //compares expected value with value stored at key
+        baby.changeGlucoseConcentration("10:35",0.2);
+        //Tests if value at key "10:35" is now 0.2
+        Assertions.assertEquals(0.2,baby.getGlucoseConcentration().get("10:35")); //compares expected value with value stored at key
     }
 
     @Test
@@ -70,10 +72,9 @@ public class TestBaby {
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
-        baby.changeEvent("breakfast","breakfast without milk");
-        LinkedHashMap<String, String> event;
-        event = baby.getEvent();
-        Assertions.assertEquals("breakfast without milk",event.get("8:30")); //comparison used to test if key 8:30 exists and is linked to corresponding event
+        baby.changeEvent("8:30","breakfast without milk");
+        //Tests if value at key "8:30" is now "breakfast without milk"
+        Assertions.assertEquals("breakfast without milk",baby.getEvent().get("8:30"));
     }
 
     @Test
@@ -83,9 +84,8 @@ public class TestBaby {
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
         baby.changeGlucoseConcentrationTimestamp("10:33","10:35");
-        LinkedHashMap<String, Double> glucoseConcentration;
-        glucoseConcentration = baby.getGlucoseConcentration();
-        Assertions.assertEquals(0.4,glucoseConcentration.get("10:35"));
+        //Tests if value at key "10:35" is now 0.4
+        Assertions.assertEquals(0.4,baby.getGlucoseConcentration().get("10:35"));
     }
 
     @Test
@@ -95,9 +95,11 @@ public class TestBaby {
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
         baby.changeEventTimestamp("8:30","9:00");
-        LinkedHashMap<String, String> event;
-        event = baby.getEvent();
-        Assertions.assertEquals("breakfast",event.get("9:00"));
+        /*
+        Tests if value at key "9:00" is the corresponding event. This implies that the
+        previous key "8:30" which was linked to such event has changed to 9:00
+        */
+        Assertions.assertEquals("breakfast",baby.getEvent().get("9:00"));
     }
 
     //Delete methods
@@ -107,13 +109,13 @@ public class TestBaby {
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
-        baby.deleteGlucoseConcentration(0.4);
-        LinkedHashMap<String, Double> glucoseConcentration;
-        glucoseConcentration = baby.getGlucoseConcentration();
+        baby.deleteGlucoseConcentration("10:33");
+        //Creates expected LinkedHashMap for later comparison against output
         LinkedHashMap<String, Double> expectedOutput = new LinkedHashMap<>();
         expectedOutput.put("10:30",0.1);
         expectedOutput.put("10:40",0.3);
-        Assertions.assertEquals(expectedOutput,glucoseConcentration);
+        //Tests expected LinkedHashMap against output LinkedHashMap
+        Assertions.assertEquals(expectedOutput,baby.getGlucoseConcentration());
     }
 
     @Test
@@ -122,14 +124,73 @@ public class TestBaby {
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
-        baby.deleteEvent("breakfast");
-        LinkedHashMap<String, String> event;
-        event = baby.getEvent();
+        baby.deleteEvent("8:30");
+        //Creates expected LinkedHashMap for later comparison against output
         LinkedHashMap<String, String> expectedOutput = new LinkedHashMap<>();
         expectedOutput.put("13:00","lunch");
         expectedOutput.put("19:00","dinner");
-        Assertions.assertEquals(expectedOutput,event);
+        //Tests expected LinkedHashMap against output LinkedHashMap
+        Assertions.assertEquals(expectedOutput,baby.getEvent());
     }
 
-    //
+    //Load & save methods
+    @Test
+    public void testSaveBaby() throws FileNotFoundException {
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        baby.addGlucoseConcentration(0.921,"8:30");
+        baby.addGlucoseConcentration(0.922,"8:40");
+        baby.addGlucoseConcentration(0.923,"8:50");
+        baby.addSkinConcentration(0.1,0.01,"8:30");
+        baby.addSkinConcentration(0.2,0.02,"8:40");
+        baby.addSkinConcentration(0.3,0.03,"8:50");
+        baby.addEvent("breakfast","8:30");
+        baby.addEvent("lunch","13:00");
+        baby.addEvent("dinner","19:00");
+        baby.saveBaby(System.getProperty("user.home")+ "/Downloads/");
+        File babyFile = new File(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //opens created file
+        Scanner babyReader = new Scanner(babyFile);
+        //Tests all lines of the file to make sure data formatting is correct
+        Assertions.assertEquals(babyReader.nextLine(),"id:baby1");
+        Assertions.assertEquals(babyReader.nextLine(),"gc:8:30,0.921");
+        Assertions.assertEquals(babyReader.nextLine(),"gc:8:40,0.922");
+        Assertions.assertEquals(babyReader.nextLine(),"gc:8:50,0.923");
+        Assertions.assertEquals(babyReader.nextLine(),"sa:8:30,0.1");
+        Assertions.assertEquals(babyReader.nextLine(),"sa:8:40,0.2");
+        Assertions.assertEquals(babyReader.nextLine(),"sa:8:50,0.3");
+        Assertions.assertEquals(babyReader.nextLine(),"sc:8:30,0.01");
+        Assertions.assertEquals(babyReader.nextLine(),"sc:8:40,0.02");
+        Assertions.assertEquals(babyReader.nextLine(),"sc:8:50,0.03");
+        Assertions.assertEquals(babyReader.nextLine(),"ev:8:30,breakfast");
+        Assertions.assertEquals(babyReader.nextLine(),"ev:13:00,lunch");
+        Assertions.assertEquals(babyReader.nextLine(),"ev:19:00,dinner");
+    }
+
+    @Test
+    public void testLoadBaby(){
+        Baby baby = new Baby("baby1"); //instantiates an object of class baby
+        baby.loadBaby(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //loads pre-made file
+        String id = "baby1";
+        //Creates expected LinkedHashMaps for later comparison against output
+        LinkedHashMap<String,Double> glucoseConcentration = new LinkedHashMap<>();
+        LinkedHashMap<String,Double> skinCurrent = new LinkedHashMap<>();
+        LinkedHashMap<String,Double> skinConcentration = new LinkedHashMap<>();
+        LinkedHashMap<String,String> event = new LinkedHashMap<>();
+        glucoseConcentration.put("8:30",0.921);
+        glucoseConcentration.put("8:40",0.922);
+        glucoseConcentration.put("8:50",0.923);
+        skinCurrent.put("8:30",0.1);
+        skinCurrent.put("8:40",0.2);
+        skinCurrent.put("8:50",0.3);
+        skinConcentration.put("8:30",0.01);
+        skinConcentration.put("8:40",0.02);
+        skinConcentration.put("8:50",0.03);
+        event.put("8:30","breakfast");
+        event.put("13:00","lunch");
+        event.put("19:00","dinner");
+        //Compares the expected LinkedHashMaps with output ones formed by loadBaby method
+        Assertions.assertEquals(glucoseConcentration,baby.getGlucoseConcentration());
+        Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
+        Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());
+        Assertions.assertEquals(event,baby.getEvent());
+    }
     }

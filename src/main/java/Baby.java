@@ -389,15 +389,4 @@ public class Baby {
             e.printStackTrace();
         }
     }
-
-    public void resetAfter24h(){
-        /*
-            Resets all LinkedHashMaps after 24h to avoid duplicate keys
-        */
-        ID=null;
-        glucoseConcentration=new LinkedHashMap<>();
-        skinCurrent=new LinkedHashMap<>();
-        skinConcentration=new LinkedHashMap<>();
-        event=new LinkedHashMap<>();
-    }
 }

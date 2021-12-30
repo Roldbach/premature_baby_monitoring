@@ -39,20 +39,21 @@ public class Main
         System.out.println(test.getEvent());
         */
 
+
         /*
-        Test code for save baby
-        Baby test=new Baby("Test");
-        test.addGlucoseConcentration(0.921,"Time 1");
-        test.addGlucoseConcentration(0.922,"Time 2");
-        test.addGlucoseConcentration(0.923,"Time 3");
-        test.addSkinConcentration(0.1,0.01,"Time 1");
-        test.addSkinConcentration(0.2,0.02,"Time 2");
-        test.addSkinConcentration(0.3,0.03,"Time 3");
-        test.addEvent("good","Time 1");
-        test.addEvent("better","Time 2");
-        test.addEvent("best","Time 3");
-        test.saveBaby(System.getProperty("user.dir"));
-        */
+        //Test code for save baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        baby.addGlucoseConcentration(0.921,"8:30");
+        baby.addGlucoseConcentration(0.922,"8:40");
+        baby.addGlucoseConcentration(0.923,"8:50");
+        baby.addSkinConcentration(0.1,0.01,"8:30");
+        baby.addSkinConcentration(0.2,0.02,"8:40");
+        baby.addSkinConcentration(0.3,0.03,"8:50");
+        baby.addEvent("breakfast","8:30");
+        baby.addEvent("lunch","13:00");
+        baby.addEvent("dinner","19:00");
+        baby.saveBaby(System.getProperty("user.home")+ "/Downloads/");
+        +/
 
         /*
         Test code for class DataBase
