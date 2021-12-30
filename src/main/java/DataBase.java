@@ -424,6 +424,9 @@ public class DataBase
         throws:
             ParseException: the string doesn't match the time pattern designed
          */
+        //Make sure the date is matched first
+        if (!inputTime.substring(0,10).equals(currentTime.substring(0,10))) {return false;}
+
         //Format the input time and the current time to the form HH:mm:ss
         SimpleDateFormat format=new SimpleDateFormat("HH:mm:ss");
         String current=currentTime.substring(11);
