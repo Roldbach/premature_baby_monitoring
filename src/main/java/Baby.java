@@ -184,46 +184,29 @@ public class Baby {
         event.put(time, detail);
     }
 
-    public void changeGlucoseConcentration(double oldValue, double newValue)
+    public void changeGlucoseConcentration(String targetTime, double newValue)
     {
         /*
             Change the glucose concentration reading which might be a typo or miss click
 
         input:
-            oldValue: double, the old glucose concentration which requires modification
+            targetTime: String, the time of the old value which requires modification
             newValue: double, the right glucose concentration that should be saved
         */
-
-        //Find the first key that maps the oldValue and replace it with newValue
-        for (String key:glucoseConcentration.keySet()) //what if same value is already recorded for another log? maybe more efficient if we start from the end?
-        {
-            if (oldValue==glucoseConcentration.get(key))
-            {
-                glucoseConcentration.replace(key, newValue);
-                break;
-            }
-        }
+        glucoseConcentration.put(targetTime, newValue);
     }
 
-    public void changeEvent(String oldEvent,String newEvent)
+    public void changeEvent(String targetTime,String newEvent)
     {
         /*
             Change the event information which might be a typo or miss click
 
          input:
-            oldEvent: String, the old event information which requires modification
+            targetTime: String, the time of the old event which requires modification
             newEvent: String, the right event that should be saved
          */
+        event.put(targetTime, newEvent);
 
-        //Find the first key that maps the oldEvent and replace it with newEvent
-        for (String key:event.keySet())
-        {
-            if (oldEvent.equals(event.get(key)))
-            {
-                event.replace(key, newEvent);
-                break;
-            }
-        }
     }
 
     public void changeGlucoseConcentrationTimestamp(String oldTime, String newTime)
@@ -268,48 +251,35 @@ public class Baby {
         this.event=newEvent;
     }
 
-    public void deleteGlucoseConcentration(double value)
+    public void deleteGlucoseConcentration(String targetTime)
     {
         /*
            Delete the glucose concentration with timestamp which might be a typo or miss click
 
          input:
-            value: double, the target value which requires deletion
+            targetTime: String, the time of the glucose concentration which requires deletion
          */
+        glucoseConcentration.remove(targetTime);
 
-        //Find the first key that maps the value and delete it
-        for (String key: glucoseConcentration.keySet())
-        {
-            if (value==glucoseConcentration.get(key))
-            {
-                glucoseConcentration.remove(key);
-                break;
-            }
-        }
+
     }
 
-    public void deleteEvent(String detail)
+    public void deleteEvent(String targetTime)
     {
         /*
            Delete the event with timestamp which might be a typo or miss click
 
          input:
-            detail: String, the target event which requires deletion
+            targetTime: String, the time of the glucose concentration which requires deletion
          */
-        for (String key: event.keySet())
-        {
-            if (detail.equals(event.get(key)))
-            {
-                event.remove(key);
-                break;
-            }
-        }
+        event.remove(targetTime);
     }
 
     public void loadBaby(String path)
     {
         /*
             Reset the class and load the file which contains data for a specific baby
+
             By default, the file could be loaded from: Base\DataBase\Baby\name.txt
 
         input:
@@ -369,6 +339,7 @@ public class Baby {
     {
         /*
             Save the formatted data for a specific baby to the target directory
+
             This will overwrite any previous data file with the same name
     `       By default, the file could be saved under: Base\DataBase\Baby
 
@@ -379,7 +350,7 @@ public class Baby {
             (4) The skin current data will be added "sa:" in the front
             (5) The skin concentration data will be added "sc:" in the front
             (6) The event data will be added "ev:" in the front
-            (7) For any time-value matched pairs, the time and the value is separated by ","
+            (7) For any time-value matched pairs, they are separated by ","
             (8) Each line represents 1 time-value matching pairs
 
          input:

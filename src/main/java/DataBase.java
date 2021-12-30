@@ -1,9 +1,10 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class DataBase
 {
@@ -281,13 +282,16 @@ public class DataBase
             Add a glucose concentration reading with timestamp for the baby
         with the matched hospital number and update the log file
 
+            Assume there is no big time difference between the input time and measurement time
+        (The time could be modified later)
+
          input:
             userID: String, the unique ID of the user who performed the action
             babyID: String, the unique ID of the baby who is monitored
             value: double, the glucose concentration reading
             time: String, the time at which the user performed the action
          */
-        babyList.get(babyID).addGlucoseConcentration(value,time);
+        babyList.get(babyID).addGlucoseConcentration(value, time);
         updateLogFile(time, userID, babyID, "Add Glucose Concentration",Double.toString(value));
     }
 
@@ -296,6 +300,9 @@ public class DataBase
         /*
             Add both skin current/concentration reading with timestamp for the baby
         with the matched hospital number and update the log file
+
+            Assume there is no big time difference between the input time and measurement time
+        (The time could be modified later)
 
          input:
             userID: String, the unique ID of the user who performed the action
@@ -320,24 +327,344 @@ public class DataBase
             time: String, the time at which the user performed the action
          */
         babyList.get(babyID).addEvent(detail,time);
-        updateLogFile(time, userID, babyID, "Add Glucose Concentration",detail);
+        updateLogFile(time, userID, babyID, "Add Event",detail);
     }
 
-    public boolean checkGlucoseConcentrationPermission(String babyID, double value)
+    public boolean checkPermission(String inputTime, String currentTime)
     {
         /*
-            Verify whether the user could modify this specific glucose concentration value
-        by calculating the time difference between the current time and the input time
+            Verify whether the user could modify this specific input by calculating the
+        absolute time difference between the current time and the input time
+
+            Assume the inputTime/currentTime are in the form: yyyy/MM/dd HH:mm:ss
 
         input:
-            value: double, the target value that the user is asking permission for
+            inputTime: String, in the form yyyy/MM/dd HH:mm:ss, the timestamp of the input value
+            currentTime: String, in the form yyyy/MM/dd HH:mm:ss, the time at which the user performed the action
 
         return:
-            result: true if the user could modify this value, false otherwise
+            true if the user could modify this value, false otherwise
+
+        throws:
+            ParseException: the string doesn't match the time pattern designed
          */
-        return false;
+        //Format the input time and the current time to the form HH:mm:ss
+        SimpleDateFormat format=new SimpleDateFormat("HH:mm:ss");
+        String current=currentTime.substring(11);
+        String target=inputTime.substring(11);
+        //Calculate the time difference in millisecond
+        try {
+            Date currentDate=format.parse(current);
+            Date targetDate=format.parse(target);
+            float difference=currentDate.getTime()-targetDate.getTime();
+            return !(Math.abs(difference) >= Long.parseLong(permissionTime) * 60000);
+        } catch (ParseException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    public boolean changePassword(String userID, String targetID, String newPassword, String time)
+    {
+        /*
+            Check whether the target ID is in the user list and change
+        the password as well as updating log file if it exists
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            targetID: String, the unique ID of the target whose password requires modification
+            newPassword: String, the new password for the target ID
+            time: String, the time at which the user performed the action
+
+        return:
+            true if change successfully, false otherwise
+         */
+        if (user.containsKey(targetID))
+        {
+            user.put(targetID, newPassword);
+            updateLogFile(time,userID,"None","Change Password",targetID);
+            return true;
+        }
+        else {return false;}
+    }
+
+    public void changeCalibrationParameter(String userID, ArrayList<Double> newCalibrationParameter, String time)
+    {
+        /*
+            Change the calibration parameter of the database and update the log file
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            newCalibrationParameter: ArrayList<Double>, new calibration parameter that
+                                could give more accurate predictions
+            time: String, the time at which the user performed the action
+         */
+        calibrationParameter=newCalibrationParameter;
+        updateLogFile(time,userID,"None","Change Calibration Parameter", "None");
+    }
+
+    public void changeLagTime(String userID, String newLagTime, String time)
+    {
+        /*
+            Change the lag time in minute which could be used to calibrate the timestamp
+         of the skin concentration data and update the log file
+
+            Assume the new time is in minute
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            newLagTime: String, new lag time in minute
+            time: String, the time at which the user performed the action
+         */
+        lagTime=newLagTime;
+        updateLogFile(time, userID, "None","Change Lag Time", newLagTime);
+    }
+
+    public void changePermissionTime(String userID, String newPermissionTime, String time)
+    {
+        /*
+            Change the permission time in minute which limit the modification to
+        the database for protection and update the log file
+
+            Assume the new time is in minute
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            new time: String, new permission time in minute
+            time: String, the time at which the user performed the action
+         */
+        permissionTime=newPermissionTime;
+        updateLogFile(time, userID, "None","Change Permission Time", newPermissionTime);
+    }
+
+    public void changeGlucoseConcentration(String userID, String babyID, String targetTime, double newValue, String time)
+    {
+        /*
+            Change a glucose concentration reading using timestamp for the baby
+        with the matched hospital number and update the log file
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            targetTime: String, the time of the old value which requires modification
+            newValue: double, the right glucose concentration that should be saved
+            time: String, the time at which the user performed the action
+         */
+        babyList.get(babyID).changeGlucoseConcentration(targetTime, newValue);
+        updateLogFile(time, userID, babyID, "Change Glucose Concentration", Double.toString(newValue));
+    }
+
+    public void changeEvent(String userID, String babyID, String targetTime, String newEvent, String time)
+    {
+        /*
+            Change an event using timestamp for the baby with the matched hospital number
+        and update the log file
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            targetTime: String, the time of the old value which requires modification
+            newEvent: String, the right event that should be saved
+            time: String, the time at which the user performed the action
+         */
+        babyList.get(babyID).changeEvent(targetTime, newEvent);
+        updateLogFile(time, userID, babyID, "Change Event", newEvent);
+    }
+
+    public void changeGlucoseConcentrationTimestamp(String userID, String babyID, String oldTime, String newTime, String time)
+    {
+        /*
+            Change the glucose concentration timestamp for the baby with the matched hospital number
+        due to the difference between measurement time and input time and then update the log file
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            oldTime: String, the old timestamp which requires modification
+            newTime: String, the right timestamp that should be saved
+            time: String, the time at which the user performed the action
+        */
+        babyList.get(babyID).changeGlucoseConcentrationTimestamp(oldTime, newTime);
+        updateLogFile(time, userID, babyID, "Change Glucose Concentration Timestamp", newTime);
+    }
+
+    public void changeEventTimestamp(String userID, String babyID, String oldTime, String newTime, String time)
+    {
+        /*
+            Change the event timestamp for the baby with the matched hospital number
+        due to the difference between measurement time and input time and then update the log file
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            oldTime: String, the old timestamp which requires modification
+            newTime: String, the right timestamp that should be saved
+            time: String, the time at which the user performed the action
+        */
+        babyList.get(babyID).changeEventTimestamp(oldTime, newTime);
+        updateLogFile(time, userID, babyID, "Change Event Timestamp", newTime);
+    }
+
+    public boolean deleteUser(String userID, String targetID, String time)
+    {
+        /*
+            Delete the user with given target ID and update the log file
+        only if the target ID is in the database
+
+            The administrator could only delete a user account but not
+        an administrator account
+
+        input:
+            userID: String, the unique ID of the user who performed the action
+            targetID: String, the unique ID of the user which requires deletion
+            time: String, the time at which the user performed the action
+
+        return:
+            true if delete successfully, false otherwise
+         */
+        if (user.containsKey(targetID))
+        {
+            user.remove(targetID);
+            updateLogFile(time,userID,"None","Delete User",targetID);
+            return true;
+        }
+        else {return false;}
+    }
+
+    public void deleteGlucoseConcentration(String userID, String babyID, String targetTime, String time)
+    {
+        /*
+           Delete the glucose concentration using timestamp for the baby with the matched hospital number
+       and update the log file using the deleted concentration
+
+         input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            targetTime: String, the time of the glucose concentration which requires deletion
+            time: String, the time at which the user performed the action
+         */
+        Double result=babyList.get(babyID).getGlucoseConcentration().get(targetTime);
+        updateLogFile(time, userID, babyID,"Delete Glucose Concentration",Double.toString(result));
+        babyList.get(babyID).deleteGlucoseConcentration(targetTime);
+    }
+
+    public void deleteEvent(String userID, String babyID, String targetTime, String time)
+    {
+        /*
+           Delete the event using timestamp for the baby with the matched hospital number
+       and update the log file
+
+         input:
+            userID: String, the unique ID of the user who performed the action
+            babyID: String, the unique ID of the baby who is monitored
+            targetTime: String, the time of the glucose concentration which requires deletion
+            time: String, the time at which the user performed the action
+         */
+        String result=babyList.get(babyID).getEvent().get(targetTime);
+        updateLogFile(time, userID, babyID,"Delete Event", result);
+        babyList.get(babyID).deleteEvent(targetTime);
+    }
+
+    public void saveDataBase(String directory, String babyDirectory)
+    {
+        /*
+            Save the formatted data for database to the target directory
+
+            This will overwrite any previous data file with the same name
+    `
+            By default, the files could be saved under: Base\DataBase
+
+
+            Data Formatting:
+            (1) The user list, administrator list will be saved within the same text file named "account.txt"
+            (2) The user will be added "us:" in the front and the administrator will be added "ad:" in the front
+            (3) For any ID-password pair, they are separated by ","
+            (4) Each line represents 1 ID-password pair
+
+            (5) General settings like calibration parameter, lag time and the permission time will
+                be saved within the same text file named "setting.txt"
+            (6) The calibration parameter will be added "cp:" in the front and each item is separated by "," in a line
+            (7) The lag time is added "lt:" in the front and the permission time is added "pt:" in the front
+            (8) For each baby, it is saved using its method defined in the class Baby, and they are saved under:
+                Base\DataBase\Baby
+
+            (9) The log file is saved within the text file named "log file.txt"
+            (10) Each line represents 1 full sentence in the log file
+        input:
+            directory: String, the directory path where files except baby data could be saved
+            babyDirectory: String, the directory path where all baby data could be saved
+
+        throws:
+            IOException: there is something wrong with the input/output operations
+        */
+
+        //Save the user and administrator data
+        try
+        {
+            String fileName="account.txt";
+            //Create a new file that is named "account.txt"
+            FileWriter userWriter=new FileWriter(directory+"\\"+fileName,false);
+            //Loop through both hash table and add those data
+            for (Map.Entry<String, String> pair:user.entrySet())
+            {
+                userWriter.write("us:"+pair.getKey()+","+pair.getValue()+"\n");
+            }
+            for (Map.Entry<String, String> pair:administrator.entrySet())
+            {
+                userWriter.write("ad:"+pair.getKey()+","+pair.getValue()+"\n");
+            }
+            userWriter.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Save the general setting data
+        try
+        {
+            String fileName="setting.txt";
+            //Create a new file that is named "setting.txt"
+            FileWriter settingWriter=new FileWriter(directory+"\\"+fileName,false);
+            //Save the calibration parameters in one line
+            settingWriter.write("cp:");
+            int index=0;
+            while (index<calibrationParameter.size())
+            {
+                if (index==calibrationParameter.size()-1) {settingWriter.write(calibrationParameter.get(index)+"\n");}
+                else {settingWriter.write(calibrationParameter.get(index)+",");}
+                index++;
+            }
+            //Save lag time
+            settingWriter.write("lt:"+lagTime+"\n");
+            //Save permission time
+            settingWriter.write("pt:"+permissionTime+"\n");
+            settingWriter.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Save all baby to the baby directory
+        for (String key:babyList.keySet())
+        {
+            babyList.get(key).saveBaby(babyDirectory);
+        }
+
+        //Save the log file
+        try
+        {
+            String fileName="log file.txt";
+            //Create a new file that is named "log file.txt"
+            FileWriter logWriter=new FileWriter(directory+"\\"+fileName,false);
+            //Loop through the log file list and save each line
+            for (String line:logFile) {logWriter.write(line+"\n");}
+            logWriter.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     public String formatTime(String minute)
     {
@@ -356,7 +683,12 @@ public class DataBase
         return formatter.format(time);
     }
 
-
-
-
+    public void addBaby(String hospitalNumber)
+    {
+        /*
+            Only for testing use
+         */
+        Baby newBaby=new Baby(hospitalNumber);
+        babyList.put(hospitalNumber,newBaby);
+    }
 }
