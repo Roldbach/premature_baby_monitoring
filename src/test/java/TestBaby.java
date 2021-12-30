@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class TestBaby {
-
     /*Setters & Getters (a little redundant)
     @Test
     public void testGetID(){
@@ -187,10 +186,11 @@ public class TestBaby {
         event.put("8:30","breakfast");
         event.put("13:00","lunch");
         event.put("19:00","dinner");
-        //Compares the expected LinkedHashMaps with output ones formed by loadBaby method
+        //Compares the expected LinkedHashMaps with output ones created by loadBaby method
         Assertions.assertEquals(glucoseConcentration,baby.getGlucoseConcentration());
         Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
         Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());
         Assertions.assertEquals(event,baby.getEvent());
     }
-    }
+}
+
