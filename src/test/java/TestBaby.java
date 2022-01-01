@@ -1,3 +1,4 @@
+import DataHandling.Baby;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,14 +12,14 @@ public class TestBaby {
     /*Setters & Getters (a little redundant)
     @Test
     public void testGetID(){
-        Baby baby = new Baby("expected"); //instantiates an object of class Baby
+        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
         String id = baby.getID(); //calls getID method and stores output in string id
         Assertions.assertEquals("expected",id); //compares real output with expected output
     }
 
     @Test
     public void testGetAndAddGlucoseConcentration(){
-        Baby baby = new Baby("expected"); //instantiates an object of class Baby
+        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
         LinkedHashMap<String, Double> expected = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, Double> glucoseConcentration; //creates a LinkedHashMap object to store real output values
         baby.addGlucoseConcentration(0.3,"10:30");
@@ -29,7 +30,7 @@ public class TestBaby {
 
     @Test
     public void testGetAndAddSkinCurrentAndConcentration(){
-        Baby baby = new Baby("expected"); //instantiates an object of class Baby
+        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
         LinkedHashMap<String, Double> expectedCurrent = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, Double> expectedConcentration = new LinkedHashMap<>();
         LinkedHashMap<String, Double> skinCurrent; //creates a LinkedHashMap object to store real output values
@@ -45,7 +46,7 @@ public class TestBaby {
 
     @Test
     public void testGetAndAddEvent(){
-        Baby baby = new Baby("expected"); //instantiates an object of class Baby
+        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
         LinkedHashMap<String, String> expected = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, String> event; //creates a LinkedHashMap object to store real output values
         baby.addEvent("food intake","10:30");
@@ -57,7 +58,7 @@ public class TestBaby {
     //Change methods
     @Test
     public void testChangeGlucoseConcentration(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:35");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -68,7 +69,7 @@ public class TestBaby {
 
     @Test
     public void testChangeEvent(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -79,7 +80,7 @@ public class TestBaby {
 
     @Test
     public void testChangeGlucoseConcentrationTimestamp(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -90,7 +91,7 @@ public class TestBaby {
 
     @Test
     public void testChangeEventTimestamp(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -105,7 +106,7 @@ public class TestBaby {
     //Delete methods
     @Test
     public void testDeleteGlucoseConcentration(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -120,7 +121,7 @@ public class TestBaby {
 
     @Test
     public void testDeleteEvent(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -136,7 +137,7 @@ public class TestBaby {
     //Load & save methods
     @Test
     public void testSaveBaby() throws FileNotFoundException {
-        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
         baby.addGlucoseConcentration(0.921,"8:30");
         baby.addGlucoseConcentration(0.922,"8:40");
         baby.addGlucoseConcentration(0.923,"8:50");

@@ -1,3 +1,5 @@
+package DataHandling;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -16,7 +18,7 @@ public class Baby {
     public Baby(String hospitalNumber)
     {
         /*
-            Initiate the class Baby with given hospital number
+            Initiate the class DataHandling.Baby with given hospital number
 
         input:
             hospitalNumber: String, the unique hospital number for each baby
@@ -31,7 +33,7 @@ public class Baby {
     public Baby(String path, boolean action)
     {
         /*
-            Initiate the class Baby with the given file path
+            Initiate the class DataHandling.Baby with the given file path
 
         input:
             path: String, the file path which contains the information about the baby
@@ -280,7 +282,7 @@ public class Baby {
         /*
             Reset the class and load the file which contains data for a specific baby
 
-            By default, the file could be loaded from: Base\DataBase\Baby\name.txt
+            By default, the file could be loaded from: Base\DataHandling.DataBase\DataHandling.Baby\name.txt
 
         input:
             path: String, the file path which contains data for a specific baby
@@ -341,7 +343,7 @@ public class Baby {
             Save the formatted data for a specific baby to the target directory
 
             This will overwrite any previous data file with the same name
-    `       By default, the file could be saved under: Base\DataBase\Baby
+    `       By default, the file could be saved under: Base\DataHandling.DataBase\DataHandling.Baby
 
             Data Formatting:
             (1) The hospital number of the baby is used as the file name

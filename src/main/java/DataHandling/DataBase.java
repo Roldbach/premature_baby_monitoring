@@ -1,8 +1,8 @@
+package DataHandling;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DataBase
@@ -36,8 +36,8 @@ public class DataBase
             Load the database from the given directory and the baby data
         from the baby directory
 
-            By default, the database data could be found under: Base\DataBase and the baby data
-        could be found under: Base\Database\Baby
+            By default, the database data could be found under: Base\DataBase
+            the baby data could be found under: Base\Database\Baby
 
             The user and administrator data is loaded from the "account.txt" file
             The general setting containing lag time and permission time is loaded from the "setting.txt" file
@@ -126,6 +126,9 @@ public class DataBase
             Verify whether the ID and the password are matched and set the status and priority
         according to this result and the account
 
+            If either user ID or the password is null, return false immediately
+            If the user enter whitespaces, it is not striped and marked as unmatched
+
         input:
             userID: String, the unique ID for each user
             password: String, the password set by the user
@@ -135,6 +138,7 @@ public class DataBase
                                item 1: whether the user is an administrator or not
           */
         Boolean[] result={false, false};
+        if (userID==null||password==null) {return result;}
         if (password.equals(user.get(userID))) {result[0]=true;}
         if (password.equals(administrator.get(userID)))
         {
@@ -169,7 +173,7 @@ public class DataBase
     public ArrayList<String> getBabyList()
     {
         /*
-            Return the whole list of baby id (Might not be used until version 2)
+            Return the whole list of baby id
 
         return:
             result: ArrayList<String>, the list of ID of all babies saved in the database
@@ -652,7 +656,7 @@ public class DataBase
 
             This will overwrite any previous data file with the same name
     `
-            By default, the files could be saved under: Base\DataBase
+            By default, the files could be saved under: Base\DataHandling.DataBase
 
 
             Data Formatting:
@@ -665,8 +669,8 @@ public class DataBase
                 be saved within the same text file named "setting.txt"
             (6) The calibration parameter will be added "cp:" in the front and each item is separated by "," in a line
             (7) The lag time is added "lt:" in the front and the permission time is added "pt:" in the front
-            (8) For each baby, it is saved using its method defined in the class Baby, and they are saved under:
-                Base\DataBase\Baby
+            (8) For each baby, it is saved using its method defined in the class DataHandling.Baby, and they are saved under:
+                Base\DataHandling.DataBase\DataHandling.Baby
 
             (9) The log file is saved within the text file named "log file.txt"
             (10) Each line represents 1 full sentence in the log file
@@ -751,8 +755,8 @@ public class DataBase
             Reset the database and load the database from the given directory and the baby data
         from the baby directory
 
-            By default, the database data could be found under: Base\DataBase and the baby data
-        could be found under: Base\Database\Baby
+            By default, the database data could be found under: Base\DataHandling.DataBase
+                        the baby data could be found under: Base\Database\DataHandling.Baby
 
             The user and administrator data is loaded from the "account.txt" file
             The general setting containing lag time and permission time is loaded from the "setting.txt" file
@@ -835,23 +839,6 @@ public class DataBase
         }
     }
 
-    public String formatTime(String minute)
-    {
-        /*
-            Return the modified time in the format "yyyy/MM/dd HH:mm:ss"
-            Return the current local time if given "0"
-
-        input:
-            minute: String, the time difference between the target time and the current time
-
-        return:
-            time: String, the target time in the format "yyyy/MM/dd HH:mm:ss"
-         */
-        LocalDateTime time=LocalDateTime.now().minusMinutes(Long.parseLong(minute));
-        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        return formatter.format(time);
-    }
-
     public ArrayList<Double> loadCalibrationParameter(String content)
     {
         /*
@@ -878,4 +865,6 @@ public class DataBase
         Baby newBaby=new Baby(hospitalNumber);
         babyList.put(hospitalNumber,newBaby);
     }
+
+    //formatTableData()
 }
