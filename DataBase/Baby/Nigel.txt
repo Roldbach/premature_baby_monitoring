@@ -1,2 +1,0 @@
-id:Nigel
-gc:Time 8,0.922

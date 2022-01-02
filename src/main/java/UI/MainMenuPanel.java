@@ -26,7 +26,17 @@ class MainMenuPanel extends GeneralPanel
             (8) changePasswordButton: JButton, display "Change Password"
             (9) entryButton: JButton, display "Administrator Entry"
          */
+        label_1=setLabel("User ID: ",880,50,80,14,false);
+        label_2=setLabel("Baby ID: ",880,76,80,14,false);
 
+        button_1=setButton("Change Baby",872,102,84,36,true);
+        button_2=setButton("Log out",872,150,84,36,true);
+
+        addButton=setButton("Add Value/Event",81,310,150,150,true);
+        changeValueButton=setButton("Change Value/Event",253,310,150,150,true);
+        plotButton=setButton("Plot Graph",425,310,150,150,true);
+        changePasswordButton=setButton("Change Password",597,310,150,150,true);
+        entryButton=setButton("Administrator Entry",769,310,150,150,true);
     }
 
     protected JButton getAddButton()

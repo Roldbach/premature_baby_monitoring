@@ -1,0 +1,13 @@
+id:baby 2
+gc:Time 1,0.9
+gc:Time 2,0.8
+gc:Time 3,0.7
+sa:Time 1,0.09
+sa:Time 2,0.08
+sa:Time 3,0.07
+sc:Time 1,0.06
+sc:Time 2,0.05
+sc:Time 3,0.04
+ev:Time 1,good
+ev:Time 2,very good
+ev:Time 3,super good
