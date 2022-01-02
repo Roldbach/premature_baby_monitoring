@@ -1,14 +1,18 @@
-import com.sun.org.apache.xerces.internal.xs.StringList;
-import org.graalvm.compiler.hotspot.replacements.AssertionSnippets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 
 public class TestDataBase {
+
+    //Setters and getters are not useful to test, we would be testing the language rather than actual code
+
     @Test
     public void testUpdateLogFile(){
         DataBase db = new DataBase();
@@ -57,6 +61,7 @@ public class TestDataBase {
     @Test
     public void testChangeCalibrationParameters(){
         DataBase db = new DataBase();
+        db.loadCalibrationParameter("0.4,0.4,0.4,0.4");
         ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1,0.2,0.3,0.4));
         db.changeCalibrationParameter("Admin",cParameters,"10:30");
         //Tests output list of parameters against expected list to see if change has been implemented
@@ -84,7 +89,7 @@ public class TestDataBase {
     @Test
     public void testLoadCalibrationParameter() {
         DataBase db = new DataBase();
-        ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1, 0.2, 0.3, 0.4));
+        ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1,0.2,0.3,0.4));
         //Tests if output is equal to an ArrayList of the input values
         Assertions.assertEquals(cParameters, db.loadCalibrationParameter("0.1,0.2,0.3,0.4"));
     }
@@ -104,12 +109,102 @@ public class TestDataBase {
     }
 
     @Test
-    public void testGetBabyFile(){
+    public void testGetBabyList(){
         DataBase db = new DataBase();
         db.addBaby("baby1");
         db.addBaby("baby2");
         db.addBaby("baby3");
         ArrayList<String> expectedBabyList = new ArrayList<>(Arrays.asList("baby3","baby2","baby1"));
         Assertions.assertEquals(expectedBabyList,db.getBabyList());
+    }
+
+    @Test
+    public void testDeleteUser(){
+        DataBase db = new DataBase();
+        db.addUser("Admin", "notAdmin", "password", false, "10:30");
+        db.deleteUser("Admin","notAdmin","10:34");
+        Hashtable<String,String> empty = new Hashtable<>();
+        //Tests if "notAdmin" was deleted and hence User Hashtable is empty
+        Assertions.assertEquals(empty,db.getUser());
+        //Tests if deleteUser method returns false when user ID does not exist
+        Assertions.assertFalse(db.deleteUser("Admin","notAdmin2","10:34"));
+    }
+
+    @Test
+    public void testSaveDataBase() throws FileNotFoundException {
+        DataBase db = new DataBase();
+        //Adds info to class to test it has been correctly saved posteriorly
+        db.addUser("Admin", "Admin2", "adminPassword", true, "10:30");
+        db.addUser("Admin", "notAdmin", "password", false, "10:31");
+        db.changeCalibrationParameter("Admin",db.loadCalibrationParameter("0.1,0.2,0.3,0.4"),"10:31");
+        db.addBaby("baby2");
+        db.addGlucoseConcentration("notAdmin", "baby2", 0.1, "10:32");
+        db.addSkinConcentration("notAdmin", "baby2", 0.01, 0.1, "10:32");
+        db.addEvent("notAdmin", "baby2", "breakfast", "10:32");
+        //Saves the dataBase
+        db.saveDataBase(System.getProperty("user.home") + "/Desktop/Database/", System.getProperty("user.home") + "/Desktop/Database/Babies/");
+        //Loads the saved files
+        File dBAccountFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\account.txt"); //opens created user&admin dataBase file
+        File dBSettingsFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\setting.txt"); //opens created user&admin dataBase file
+        File babyFile = new File(System.getProperty("user.home") + "/Desktop/Database/Babies/" + "\\baby2.txt"); //opens created baby file
+        File logFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\log file.txt"); //opens created baby file
+        Scanner accountReader = new Scanner(dBAccountFile);
+        Scanner settingsReader = new Scanner(dBSettingsFile);
+        Scanner babyReader = new Scanner(babyFile);
+        Scanner logReader = new Scanner(logFile);
+        //Tests expected lines in each file to make sure data has been saved and formatting is correct
+        Assertions.assertEquals("us:notAdmin,password",accountReader.nextLine());
+        Assertions.assertEquals("ad:Admin2,adminPassword",accountReader.nextLine());
+        Assertions.assertEquals("cp:0.1,0.2,0.3,0.4",settingsReader.nextLine());
+        Assertions.assertEquals("lt:10",settingsReader.nextLine());
+        Assertions.assertEquals("pt:5",settingsReader.nextLine());
+        Assertions.assertEquals("id:baby2",babyReader.nextLine());
+        Assertions.assertEquals("gc:10:32,0.1",babyReader.nextLine());
+        Assertions.assertEquals("sa:10:32,0.01",babyReader.nextLine());
+        Assertions.assertEquals("sc:10:32,0.1",babyReader.nextLine());
+        Assertions.assertEquals("ev:10:32,breakfast",babyReader.nextLine());
+        Assertions.assertEquals("10:30,Admin,None,Add Administrator,Admin2",logReader.nextLine());
+        Assertions.assertEquals("10:31,Admin,None,Add User,notAdmin",logReader.nextLine());
+        Assertions.assertEquals("10:31,Admin,None,Change Calibration Parameter,None",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby2,Add Glucose Concentration,0.1",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby2,Add Skin Current/Concentration,0.01/0.1",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby2,Add Event,breakfast",logReader.nextLine());
+    }
+
+    @Test
+    public void testLoadDataBase(){
+        DataBase db = new DataBase();
+        //Loads dataBase from existing files
+        db.loadDataBase(System.getProperty("user.home") + "/Desktop/Database/", System.getProperty("user.home") + "/Desktop/Database/Babies/");
+        //Creates expected Hashtables, Arraylists & strings for later comparison
+        String lagTime = "10";
+        String permissionTime = "5";
+        Hashtable<String, String> user = new Hashtable<>();
+        user.put("notAdmin","password");
+        Hashtable<String, String> administrator = new Hashtable<>();
+        administrator.put("Admin2","adminPassword");
+        ArrayList<String> babyList = new ArrayList<>();
+        Baby baby = new Baby("baby2");
+        babyList.add("baby2");
+        ArrayList<String> logFile = new ArrayList<>();
+        logFile.add("10:30,Admin,None,Add Administrator,Admin2");
+        logFile.add("10:31,Admin,None,Add User,notAdmin");
+        logFile.add("10:31,Admin,None,Change Calibration Parameter,None");
+        logFile.add("10:32,notAdmin,baby2,Add Glucose Concentration,0.1");
+        logFile.add("10:32,notAdmin,baby2,Add Skin Current/Concentration,0.01/0.1");
+        logFile.add("10:32,notAdmin,baby2,Add Event,breakfast");
+        ArrayList<Double> calibrationParameter = new ArrayList<>();
+        calibrationParameter.add(0.1);
+        calibrationParameter.add(0.2);
+        calibrationParameter.add(0.3);
+        calibrationParameter.add(0.4);
+        //Compares the content of the expected structures with the ones created by loadDataBase method
+        Assertions.assertEquals(lagTime,db.getLagTime());
+        Assertions.assertEquals(permissionTime,db.getPermissionTime());
+        Assertions.assertEquals(user,db.getUser());
+        Assertions.assertEquals(administrator,db.getAdministrator());
+        Assertions.assertEquals(babyList,db.getBabyList());
+        Assertions.assertEquals(logFile,db.getLogFile());
+        Assertions.assertEquals(calibrationParameter,db.getCalibrationParameter());
     }
 }

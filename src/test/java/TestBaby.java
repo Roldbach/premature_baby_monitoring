@@ -101,7 +101,7 @@ public class TestBaby {
         Assertions.assertEquals("breakfast",baby.getEvent().get("9:00"));
     }
 
-    //Delete methods
+    /*Delete methods, quite redundant too
     @Test
     public void testDeleteGlucoseConcentration(){
         Baby baby = new Baby("baby1"); //instantiates an object of class Baby
@@ -131,6 +131,7 @@ public class TestBaby {
         //Tests expected LinkedHashMap against output LinkedHashMap
         Assertions.assertEquals(expectedOutput,baby.getEvent());
     }
+    */
 
     //Load & save methods
     @Test
@@ -148,28 +149,29 @@ public class TestBaby {
         baby.saveBaby(System.getProperty("user.home")+ "/Downloads/");
         File babyFile = new File(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //opens created file
         Scanner babyReader = new Scanner(babyFile);
-        //Tests all lines of the file to make sure data formatting is correct
-        Assertions.assertEquals(babyReader.nextLine(),"id:baby1");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:30,0.921");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:40,0.922");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:50,0.923");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:30,0.1");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:40,0.2");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:50,0.3");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:30,0.01");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:40,0.02");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:50,0.03");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:8:30,breakfast");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:13:00,lunch");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:19:00,dinner");
+        //Tests all lines of the file to make sure data has been saved and formatting is correct
+        Assertions.assertEquals("id:baby1",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:30,0.921",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:40,0.922",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:50,0.923",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:30,0.1",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:40,0.2",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:50,0.3",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:30,0.01",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:40,0.02",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:50,0.03",babyReader.nextLine());
+        Assertions.assertEquals("ev:8:30,breakfast",babyReader.nextLine());
+        Assertions.assertEquals("ev:13:00,lunch",babyReader.nextLine());
+        Assertions.assertEquals("ev:19:00,dinner",babyReader.nextLine());
     }
 
     @Test
     public void testLoadBaby(){
         Baby baby = new Baby("baby1"); //instantiates an object of class baby
-        baby.loadBaby(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //loads pre-made file
+        //Loads existing file
+        baby.loadBaby(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt");
+        //Creates expected String & LinkedHashMaps for later comparison against output
         String id = "baby1";
-        //Creates expected LinkedHashMaps for later comparison against output
         LinkedHashMap<String,Double> glucoseConcentration = new LinkedHashMap<>();
         LinkedHashMap<String,Double> skinCurrent = new LinkedHashMap<>();
         LinkedHashMap<String,Double> skinConcentration = new LinkedHashMap<>();
@@ -186,7 +188,8 @@ public class TestBaby {
         event.put("8:30","breakfast");
         event.put("13:00","lunch");
         event.put("19:00","dinner");
-        //Compares the expected LinkedHashMaps with output ones created by loadBaby method
+        //Compares the expected String & LinkedHashMaps with the ones created by loadBaby method
+        Assertions.assertEquals(id,baby.getID());
         Assertions.assertEquals(glucoseConcentration,baby.getGlucoseConcentration());
         Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
         Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());

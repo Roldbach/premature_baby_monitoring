@@ -56,22 +56,22 @@ public class Baby {
                 while (babyReader.hasNextLine())
                 {
                     String currentLine=babyReader.nextLine();
-                    if (currentLine.contains("id"))
+                    if (currentLine.contains("id:"))
                     {
                         ID=currentLine.substring(3);
                     }
                     else
                     {
                         int index=currentLine.indexOf(",");
-                        if (currentLine.contains("gc"))
+                        if (currentLine.contains("gc:"))
                         {
                             glucoseConcentration.put(currentLine.substring(3,index),Double.parseDouble(currentLine.substring(index+1)));
                         }
-                        else if (currentLine.contains("sa"))
+                        else if (currentLine.contains("sa:"))
                         {
                             skinCurrent.put(currentLine.substring(3,index),Double.parseDouble(currentLine.substring(index+1)));
                         }
-                        else if (currentLine.contains("sc"))
+                        else if (currentLine.contains("sc:"))
                         {
                             skinConcentration.put(currentLine.substring(3,index),Double.parseDouble(currentLine.substring(index+1)));
                         }
@@ -260,8 +260,6 @@ public class Baby {
             targetTime: String, the time of the glucose concentration which requires deletion
          */
         glucoseConcentration.remove(targetTime);
-
-
     }
 
     public void deleteEvent(String targetTime)

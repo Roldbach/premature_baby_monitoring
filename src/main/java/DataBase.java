@@ -1,6 +1,7 @@
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -814,7 +815,7 @@ public class DataBase
         {
             for (String babyName:babyNames)
             {
-                Baby baby=new Baby(babyDirectory+"\\"+babyName,true);
+                Baby baby=new Baby(babyDirectory+babyName,true);
                 babyList.put(baby.getID(),baby);
             }
         }
