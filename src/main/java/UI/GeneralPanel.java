@@ -13,6 +13,7 @@ class GeneralPanel extends JPanel
     protected JButton button_1;
     protected JButton button_2;
     protected JButton button_3;
+    protected JButton button_4;
     protected JTextField textField_1;
     protected JTextField textField_2;
 
@@ -151,9 +152,8 @@ class GeneralPanel extends JPanel
         table.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
         table.setCellSelectionEnabled(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrollPane=new JScrollPane();
-        scrollPane.add(table);
-        add(scrollPane);
+        add(new JScrollPane(table));
+        System.out.println(data[0][0]);
         return table;
     }
 

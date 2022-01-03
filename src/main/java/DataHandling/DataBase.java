@@ -151,7 +151,7 @@ public class DataBase
     public Hashtable<String, String> getUser()
     {
         /*
-            Return the whole list of user id and matching password (Might not be used until version 2)
+            Return the whole list of user id and matching password
 
         return:
             user: Hashtable<String, String>, key=user id, value=password
@@ -315,10 +315,10 @@ public class DataBase
         logFile.add(sentence);
     }
 
-    public boolean addUser(String userID, String newID, String password, boolean givePriority, String time)
+    public void addUser(String userID, String newID, String password, boolean givePriority, String time)
     {
         /*
-            Add a new user to the system and update the log file only if the given newID is not already in the database
+            Add a new user to the system and update the log file
             The user would become an administrator if given priority
 
         input:
@@ -331,28 +331,16 @@ public class DataBase
         return:
             result: boolean, true if added successfully, false otherwise
          */
-
-        //Check whether the new ID is already been used within the database
-        boolean status;
-        if (givePriority) status = administrator.containsKey(newID);
-        else status = user.containsKey(newID);
-
         //Add the new ID and the matched password into the database according to the result and the givenPriority
-        if (!status&&givePriority)
+        if (givePriority)
         {
             administrator.put(newID, password);
             updateLogFile(time,userID,"None","Add Administrator",newID);
-            return true;
-        }
-        else if(!status)
-        {
-            user.put(newID, password);
-            updateLogFile(time,userID,"None","Add User",newID);
-            return true;
         }
         else
         {
-            return false;
+            user.put(newID, password);
+            updateLogFile(time,userID,"None","Add User",newID);
         }
     }
 
@@ -448,7 +436,7 @@ public class DataBase
         }
     }
 
-    public boolean changePassword(String userID, String targetID, String newPassword, String time)
+    public void changePassword(String userID, String targetID, String newPassword, String time)
     {
         /*
             Check whether the target ID is in the user list and change
@@ -459,17 +447,9 @@ public class DataBase
             targetID: String, the unique ID of the target whose password requires modification
             newPassword: String, the new password for the target ID
             time: String, the time at which the user performed the action
-
-        return:
-            true if change successfully, false otherwise
          */
-        if (user.containsKey(targetID))
-        {
             user.put(targetID, newPassword);
             updateLogFile(time,userID,"None","Change Password",targetID);
-            return true;
-        }
-        else {return false;}
     }
 
     public void changeCalibrationParameter(String userID, ArrayList<Double> newCalibrationParameter, String time)
@@ -589,7 +569,7 @@ public class DataBase
         updateLogFile(time, userID, babyID, "Change Event Timestamp", newTime);
     }
 
-    public boolean deleteUser(String userID, String targetID, String time)
+    public void deleteUser(String userID, String targetID, String time)
     {
         /*
             Delete the user with given target ID and update the log file
@@ -606,13 +586,10 @@ public class DataBase
         return:
             true if delete successfully, false otherwise
          */
-        if (user.containsKey(targetID))
-        {
-            user.remove(targetID);
-            updateLogFile(time,userID,"None","Delete User",targetID);
-            return true;
-        }
-        else {return false;}
+        user.remove(targetID);
+        updateLogFile(time,userID,"None","Delete User",targetID);
+
+
     }
 
     public void deleteGlucoseConcentration(String userID, String babyID, String targetTime, String time)
@@ -866,5 +843,30 @@ public class DataBase
         babyList.put(hospitalNumber,newBaby);
     }
 
-    //formatTableData()
+    public String[][] formatGlucoseConcentration(String babyID)
+    {
+        /*
+            Return a 2-d Array<String> containing glucose concentration data of the specific baby and
+        then could be used to build a JTable directly
+
+        input:
+            babyID: String, the unique ID of the baby who is monitored
+
+        return:
+            result: String[][], the glucose concentration with timestamp
+         */
+        //Initiate a new array according to the size of the data
+        LinkedHashMap<String, Double> glucoseConcentration=babyList.get(babyID).getGlucoseConcentration();
+        String[][] result=new String[glucoseConcentration.size()][2];
+        //Add glucose concentration with timestamp into the array in order
+        int rowNumber=0;
+        for(Map.Entry<String, Double> pair:glucoseConcentration.entrySet())
+        {
+            //Save the concentration as String type for
+            result[rowNumber][0]=pair.getKey();
+            result[rowNumber][1]=Double.toString(pair.getValue());
+            rowNumber++;
+        }
+        return result;
+    }
 }

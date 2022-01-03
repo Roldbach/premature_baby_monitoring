@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Hashtable;
 
 public class UIController {
     private DataBase dataBase;
@@ -20,6 +21,13 @@ public class UIController {
     private MainMenuPanel mainMenuPanel;
     private ChangeBabyPanel changeBabyPanel;
     private AddValuePanel addValuePanel;
+    private ChangeValuePanel changeValuePanel;
+
+
+    private ChangePasswordPanel changePasswordPanel;
+    private AdministratorEntryPanel administratorEntryPanel;
+    private ManageAccountPanel manageAccountPanel;
+    private ManageLogFilePanel manageLogFilePanel;
 
     public UIController(String directory, String babyDirectory) {
         /*
@@ -55,6 +63,17 @@ public class UIController {
         setChangeBabyPanel();
         addValuePanel=new AddValuePanel();
         setAddValuePanel();
+        changeValuePanel=new ChangeValuePanel();
+        setChangeValuePanel();
+
+
+
+        changePasswordPanel=new ChangePasswordPanel();
+        setChangePasswordPanel();
+        administratorEntryPanel=new AdministratorEntryPanel();
+        setAdministratorEntryPanel();
+        manageAccountPanel=new ManageAccountPanel();
+        setManageAccountPanel();
     }
 
     public JPanel getMainPanel() {
@@ -173,8 +192,39 @@ public class UIController {
             addValuePanel.resetText(addValuePanel.textField_2, false);
             addValuePanel.getOptionButton().setSelected(true);
         });
+        //Action listener to jump to change value page for change value button
+        mainMenuPanel.getChangeValueButton().addActionListener(e->{
+            //Update the current user ID and current baby ID
+            setUserID(changeValuePanel.label_1, currentUser);
+            setBabyID(changeValuePanel.label_2,currentBaby);
 
+            //Initiates 3 tables
+            String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
+            String[] columnName={"Time","Glucose Concentration"};
+
+            cardLayout.show(mainPanel,"change value");
+        });
+
+        //Action listener to jump to change password page for change password button
+        mainMenuPanel.getChangePasswordButton().addActionListener(e->{
+            //Update the current user ID, reset both text fields and set the default focus to the text field 1
+            setUserID(changePasswordPanel.label_1, currentUser);
+            cardLayout.show(mainPanel,"change password");
+            changeBabyPanel.resetText(changePasswordPanel.textField_1, true);
+            changeBabyPanel.resetText(changePasswordPanel.textField_2, false);
+        });
         mainPanel.add(mainMenuPanel, "main menu");
+        //Action listener to jump to administrator entry page for entry button
+        mainMenuPanel.getEntryButton().addActionListener(e -> {
+            if (priority)
+            {
+                //Update the current user ID
+                setUserID(administratorEntryPanel.label_1,currentUser);
+                cardLayout.show(mainPanel,"administrator entry");
+            }
+            //If no priority, show message
+            else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+        });
     }
 
     private void setChangeBabyPanel()
@@ -272,6 +322,207 @@ public class UIController {
         mainPanel.add(addValuePanel,"add value");
     }
 
+    private void setChangeValuePanel()
+    {
+      /*
+           Set the change value panel, the page where the user could check glucose concentration, skin
+       current/concentration and event with timestamp. By interacting with the table, the user could directly
+       modify the value if permission given (only within 5min for user)
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the main menu page without any change
+
+           This page contains those list selection listeners:
+           (1)
+
+
+        */
+
+        mainPanel.add(changeValuePanel,"change value");
+    }
+
+    private void setChangePasswordPanel()
+    {
+       /*
+           Set the change password panel, the page where the user could change its own password and the administrator
+       could change all user's password
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the main menu page without any change
+           (3) button 3: Verify whether it is a valid ID first, allow user to change its own password and
+                         administrator to change all user's password
+        */
+        //Action listener to log out for button 1
+        jumpBack(changePasswordPanel.button_1,"log in");
+        //Action listener to jump to the main menu for button 2
+        jumpBack(changePasswordPanel.button_2, "main menu");
+        //Action listener to change password for button 3
+        changePasswordPanel.button_3.addActionListener(e->{
+            //Check whether the user entered both ID and password
+            String ID=changePasswordPanel.textField_1.getText().trim();
+            String password=changePasswordPanel.textField_2.getText().trim();
+            //Reset both text fields and set the default focus to the text field 1
+            changePasswordPanel.resetText(changePasswordPanel.textField_1, true);
+            changePasswordPanel.resetText(changePasswordPanel.textField_2, false);
+            //If entered both ID and password, check whether the password could be changed according to priority
+            if (!ID.equals("")&&!password.equals(""))
+            {
+                Hashtable<String, String> userList=dataBase.getUser();
+                //If no priority, check whether the input ID is matched with the current user ID
+                if (!priority)
+                {
+                    //If true, change the password and show message to the user
+                    if (ID.equals(currentUser)&&userList.containsKey(ID))
+                    {
+                        dataBase.changePassword(currentUser,ID,password,formatTime("0"));
+                        showMessage("Message","Change password successfully!","message");
+                        //Return to the main menu if successfully change the password
+                        setUserID(mainMenuPanel.label_1,currentUser);
+                        setBabyID(mainMenuPanel.label_2,currentBaby);
+                        cardLayout.show(mainPanel,"main menu");
+                    }
+                    //If the input ID is not in the database, show message
+                    else if (!userList.containsKey(ID)) {showMessage("Error","Invalid ID. Please try again.","error");}
+                    //If not matched, show message
+                    else if (userList.containsKey(ID)&&!currentUser.equals(ID)) {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                }
+                //If given priority, check whether the input ID is in the database
+                else
+                {
+                    //If true, change the password and show message
+                    if (userList.containsKey(ID))
+                    {
+                        dataBase.changePassword(currentUser,ID,password,formatTime("0"));
+                        showMessage("Message","Change password successfully!","message");
+                        //Return to the main menu if successfully change the password
+                        setUserID(mainMenuPanel.label_1,currentUser);
+                        setBabyID(mainMenuPanel.label_2,currentBaby);
+                        cardLayout.show(mainPanel,"main menu");
+                    }
+                    else {showMessage("Error","Invalid ID. Please try again.","error");}
+                }
+            }
+            //If missed any information, show different message for each situation
+            else if (ID.equals("")&&password.equals("")){showMessage("Error","Please enter a valid ID and password.","error");}
+            else if (ID.equals("")) {showMessage("Error","Please enter a valid ID.","error");}
+            else {showMessage("Error","Please enter a valid password.","error");}
+        });
+        mainPanel.add(changePasswordPanel,"change password");
+    }
+
+    private void setAdministratorEntryPanel()
+    {
+       /*
+           Set the administrator panel, the page where the administrator could jump to the manage account page
+       or the manage log file page
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the main menu page without any change
+           (3) button 3: jump to the manage account page
+           (4) button 4: jump to the manage log file page
+        */
+        //Action listener to log out for button 1
+        jumpBack(administratorEntryPanel.button_1,"log in");
+        //Action listener to jump to the main menu for button 2
+        jumpBack(administratorEntryPanel.button_2, "main menu");
+        //Action listener to jump to the manage account page
+        administratorEntryPanel.button_3.addActionListener(e->{
+            //Update the current user ID, reset both text fields and set the default focus to the text field 1
+            setUserID(manageAccountPanel.label_1,currentUser);
+            cardLayout.show(mainPanel,"manage account");
+            administratorEntryPanel.resetText(manageAccountPanel.textField_1,true);
+            administratorEntryPanel.resetText(manageAccountPanel.textField_2, false);
+        });
+        mainPanel.add(administratorEntryPanel,"administrator entry");
+    }
+
+    private void setManageAccountPanel()
+    {
+       /*
+           Set the manage account panel, the page where the administrator could add new user or delete a current user
+       account if it is in the database already
+
+           It might be possible to add and administrator in version 2
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the main menu page without any change
+           (3) button 3: add new ID and password into the database
+           (4) button 4: delete a current user account
+        */
+        //Action listener to log out for button 1
+        jumpBack(manageAccountPanel.button_1,"log in");
+        //Action listener to jump to the administrator entry for button 2
+        manageAccountPanel.button_2.addActionListener(e->{
+            setUserID(administratorEntryPanel.label_1, currentUser);
+            cardLayout.show(mainPanel,"administrator entry");
+        });
+        //Action listener to jump to the main meu for main button
+        jumpBack(manageAccountPanel.getMainButton(),"main menu");
+        //Action listener to add account for button 3
+        manageAccountPanel.button_3.addActionListener(e->{
+            //Check whether the user entered both ID and password
+            String ID=manageAccountPanel.textField_1.getText().trim();
+            String password=manageAccountPanel.textField_2.getText().trim();
+            //Reset both text fields and set the default focus to the text field 1
+            manageAccountPanel.resetText(manageAccountPanel.textField_1, true);
+            manageAccountPanel.resetText(manageAccountPanel.textField_2, false);
+            //If entered both ID and password, check whether the input ID is in the database
+            if (!ID.equals("")&&!password.equals(""))
+            {
+                Hashtable<String,String> userList=dataBase.getUser();
+                if (userList.containsKey(ID))
+                {
+                    //Show a message to ask whether need to change password for the input ID
+                    int result=JOptionPane.showConfirmDialog(mainPanel,"ID is already added. Would you like to change password?","Confirmation",JOptionPane.YES_NO_OPTION);
+                    if (result==JOptionPane.YES_OPTION)
+                    {
+                        dataBase.changePassword(currentUser,ID,password,formatTime("0"));
+                        showMessage("Message","Change password successfully!","message");
+                    }
+                }
+                else
+                {
+                    dataBase.addUser(currentUser,ID,password,false,formatTime("0"));
+                    showMessage("Message","Add user (ID: "+ID+") successfully!","message");
+                }
+            }
+            else if (ID.equals("")&&password.equals("")) {showMessage("Error","Please enter a valid ID and password.","error");}
+            else if (password.equals("")) {showMessage("Error","Please enter a valid password.","error");}
+            else {showMessage("Error","Please enter a valid ID.","error");}
+        });
+        manageAccountPanel.button_4.addActionListener(e->{
+            //Check whether the user entered ID
+            String ID=manageAccountPanel.textField_1.getText().trim();
+            //Reset both text fields and set the default focus to the text field 1
+            manageAccountPanel.resetText(manageAccountPanel.textField_1, true);
+            manageAccountPanel.resetText(manageAccountPanel.textField_2, false);
+            //If entered ID, check whether it is valid
+            if (!ID.equals(""))
+            {
+                Hashtable<String, String> userList=dataBase.getUser();
+                //If it is in the database, double check to delete it
+                if (userList.containsKey(ID))
+                {
+                    int result=JOptionPane.showConfirmDialog(mainPanel,"Would you like to delete user (ID: "+ID+")?","Confirmation",JOptionPane.YES_NO_OPTION);
+                    if (result==JOptionPane.YES_OPTION)
+                    {
+                        dataBase.deleteUser(currentUser,ID,formatTime("0"));
+                        showMessage("Message","Delete user successfully!","message");
+                    }
+                }
+                else {showMessage("Error","ID not found in the database. Please try again.","error");}
+            }
+            else {showMessage("Error","Please enter a valid ID.","error");}
+        });
+        //Action listener to jump to main menu for main button
+        jumpBack(manageAccountPanel.getMainButton(),"main menu");
+        mainPanel.add(manageAccountPanel,"manage account");
+    }
+
     private void showMessage(String title, String message, String type)
     {
         /*
@@ -283,7 +534,7 @@ public class UIController {
             type: String, the type of message box displayed
          */
         if (type.equals("error")) {JOptionPane.showMessageDialog(mainPanel, message, title, JOptionPane.ERROR_MESSAGE);}
-        else if(type.equals("input")) {JOptionPane.showInputDialog(mainPanel, message, title);}
+        else if (type.equals("input")) {JOptionPane.showInputDialog(mainPanel, message, title);}
         else {JOptionPane.showMessageDialog(mainPanel,message,title,JOptionPane.INFORMATION_MESSAGE);}
 
     }

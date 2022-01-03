@@ -22,6 +22,12 @@ class ChangeValuePanel extends GeneralPanel
             (6) skinTable: JTable, display skin current, concentration with timestamp
             (7) eventTable: JTable, display detailed event with timestamp
          */
+        label_1=setLabel("User ID: ",880,50,80,14,false);
+        label_2=setLabel("Baby ID: ",880,76,80,14,false);
+
+        button_1=setButton("Log out",872,102,84,36,true);
+        button_2=setButton("Back",44,44,69,26,true);
+
     }
 
     protected JTable getGlucoseTable()
