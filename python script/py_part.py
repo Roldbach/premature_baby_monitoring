@@ -29,6 +29,22 @@ def drift_removement_by_linear_fitting(data):
     return:
         result: List<float>, a list of float data that has been modified
     '''
+    #X is input (regressors), Y is output (predictors)
+    # Problem: shouldn't 2 arguments be supplied?
+    #input arguments xdata and ydata are of type np.array
+    model = LinearRegression()
+    model.fit(xdata, ydata)
+    model = LinearRegression().fit(xdata, ydata)
+    out_pred = model.predict(xdata)
+    # np array named corrected_out is the output, declared with value None
+    corrected_out = np.array(None)
+    i = 0;
+    while (i < len(indata)):
+        corrected_out[i] = indata[i] - out_pred[i]
+        i += 1
+
+    return(corrected_out)
+    
 
 def drift_removement_by_1st_order_differentiation(data):
     '''
@@ -49,6 +65,14 @@ def drift_removement_by_1st_order_differentiation(data):
     return:
         result: List<float>, a list of float data that has been modified
     '''
+    corrected_out = None
+    corrected_out[0] = data[0] # the first value isn't changed (no previous value)
+    for i in range(1, len(data)):
+        corrected_out[i] = data[i] - data[i-1]
+
+    return(corrected_out)
+
+    
 
 def noise_removement_by_moving_average(data, window_size=5):
     '''
