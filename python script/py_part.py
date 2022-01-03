@@ -72,6 +72,13 @@ def noise_removement_by_moving_average(data, window_size=5):
     return:
         result: List<float>, a list of float data that has been filtered
     '''
+    #pad data
+    pad_data=np.pad(data, (window_size-1, window_size-1), 'constant', constant_values=(0,0))
+    print(pad_data)
+    y = np.array([])
+    for i in range(4,18):
+        print(pad_data[i],pad_data[i-1],pad_data[i-2],pad_data[i-3],pad_data[i-4])
+
 
 def noise_removement_by_savitzky_golay(data, window_size=5):
     '''
