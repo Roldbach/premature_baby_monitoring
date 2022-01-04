@@ -19,18 +19,17 @@ class ChangeValuePanel extends GeneralPanel
             (2) label 2: JLabel, display the current baby ID
             (3) button_1: JButton, display "Log out"
             (4) button_2: JButton, display "Back"
-            (5) glucoseTable: JTable, display glucose concentration with timestamp
-            (6) skinTable: JTable, display skin current, concentration with timestamp
-            (7) eventTable: JTable, display detailed event with timestamp
+            (5) table_1: JTable, display glucose concentration with timestamp
+            (6) table_2: JTable, display skin current, concentration with timestamp
+            (7) table_3: JTable, display detailed event with timestamp
+
+            #Class diagram requires modification
          */
         label_1=setLabel("User ID: ",880,50,80,14,false);
         label_2=setLabel("Baby ID: ",880,76,80,14,false);
 
         button_1=setButton("Log out",872,102,84,36,true);
         button_2=setButton("Back",44,44,69,26,true);
-
-        glucoseTable=new JTable();
-
 
     }
 
@@ -100,7 +99,6 @@ class ChangeValuePanel extends GeneralPanel
         table.setRowSelectionAllowed(false);
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
         //scrollPane.add(table);
         add(table);
         return table;

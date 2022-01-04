@@ -16,6 +16,9 @@ class GeneralPanel extends JPanel
     protected JButton button_4;
     protected JTextField textField_1;
     protected JTextField textField_2;
+    protected JTable table_1;
+    protected JTable table_2;
+    protected JTable table_3;
 
     protected GeneralPanel()
     {

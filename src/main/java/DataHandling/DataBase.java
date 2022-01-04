@@ -862,13 +862,79 @@ public class DataBase
         int rowNumber=0;
         for(Map.Entry<String, Double> pair:glucoseConcentration.entrySet())
         {
-            //Save the concentration as String type for
+            //Save the concentration as String type for displaying
             result[rowNumber][0]=pair.getKey();
             result[rowNumber][1]=Double.toString(pair.getValue());
             rowNumber++;
         }
         return result;
     }
+
+    public String[][] formatSkinConcentration(String babyID)
+    {
+        /*
+            Return a 2-d Array<String> containing skin current/concentration data of the specific baby and
+        then could be used to build a JTable directly
+
+        input:
+            babyID: String, the unique ID of the baby who is monitored
+
+        return:
+            result: String[][], the skin current/concentration with timestamp
+         */
+        //Initiate a new array according to the size of the data
+        LinkedHashMap<String, Double> skinCurrent=babyList.get(babyID).getSkinCurrent();
+        LinkedHashMap<String, Double> skinConcentration=babyList.get(babyID).getSkinConcentration();
+        String[][] result=new String[skinConcentration.size()][3];
+        //Add skin concentration with timestamp into the array in order
+        int rowNumber=0;
+        for(Map.Entry<String, Double> pair:skinConcentration.entrySet())
+        {
+            //Save the concentration as String type for
+            result[rowNumber][0]=pair.getKey();
+            result[rowNumber][1]=Double.toString(pair.getValue());
+            rowNumber++;
+        }
+        //Add skin current with timestamp into the array in order
+        rowNumber=0;
+        for(Map.Entry<String, Double> pair:skinCurrent.entrySet())
+        {
+            //Save the current as String type for displaying
+            result[rowNumber][0]=pair.getKey();
+            result[rowNumber][2]=Double.toString(pair.getValue());
+            rowNumber++;
+        }
+        return result;
+    }
+
+    public String[][] formatEvent(String babyID)
+    {
+        /*
+            Return a 2-d Array<String> containing glucose concentration data of the specific baby and
+        then could be used to build a JTable directly
+
+        input:
+            babyID: String, the unique ID of the baby who is monitored
+
+        return:
+            result: String[][], the glucose concentration with timestamp
+         */
+        //Initiate a new array according to the size of the data
+        LinkedHashMap<String, String> event=babyList.get(babyID).getEvent();
+        String[][] result=new String[event.size()][2];
+        //Add glucose concentration with timestamp into the array in order
+        int rowNumber=0;
+        for(Map.Entry<String, String> pair:event.entrySet())
+        {
+            //Save the concentration as String type for displaying
+            result[rowNumber][0]=pair.getKey();
+            result[rowNumber][1]=pair.getValue();
+            rowNumber++;
+        }
+        return result;
+    }
+
+
 
     public void sortTimestamp()
     {

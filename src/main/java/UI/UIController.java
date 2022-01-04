@@ -3,12 +3,11 @@ package UI;
 import DataHandling.DataBase;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Hashtable;
 
 public class UIController {
@@ -201,10 +200,105 @@ public class UIController {
             setBabyID(changeValuePanel.label_2,currentBaby);
             //Sort the data before displaying to the user
             dataBase.sortTimestamp();
-            //Initiates 3 tables
+            //Initiates glucose concentration table
             String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
-            String[] columnName={"Time","Glucose Concentration"};
-            changeValuePanel.setTable(glucoseConcentration,columnName,150,210,204,380);
+            String[] glucoseColumnName={"Time","Glucose Concentration"};
+            changeValuePanel.table_1=changeValuePanel.setTable(glucoseConcentration,glucoseColumnName,150,210,204,380);
+            //Initiate skin glucose concentration table
+            String[][] skinConcentration= dataBase.formatSkinConcentration(currentBaby);
+            String[] skinColumnName= {"Time","Skin Concentration","Skin Current"};
+            changeValuePanel.table_2=changeValuePanel.setTable(skinConcentration,skinColumnName,398,210,204,380);
+            //Initiate event table
+            //Initiate skin glucose concentration table
+            String[][] event=dataBase.formatEvent(currentBaby);
+            String[] eventColumnName= {"Time","Event"};
+            changeValuePanel.table_3=changeValuePanel.setTable(event,eventColumnName,646,210,204,380);
+            //Add mouse listener for the glucose concentration table
+            changeValuePanel.table_1.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //Only response when the user double-click the table
+                    if (e.getClickCount()==2&&!e.isConsumed())
+                    {
+                        int row=changeValuePanel.table_1.getSelectedRow();
+                        int column=changeValuePanel.table_1.getSelectedColumn();
+                        //According to the column show different message box to ask for input
+                        if (column==1)
+                        {
+                            String input=JOptionPane.showInputDialog("Glucose Concentration: " + changeValuePanel.table_1.getValueAt(row, column),
+                                    changeValuePanel.table_1.getValueAt(row, column));
+                            if (input!=null)
+                            {
+                                //If the user want to change the value, check permission and whether the input is valid before changing
+                                try
+                                {
+                                    Double newValue=Double.parseDouble(input.trim());
+                                    String targetTime=(String) changeValuePanel.table_1.getValueAt(row,0);
+                                    if (dataBase.checkPermission(targetTime,formatTime("0"))||priority)
+                                    {
+                                        changeValuePanel.table_1.setValueAt(input,row,column);
+                                        dataBase.changeGlucoseConcentration(currentUser,currentBaby,targetTime,newValue,formatTime("0"));
+                                        showMessage("Message","Change glucose concentration successfully!","message");
+                                    }
+                                    else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    showMessage("Error","Invalid concentration value. Please try again.","error");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            String input=JOptionPane.showInputDialog("Timestamp: "+changeValuePanel.table_1.getValueAt(row,column),
+                                    changeValuePanel.table_1.getValueAt(row,column));
+                            if (input!=null)
+                            {
+                                //Check whether the input timestamp is valid and permission
+                                try
+                                {
+                                    DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                                    formatter.parse(input.trim());
+                                    if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,column),formatTime("0")))
+                                    {
+                                        dataBase.changeGlucoseConcentrationTimestamp(currentUser,currentBaby,
+                                                (String) changeValuePanel.table_1.getValueAt(row,column),input,formatTime("0"));
+                                        changeValuePanel.table_1.setValueAt(input,row,column);
+                                        showMessage("Message","Change timestamp successfully!","message");
+                                    }
+                                    else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                                }
+                                catch (StringIndexOutOfBoundsException|DateTimeParseException exception)
+                                {
+                                    showMessage("Error","Invalid timestamp. Please try again.","error");
+                                }
+                            }
+                        }
+                    }
+                }
+                //Add mouse listener for the event table
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            });
+
             cardLayout.show(mainPanel,"change value");
         });
 
@@ -348,48 +442,7 @@ public class UIController {
         jumpBack(changeValuePanel.button_2, "main menu");
         mainPanel.add(changeValuePanel,"change value");
 
-        //Add mouse click listener for the glucose concentration table
-        JTable glucoseTable=changeValuePanel.getGlucoseTable();
-        //System.out.println(glucoseTable.getValueAt(0,0));
-        /*
-        glucoseTable.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
 
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                //Only response when double-click the table
-                if (e.getClickCount()==2&&!e.isConsumed())
-                {
-                    int row=glucoseTable.getSelectedRow();
-                    int column=glucoseTable.getSelectedColumn();
-                    //Show different message when clicking concentration and timestamp according to the column number
-                    if (column==1)
-                    {
-                        String inputConcentration=JOptionPane.showInputDialog( "Glucose Concentration: "+glucoseTable.getValueAt(row,column), JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
-
-         */
     }
 
     private void setChangePasswordPanel()

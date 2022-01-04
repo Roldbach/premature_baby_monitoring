@@ -27,7 +27,7 @@ def load_baby_data(directory):
     '''
     result={}
     #Load instruction file to get user's choice for drift/noise removal and baby ID
-    with open(directory+"\DataBase\instruction.txt","r") as file:
+    with open(directory+"/DataBase/instruction.txt","r") as file:
         content=file.readlines()
         for line in content:
             if ("drift:" in line):
@@ -41,7 +41,7 @@ def load_baby_data(directory):
     for name in name_list:
         result[name]=[]
     #Use the given baby ID to load the baby data as the file is saved using the baby ID
-    with open(directory+"\DataBase\Baby\\"+result["ID"]+".txt","r") as file:
+    with open(directory+"/DataBase/Baby/"+result["ID"]+".txt","r") as file:
         content=file.readlines()
         for line in content:
             if ("gc:" in line):
