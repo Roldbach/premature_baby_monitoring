@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -342,6 +343,8 @@ public class Baby {
         /*
             Save the formatted data for a specific baby to the target directory
 
+            Sort the data first before saving
+
             This will overwrite any previous data file with the same name
     `       By default, the file could be saved under: Base\DataHandling.DataBase\DataHandling.Baby
 
@@ -361,11 +364,12 @@ public class Baby {
          throws:
             IOException: there is something wrong with the input/output operations
          */
+        sortTimestamp();
         String fileName=ID+".txt";
         try
         {
             //Create a new file that is named by the baby's hospital number
-            FileWriter babyWriter=new FileWriter(directory+"\\"+fileName,false);
+            FileWriter babyWriter=new FileWriter(directory+"/"+fileName,false);
             //Save hospital number to the file
             babyWriter.write("id:"+ID+"\n");
             //Loop through each linked hash map and add those data in order
@@ -391,5 +395,60 @@ public class Baby {
         {
             e.printStackTrace();
         }
+    }
+
+    public void sortTimestamp()
+    {
+        /*
+            Sort the glucose concentration data, skin concentration/current data, event
+        data according to their timestamps
+
+            The timestamp could be directly sorted as they have exactly the same format: yyyy/MM/dd HH:MM:ss
+         */
+       //Extract all timestamp as an Array<String> and sort this array
+        String[] glucoseTimestamp=new String[glucoseConcentration.size()];
+        int index=0;
+        for (String time:glucoseConcentration.keySet())
+        {
+            glucoseTimestamp[index]=time;
+            index++;
+        }
+        Arrays.sort(glucoseTimestamp);
+        //According to the order in the array, update the stored Linked Hashmap
+        LinkedHashMap<String, Double> newGlucoseConcentration=new LinkedHashMap<>();
+        for (int i=0;i<glucoseConcentration.size();i++) newGlucoseConcentration.put(glucoseTimestamp[i],glucoseConcentration.get(glucoseTimestamp[i]));
+        glucoseConcentration=newGlucoseConcentration;
+
+        //Do the same for the skin current/concentration as they use exactly the same timestamp
+        String[] skinTimestamp=new String[skinCurrent.size()];
+        index=0;
+        for (String time:skinCurrent.keySet())
+        {
+            skinTimestamp[index]=time;
+            index++;
+        }
+        Arrays.sort(skinTimestamp);
+        LinkedHashMap<String, Double> newSkinCurrent=new LinkedHashMap<>();
+        LinkedHashMap<String, Double> newSkinConcentration=new LinkedHashMap<>();
+        for (int i=0;i<skinCurrent.size();i++)
+        {
+            newSkinCurrent.put(skinTimestamp[i],skinCurrent.get(skinTimestamp[i]));
+            newSkinConcentration.put(skinTimestamp[i],skinConcentration.get(skinTimestamp[i]));
+        }
+        skinCurrent=newSkinCurrent;
+        skinConcentration=newSkinConcentration;
+
+        //Do the same for the event
+        String[] eventTimestamp=new String[event.size()];
+        index=0;
+        for (String time:event.keySet())
+        {
+            eventTimestamp[index]=time;
+            index++;
+        }
+        Arrays.sort(eventTimestamp);
+        LinkedHashMap<String,String> newEvent=new LinkedHashMap<>();
+        for (int i=0;i<event.size();i++) {newEvent.put(eventTimestamp[i],event.get(eventTimestamp[i]));}
+        event=newEvent;
     }
 }

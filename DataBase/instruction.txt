@@ -1,0 +1,3 @@
+id:baby 2
+drift:linear regression
+noise:moving average

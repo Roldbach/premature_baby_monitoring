@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Hashtable;
@@ -58,7 +60,7 @@ public class UIController {
         logInPanel=new LogInPanel();
         setLogInPanel(directory,babyDirectory);
         mainMenuPanel=new MainMenuPanel();
-        setMainMenuPanel();
+        setMainMenuPanel(directory,babyDirectory);
         changeBabyPanel=new ChangeBabyPanel();
         setChangeBabyPanel();
         addValuePanel=new AddValuePanel();
@@ -152,7 +154,7 @@ public class UIController {
         mainPanel.add(logInPanel, "log in");
     }
 
-    private void setMainMenuPanel()
+    private void setMainMenuPanel(String directory, String babyDirectory)
     {
        /*
            Set the main menu panel, the page where the user could choose various function here
@@ -197,11 +199,12 @@ public class UIController {
             //Update the current user ID and current baby ID
             setUserID(changeValuePanel.label_1, currentUser);
             setBabyID(changeValuePanel.label_2,currentBaby);
-
+            //Sort the data before displaying to the user
+            dataBase.sortTimestamp();
             //Initiates 3 tables
             String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
             String[] columnName={"Time","Glucose Concentration"};
-
+            changeValuePanel.setTable(glucoseConcentration,columnName,150,210,204,380);
             cardLayout.show(mainPanel,"change value");
         });
 
@@ -333,13 +336,60 @@ public class UIController {
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
            (2) button 2: jump to the main menu page without any change
 
-           This page contains those list selection listeners:
-           (1)
-
-
+           This page contains those mouse listeners:
+           (1) glucose table: show confirm message box when double-click the table, if the permission is given
+                              then edit the data and refresh the table when clicking yes option
+           (2) skin table: the same as glucose table
+           (3) event table: the same as glucose table
         */
-
+        //Action listener to log out for button 1
+        jumpBack(changeValuePanel.button_1,"log in");
+        //Action listener to jump to the main menu for button 2
+        jumpBack(changeValuePanel.button_2, "main menu");
         mainPanel.add(changeValuePanel,"change value");
+
+        //Add mouse click listener for the glucose concentration table
+        JTable glucoseTable=changeValuePanel.getGlucoseTable();
+        //System.out.println(glucoseTable.getValueAt(0,0));
+        /*
+        glucoseTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //Only response when double-click the table
+                if (e.getClickCount()==2&&!e.isConsumed())
+                {
+                    int row=glucoseTable.getSelectedRow();
+                    int column=glucoseTable.getSelectedColumn();
+                    //Show different message when clicking concentration and timestamp according to the column number
+                    if (column==1)
+                    {
+                        String inputConcentration=JOptionPane.showInputDialog( "Glucose Concentration: "+glucoseTable.getValueAt(row,column), JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+         */
     }
 
     private void setChangePasswordPanel()
@@ -536,7 +586,6 @@ public class UIController {
         if (type.equals("error")) {JOptionPane.showMessageDialog(mainPanel, message, title, JOptionPane.ERROR_MESSAGE);}
         else if (type.equals("input")) {JOptionPane.showInputDialog(mainPanel, message, title);}
         else {JOptionPane.showMessageDialog(mainPanel,message,title,JOptionPane.INFORMATION_MESSAGE);}
-
     }
 
     private String formatTime(String minute) {
@@ -553,6 +602,7 @@ public class UIController {
         LocalDateTime time = LocalDateTime.now().minusMinutes(Long.parseLong(minute));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         return formatter.format(time);
+
     }
 
     private void setUserID(JLabel label, String userID)

@@ -63,7 +63,7 @@ public class DataBase
 
         //Load the user and administrator
         try {
-            File userFile=new File(directory+"\\account.txt");
+            File userFile=new File(directory+"/account.txt");
             Scanner userReader=new Scanner(userFile);
             //Read line by line and add formatted data according to the flag in each line
             while (userReader.hasNextLine())
@@ -81,7 +81,7 @@ public class DataBase
         //Load general settings
         try
         {
-            File settingFile=new File(directory+"\\setting.txt");
+            File settingFile=new File(directory+"/setting.txt");
             Scanner settingReader=new Scanner(settingFile);
             while (settingReader.hasNextLine())
             {
@@ -102,7 +102,7 @@ public class DataBase
         {
             for (String babyName:babyNames)
             {
-                Baby baby=new Baby(babyDirectory+"\\"+babyName,true);
+                Baby baby=new Baby(babyDirectory+"/"+babyName,true);
                 babyList.put(baby.getID(),baby);
             }
         }
@@ -110,7 +110,7 @@ public class DataBase
         //Load the log file
         try
         {
-            File log=new File(directory+"\\log file.txt");
+            File log=new File(directory+"/log file.txt");
             Scanner logFileReader=new Scanner(log);
             //Read line by line and directly save the content into the ArrayList
             while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
@@ -664,7 +664,7 @@ public class DataBase
         {
             String fileName="account.txt";
             //Create a new file that is named "account.txt"
-            FileWriter userWriter=new FileWriter(directory+"\\"+fileName,false);
+            FileWriter userWriter=new FileWriter(directory+"/"+fileName,false);
             //Loop through both hash table and add those data
             for (Map.Entry<String, String> pair:user.entrySet())
             {
@@ -685,7 +685,7 @@ public class DataBase
         {
             String fileName="setting.txt";
             //Create a new file that is named "setting.txt"
-            FileWriter settingWriter=new FileWriter(directory+"\\"+fileName,false);
+            FileWriter settingWriter=new FileWriter(directory+"/"+fileName,false);
             //Save the calibration parameters in one line
             settingWriter.write("cp:");
             int index=0;
@@ -716,7 +716,7 @@ public class DataBase
         {
             String fileName="log file.txt";
             //Create a new file that is named "log file.txt"
-            FileWriter logWriter=new FileWriter(directory+"\\"+fileName,false);
+            FileWriter logWriter=new FileWriter(directory+"/"+fileName,false);
             //Loop through the log file list and save each line
             for (String line:logFile) {logWriter.write(line+"\n");}
             logWriter.close();
@@ -759,7 +759,7 @@ public class DataBase
 
         //Load the user and administrator
         try {
-            File userFile=new File(directory+"\\account.txt");
+            File userFile=new File(directory+"/account.txt");
             Scanner userReader=new Scanner(userFile);
             //Read line by line and add formatted data according to the flag in each line
             while (userReader.hasNextLine())
@@ -777,7 +777,7 @@ public class DataBase
         //Load general settings
         try
         {
-            File settingFile=new File(directory+"\\setting.txt");
+            File settingFile=new File(directory+"/setting.txt");
             Scanner settingReader=new Scanner(settingFile);
             while (settingReader.hasNextLine())
             {
@@ -798,7 +798,7 @@ public class DataBase
         {
             for (String babyName:babyNames)
             {
-                Baby baby=new Baby(babyDirectory+"\\"+babyName,true);
+                Baby baby=new Baby(babyDirectory+"/"+babyName,true);
                 babyList.put(baby.getID(),baby);
             }
         }
@@ -806,7 +806,7 @@ public class DataBase
         //Load the log file
         try
         {
-            File log=new File(directory+"\\log file.txt");
+            File log=new File(directory+"/log file.txt");
             Scanner logFileReader=new Scanner(log);
             //Read line by line and directly save the content into the ArrayList
             while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
@@ -869,4 +869,17 @@ public class DataBase
         }
         return result;
     }
+
+    public void sortTimestamp()
+    {
+        /*
+            Sort data for every baby saved within the database before displaying
+        tables or moving on to data processing
+         */
+        for(Baby baby: babyList.values())
+        {
+            baby.sortTimestamp();
+        }
+    }
+
 }

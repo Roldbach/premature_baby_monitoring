@@ -130,33 +130,6 @@ class GeneralPanel extends JPanel
         return radioButton;
     }
 
-    protected JTable setTable(String[][] data, String[] columnName, int x, int y, int width, int height)
-    {
-        /*
-            Return a table with given data, columnName, coordinates and size after adding it to a scroll pane
-        and page panel
-
-            The input value is pixel value and requires transform into point value by /0.75
-
-            The table allows single cell selection
-
-       input:
-            data: String[][], 2-d String Array containing timestamp and value
-            columnName: String[], containing names for each column
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
-         */
-        JTable table=new JTable(data,columnName);
-        table.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-        table.setCellSelectionEnabled(true);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        add(new JScrollPane(table));
-        System.out.println(data[0][0]);
-        return table;
-    }
-
     protected void resetText(JTextField textField, boolean focus)
     {
         /*
