@@ -16,8 +16,12 @@ class ManageLogFilePanel extends GeneralPanel
             (2) button_1: JButton, display "Log out"
             (3) button_2: JButton, display "Back"
             (4) button_3: JButton, display "Main"
-            (5) logFileTable: JTable, display detailed modification to the database
+            (5) table_1: JTable, display detailed modification to the database
          */
+        label_1=setLabel("User: ",880,50,80,14,false);
+        button_1=setButton("Log out",872,76,84,36,true);
+        button_2=setButton("Back",44,44,69,26,true);
+        button_3=setButton("Main",135,44,69,26,true);
     }
 
     protected JTable getLogFileTable()

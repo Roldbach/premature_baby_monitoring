@@ -1,29 +1,3 @@
 Time 1,Roldbach,None,Add User,User 1
 Time 2,Roldbach,None,Add Administrator,User 2
-Time 1,Roldbach,None,Add User,User 3
-Time 3,Roldbach,None,Delete User,User 1
-Time 4,Roldbach,None,Change Calibration Parameter,None
-Time 4,Roldbach,None,Change Lag Time,9
-Time 5,Roldbach,None,Change Permission Time,1
-Time 6,Roldbach,None,Change Password,User 3
-Time 7,Roldbach,Nigel,Add Glucose Concentration,0.922
-Time 8,Roldbach,Nigel,Add Glucose Concentration,0.922
-Time 8,Roldbach,Nigel,Change Glucose Concentration,0.0922
-Time 9,Roldbach,Nigel,Delete Glucose Concentration,0.0922
-2022/01/02 22:03:28,789,None,Change Password,123
-2022/01/02 22:03:57,789,None,Change Password,123
-2022/01/02 22:13:34,789,None,Delete User,123
-2022/01/02 22:13:43,789,None,Add User,123
-2022/01/02 22:14:23,789,None,Delete User,123
-2022/01/02 22:14:28,789,None,Add User,123
-2022/01/03 10:19:36,123,None,Change Password,123
-2022/01/03 11:11:20,123,None,Change Password,123
-2022/01/04 14:05:54,789,None,Add User,321
-2022/01/04 22:05:50,789,baby 2,Change Glucose Concentration,1.3
-2022/01/04 22:10:05,789,baby 2,Change Glucose Concentration,1.2
-2022/01/04 22:40:14,789,baby 2,Change Glucose Concentration Timestamp,2021-01-04T22:39:00
-2022/01/04 22:41:14,789,baby 2,Change Glucose Concentration Timestamp,2021-01-04 22:39:00
-2022/01/04 23:33:50,123,baby 2,Change Glucose Concentration,1.3
-2022/01/04 23:34:13,123,baby 2,Change Glucose Concentration Timestamp,2022/01/04 23:35:00
-2022/01/04 23:35:01,123,baby 2,Change Glucose Concentration Timestamp,2022/01/04 23:00:00
-2022/01/04 23:36:42,123,baby 2,Change Glucose Concentration Timestamp,2022/01/04 23:37:00
+2022/01/05 16:25:05,123,baby 2,Add Glucose Concentration,1.3

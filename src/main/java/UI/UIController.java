@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -23,8 +25,7 @@ public class UIController {
     private ChangeBabyPanel changeBabyPanel;
     private AddValuePanel addValuePanel;
     private ChangeValuePanel changeValuePanel;
-
-
+    private PlotGraphPanel plotGraphPanel;
     private ChangePasswordPanel changePasswordPanel;
     private AdministratorEntryPanel administratorEntryPanel;
     private ManageAccountPanel manageAccountPanel;
@@ -37,13 +38,6 @@ public class UIController {
             By default, the database data could be found under: Base\DataBase
                         the baby data could be found under: Base\Database\Baby
 
-           5. changeValuePanel: the page where the user could check glucose concentration, skin current/concentration
-                                and detailed event information with timestamp
-                                the value could be modified directly by editing the table
-              This page contains those action listeners:
-              (1) button 1: jump to the login page and then reset the current user ID and current baby ID
-              (2) button 2: jump to the main menu page and refresh the hashmap-format data
-
         input:
             directory: String, the directory path where files except baby data could be loaded
             babyDirectory: String, the directory path where all baby data could be loaded
@@ -53,6 +47,7 @@ public class UIController {
         currentUser=null;
         currentBaby=null;
         priority=false;
+
         //Initiate all pages
         cardLayout=new CardLayout();
         mainPanel=new JPanel(cardLayout);
@@ -66,15 +61,16 @@ public class UIController {
         setAddValuePanel();
         changeValuePanel=new ChangeValuePanel();
         setChangeValuePanel();
-
-
-
+        plotGraphPanel=new PlotGraphPanel();
+        setPlotGraphPanel(directory);
         changePasswordPanel=new ChangePasswordPanel();
         setChangePasswordPanel();
         administratorEntryPanel=new AdministratorEntryPanel();
         setAdministratorEntryPanel();
         manageAccountPanel=new ManageAccountPanel();
         setManageAccountPanel();
+        manageLogFilePanel=new ManageLogFilePanel();
+        setManageLogFilePanel();
     }
 
     public JPanel getMainPanel() {
@@ -191,7 +187,7 @@ public class UIController {
             cardLayout.show(mainPanel,"add value");
             addValuePanel.resetText(addValuePanel.textField_1, true);
             addValuePanel.resetText(addValuePanel.textField_2, false);
-            addValuePanel.getOptionButton().setSelected(true);
+            addValuePanel.radioButton_1.setSelected(true);
         });
         //Action listener to jump to change value page for change value button
         mainMenuPanel.getChangeValueButton().addActionListener(e->{
@@ -264,7 +260,7 @@ public class UIController {
                                 {
                                     DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                                     formatter.parse(input.trim());
-                                    if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,column),formatTime("0")))
+                                    if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,column),formatTime("0"))||priority)
                                     {
                                         dataBase.changeGlucoseConcentrationTimestamp(currentUser,currentBaby,
                                                 (String) changeValuePanel.table_1.getValueAt(row,column),input,formatTime("0"));
@@ -281,7 +277,6 @@ public class UIController {
                         }
                     }
                 }
-                //Add mouse listener for the event table
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
@@ -298,8 +293,116 @@ public class UIController {
 
                 }
             });
+            //Add mouse listener for the event table
+            changeValuePanel.table_3.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
 
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //Only response when double-clicking the table
+                    if (e.getClickCount()==2&&!e.isConsumed())
+                    {
+                        int row=changeValuePanel.table_3.getSelectedRow();
+                        int column=changeValuePanel.table_3.getSelectedColumn();
+                        //According to the column show different message box to ask for input
+                        if (column==1)
+                        {
+                            String input=JOptionPane.showInputDialog("Event: " + changeValuePanel.table_3.getValueAt(row, column),
+                                    changeValuePanel.table_3.getValueAt(row, column));
+                            if (input!=null)
+                            {
+                                //If the user want to change the event, check permission and assume the input is valid (Can not find a way to check validity for event)
+                                try
+                                {
+                                    String targetTime=(String) changeValuePanel.table_3.getValueAt(row,0);
+                                    if (dataBase.checkPermission(targetTime,formatTime("0"))||priority)
+                                    {
+                                        changeValuePanel.table_3.setValueAt(input,row,column);
+                                        dataBase.changeEvent(currentUser,currentBaby,targetTime,input.trim(),formatTime("0"));
+                                        showMessage("Message","Change event successfully!","message");
+                                    }
+                                    else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    showMessage("Error","Invalid event information. Please try again.","error");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            String input=JOptionPane.showInputDialog("Timestamp: "+changeValuePanel.table_3.getValueAt(row,column),
+                                    changeValuePanel.table_3.getValueAt(row,column));
+                            if (input!=null)
+                            {
+                                //Check whether the input timestamp is valid and permission
+                                try
+                                {
+                                    DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                                    formatter.parse(input.trim());
+                                    if (dataBase.checkPermission((String) changeValuePanel.table_3.getValueAt(row,column),formatTime("0"))||priority)
+                                    {
+                                        dataBase.changeEventTimestamp(currentUser,currentBaby,
+                                                (String) changeValuePanel.table_3.getValueAt(row,column),input,formatTime("0"));
+                                        changeValuePanel.table_3.setValueAt(input,row,column);
+                                        showMessage("Message","Change timestamp successfully!","message");
+                                    }
+                                    else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                                }
+                                catch (StringIndexOutOfBoundsException|DateTimeParseException exception)
+                                {
+                                    showMessage("Error","Invalid timestamp. Please try again.","error");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            });
             cardLayout.show(mainPanel,"change value");
+        });
+        //Action listener to jump to plot graph page for plot button
+        mainMenuPanel.getPlotButton().addActionListener(e -> {
+            //Update the current user ID and current baby ID
+            setUserID(plotGraphPanel.label_1,currentUser);
+            setBabyID(plotGraphPanel.label_2, currentBaby);
+            //Reset the option
+            plotGraphPanel.resetOption();
+            //According to the user's choice, write the instruction file
+            setInstruction(directory, plotGraphPanel.getDriftOption(), plotGraphPanel.getFilterOption());
+            //Generate plots by calling python script from java
+            String[] command= {"python",System.getProperty("user.dir")+"/PythonScript/main.py",System.getProperty("user.dir")};
+            try {
+                Process process=Runtime.getRuntime().exec(command);
+                if (process.waitFor()!=0) {showMessage("Error","Something really bad happened. Please call the emergency number.","Error");}
+                //Show error message if something unexpected happen
+                else
+                {
+                    //Load plots and jump to the page
+                    plotGraphPanel.loadImage(System.getProperty("user.dir"));
+                    cardLayout.show(mainPanel,"plot graph");
+                }
+            } catch (IOException | InterruptedException exception) {
+                showMessage("Error","Something really bad happened. Please call the emergency number.","Error");
+            }
+
         });
 
         //Action listener to jump to change password page for change password button
@@ -408,7 +511,7 @@ public class UIController {
             //Reset both text fields and set the default focus to the text field 1 and default select option button 1
             addValuePanel.resetText(addValuePanel.textField_1, true);
             addValuePanel.resetText(addValuePanel.textField_2, false);
-            addValuePanel.getOptionButton().setSelected(true);
+            addValuePanel.radioButton_1.setSelected(true);
             //Show messages for each situation
             if (!glucose&&!event) {showMessage("Error","Invalid concentration or event. Please try again","error");}
             else if (glucose&&event) {showMessage("Message","Add glucose and event successfully!","message");}
@@ -442,9 +545,35 @@ public class UIController {
         jumpBack(changeValuePanel.button_2, "main menu");
         mainPanel.add(changeValuePanel,"change value");
 
-
     }
 
+    private void setPlotGraphPanel(String directory)
+    {
+      /*
+           Set the change password panel, the page where the user could change its own password and the administrator
+       could change all user's password
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the main menu page without any change
+           (3) driftButton_1: Obtain user's choice for drift/noise removal and refresh the label
+           (4) driftButton_2: the same as driftButton_1
+           (5) filterButton_1: the same as driftButton_1
+           (6) filterButton_2: the same as driftButton_1
+        input:
+            directory: String, the directory path where files except baby data could be loaded
+        */
+        //Action listener to log out for button 1
+        jumpBack(plotGraphPanel.button_1,"log in");
+        //Action listener to jump to the main menu for button 2
+        jumpBack(plotGraphPanel.button_2, "main menu");
+        //Action listener to refresh images for every radio button
+        refreshImages(plotGraphPanel.getDriftButton_1(), directory);
+        refreshImages(plotGraphPanel.getDriftButton_2(), directory);
+        refreshImages(plotGraphPanel.getFilterButton_1(), directory);
+        refreshImages(plotGraphPanel.getFilterButton_2(), directory);
+        mainPanel.add(plotGraphPanel,"plot graph");
+    }
     private void setChangePasswordPanel()
     {
        /*
@@ -525,19 +654,29 @@ public class UIController {
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
            (2) button 2: jump to the main menu page without any change
            (3) button 3: jump to the manage account page
-           (4) button 4: jump to the manage log file page
+           (4) button 4: jump to the manage log file page and initiate the table
         */
         //Action listener to log out for button 1
         jumpBack(administratorEntryPanel.button_1,"log in");
         //Action listener to jump to the main menu for button 2
         jumpBack(administratorEntryPanel.button_2, "main menu");
-        //Action listener to jump to the manage account page
+        //Action listener to jump to the manage account page for button 3
         administratorEntryPanel.button_3.addActionListener(e->{
             //Update the current user ID, reset both text fields and set the default focus to the text field 1
             setUserID(manageAccountPanel.label_1,currentUser);
             cardLayout.show(mainPanel,"manage account");
             administratorEntryPanel.resetText(manageAccountPanel.textField_1,true);
             administratorEntryPanel.resetText(manageAccountPanel.textField_2, false);
+        });
+        //Action listener to jump to the manage log file page for button 4
+        administratorEntryPanel.button_4.addActionListener(e -> {
+            //Update the current user ID
+            setUserID(manageLogFilePanel.label_1, currentUser);
+            //Initiate and display the log file as a table
+            String[][] logFile=dataBase.formatLogFile();
+            String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
+            manageLogFilePanel.table_1=manageLogFilePanel.setTable(logFile,columnName,378,210,604,380);
+            cardLayout.show(mainPanel,"manage log file");
         });
         mainPanel.add(administratorEntryPanel,"administrator entry");
     }
@@ -626,6 +765,27 @@ public class UIController {
         mainPanel.add(manageAccountPanel,"manage account");
     }
 
+    private void setManageLogFilePanel()
+    {
+       /*
+           Set the manage log file panel, the page where the administrator could check detailed records in the log file
+
+           This page contains those action listeners:
+           (1) button 1: jump to the login page and then reset the current user ID and current baby ID
+           (2) button 2: jump to the administrator entry page
+           (3) button 3: jump to the main menu page without any change
+        */
+        //Action listener to log out for button 1
+        jumpBack(manageLogFilePanel.button_1,"log in");
+        //Action listener to jump to the administrator entry page for button 2
+        manageLogFilePanel.button_2.addActionListener(e -> {
+            setUserID(administratorEntryPanel.label_1, currentUser);
+            cardLayout.show(mainPanel,"administrator entry");
+        });
+        //Action listener to jump to the main menu for button 3
+        jumpBack(manageLogFilePanel.button_3, "main menu");
+        mainPanel.add(manageLogFilePanel,"manage log file");
+    }
     private void showMessage(String title, String message, String type)
     {
         /*
@@ -714,5 +874,80 @@ public class UIController {
                 logInPanel.resetText(logInPanel.textField_2, false);
             });
         }
+    }
+
+    private void setInstruction(String directory, String driftOption, String filterOption)
+    {
+        /*
+            Generate the instruction file which could be used to generate plots
+        according to the user's choice
+
+            By default, the instruction file could be found under: Base\DataBase
+
+        input:
+            directory: String, the directory path where files except baby data could be loaded
+            driftOption: String, the user's choice of drift removal
+            filterOption: String, the user's choice of noise removal
+
+         throws:
+            IOException: there is something wrong with the input/output operations
+         */
+        try
+        {
+            //Create a new file that is named by the baby's hospital number
+            FileWriter instructionWriter=new FileWriter(directory+"/instruction.txt",false);
+            //Save the current baby ID to the file
+            instructionWriter.write("id:"+currentBaby+"\n");
+            //Save the drift removal and noise removal to the file
+            instructionWriter.write("drift:"+driftOption+"\n");
+            instructionWriter.write("noise:"+filterOption+"\n");
+            instructionWriter.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    protected void refreshImages(JRadioButton radioButton, String directory)
+    {
+        /*
+            Add action listener for the given JRadio button so that every time the
+        user choose a new option in the plot graph page, the plots could be generated
+        according to the new instruction file and refreshed
+
+        input:
+            radioButton: JRadioButton, allows user to choose different options
+            directory: String, the directory path where files except baby data could be loaded
+         */
+        radioButton.addActionListener(e->{
+            //Generate new instruction file
+            setInstruction(directory, plotGraphPanel.getDriftOption(), plotGraphPanel.getFilterOption());
+            //Generate plots by calling python script from java
+            String[] command= {"python",System.getProperty("user.dir")+"/PythonScript/main.py",System.getProperty("user.dir")};
+            try {
+                Process process=Runtime.getRuntime().exec(command);
+                if (process.waitFor()!=0)
+                {
+                    //Show error message and force quit current page if something wrong happened
+                    showMessage("Error","Something really bad happened. Please call the emergency number.","Error");
+                    setUserID(mainMenuPanel.label_1, currentUser);
+                    setUserID(mainMenuPanel.label_2, currentBaby);
+                    cardLayout.show(mainPanel,"main menu");
+                }
+                //Show error message if something unexpected happen
+                else
+                {
+                    //Load plots and refresh
+                    plotGraphPanel.loadImage(System.getProperty("user.dir"));
+                }
+            } catch (IOException | InterruptedException exception) {
+                showMessage("Error","Something really bad happened. Please call the emergency number.","Error");
+                setUserID(mainMenuPanel.label_1, currentUser);
+                setUserID(mainMenuPanel.label_2, currentBaby);
+                cardLayout.show(mainPanel,"main menu");
+            }
+        });
     }
 }

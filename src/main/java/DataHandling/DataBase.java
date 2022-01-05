@@ -934,7 +934,32 @@ public class DataBase
         return result;
     }
 
+    public String[][] formatLogFile()
+    {
+        /*
+            Return a 2-d Array<String> recording details of modification to the database and
+        then could be used to build a JTable directly
 
+            If "None" is recorded in the log file, it will display nothing in the table
+
+        return:
+            result: String[][], the detailed log file
+         */
+        ArrayList<String> logFile=getLogFile();
+        String[][] result=new String[logFile.size()][5];
+        int rowNumber=0;
+        for (String content:logFile)
+        {
+            String[] splitContent=content.split(",");
+            for (int i=0;i<5;i++)
+            {
+                if (!splitContent[i].equals("None")) {result[rowNumber][i]=splitContent[i];}
+                else {result[rowNumber][i]=" ";}
+            }
+            rowNumber++;
+        }
+        return result;
+    }
 
     public void sortTimestamp()
     {

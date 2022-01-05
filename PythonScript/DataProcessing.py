@@ -163,7 +163,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
         directory: String, the base working directory of the user
     
     return:
-        plot: png image, saved under Base\Plot
+        plot: png image, saved under Base\DataBase\Plots
     '''
     #Ignore difference in secods and generate time index for glucose/event timestamp
     skin_time_index=[i for i in range(len(skin_timestmap))]
@@ -185,14 +185,17 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
             if (time[:-3] in skin_timestmap[index]):
                 event_time_index.append(index)
                 limit=index
+       
     #Set bar property: line height is the height to display the event at certain time
     line_height=0.5*np.amin(glucose_concentration)
-    event_height=[line_height for i in range(len(event_time_index))] 
+    event_height=[line_height for i in range(len(event_time_index))]
+    
     #Save glucose concentration with timestamp as well as event
-    figure, axis=plt.subplots(figsize=(8,5), dpi=300)   
-    axis.vlines(x=event_time_index,ymin=0,ymax=event_height,color="firebrick",alpha=0.7,linewidth=1)
-    axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)
+    figure, axis=plt.subplots(figsize=(8,5), dpi=300)       
+    axis.vlines(x=event_time_index,ymin=0,ymax=event_height,color="firebrick",alpha=0.7,linewidth=1)  
+    axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)    
     axis.plot(glucose_time_index,glucose_concentration,color="black",label="Glucose Concentration")
+
     axis.set_title("Baby ID: "+babyID+" Data: "+date+" "+"Glucose Concentration")
     axis.set_ylabel("Concentration")
     axis.set_xlabel("Time")
@@ -201,7 +204,9 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.set_ylim(0,np.amax(skin_concentration)+5)
     for i in range(len(event_time_index)):
         axis.text(event_time_index[i],event_height[i]+1,event[i],fontsize="large",horizontalalignment="center")
-    figure.savefig(directory+"/DataBase/Plots/glucose vs time.png")
+    
+    figure.savefig(directory+"/DataBase/Plots/GlucoseTime.png")
+    
     #Do the same for the skin concentration
     line_height=0.5*np.amin(skin_concentration)
     event_height=[line_height for i in range(len(event_time_index))]
@@ -220,7 +225,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.set_ylim(0,np.amax(skin_concentration)+5)
     for i in range(len(event_time_index)):
         axis.text(event_time_index[i],event_height[i]+1,event[i],fontsize="large",horizontalalignment="center")
-    figure.savefig(directory+"/DataBase/Plots/skin vs time.png")
+    figure.savefig(directory+"/DataBase/Plots/SkinTime.png")
     #If not the same dimension, certain skin glucose values are chosen and compared with glucose concentration
     new_skin_concentration=[skin_concentration[time] for time in glucose_time_index]
     #Fit a linear regression model to calculate the gradient and intercept
@@ -238,5 +243,5 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     figure.savefig(directory+"/DataBase/Plots/correlation.png")
     #Finally plot the bland-altman graph between 2 concentrations
     pyCompare.blandAltman(glucose_concentration,new_skin_concentration,title="Baby ID: "+babyID+" Bland Altman Plot",
-                        figureSize=(8,5),dpi=300,savePath=directory+"/DataBase/Plots/bland altman.png")
+                        figureSize=(8,5),dpi=300,savePath=directory+"/DataBase/Plots/BlandAltman.png")
 

@@ -5,10 +5,6 @@ import java.awt.*;
 
 class AddValuePanel extends GeneralPanel
 {
-    private JRadioButton optionButton_1;
-    private JRadioButton optionButton_2;
-    private JRadioButton optionButton_3;
-
     protected AddValuePanel()
     {
         /*
@@ -22,9 +18,9 @@ class AddValuePanel extends GeneralPanel
             (5) button_1: JButton, display "Log out"
             (6) button_2: JButton, display "Back"
             (7) button_3: JButton, display "Add"
-            (8) optionButton_1: JRadioButton, display "Current"
-            (9) optionButton_2: JRadioButton, display "5min Ago"
-            (10) optionButton_3: JRadioButton, display "10min Ago"
+            (8) radioButton_1: JRadioButton, display "Current"
+            (9) radioButton_2: JRadioButton, display "5min Ago"
+            (10) radioButton_3: JRadioButton, display "10min Ago"
             (11) textField 1: JTextField, enable user to input glucose concentration value
             (12) textField 2: JTextField, enable user to input event detail
          */
@@ -41,18 +37,11 @@ class AddValuePanel extends GeneralPanel
         textField_2=setTextField(314,350,372,36);
 
         ButtonGroup group=new ButtonGroup();
-        optionButton_1=setRadioButton(group,"Current",382,408,50,14,false);
-        optionButton_2=setRadioButton(group,"5min Ago",486,408,62,14,false);
-        optionButton_3=setRadioButton(group,"10min Ago",602,408,69,14,false);
+        radioButton_1=setRadioButton(group,"Current",382,408,50,14,false);
+        radioButton_2=setRadioButton(group,"5min Ago",486,408,62,14,false);
+        radioButton_3=setRadioButton(group,"10min Ago",602,408,69,14,false);
     }
 
-    protected JRadioButton getOptionButton()
-    {
-        /*
-            Return the default selected radio button
-         */
-        return optionButton_1;
-    }
     protected String getDelay()
     {
         /*
@@ -63,8 +52,8 @@ class AddValuePanel extends GeneralPanel
         return:
             delay: String, the approximate time difference between the measurement time and the input time
          */
-        if (optionButton_1.isSelected()) {return "0";}
-        else if (optionButton_2.isSelected()) {return "5";}
+        if (radioButton_1.isSelected()) {return "0";}
+        else if (radioButton_2.isSelected()) {return "5";}
         else {return "10";}
     }
 }

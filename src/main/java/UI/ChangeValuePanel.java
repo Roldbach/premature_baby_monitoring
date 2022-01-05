@@ -65,42 +65,4 @@ class ChangeValuePanel extends GeneralPanel
          */
         return eventTable;
     }
-
-    protected JTable setTable(String[][] data, String[] columnName, int x, int y, int width, int height)
-    {
-        /*
-            Return a table with given data, columnName, coordinates and size after adding it to a scroll pane
-        and page panel
-
-            The input value is pixel value and requires transform into point value by /0.75
-
-            The table allows single cell selection
-
-       input:
-            data: String[][], 2-d String Array containing timestamp and value
-            columnName: String[], containing names for each column
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
-         */
-        //JScrollPane scrollPane=new JScrollPane();
-        //scrollPane.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-
-        JTable table=new JTable(data,columnName){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        //table.getPreferredSize();
-        table.setBounds((int) (x/0.75), (int) (y/0.75),table.getPreferredSize().width,table.getPreferredSize().height);
-        table.setColumnSelectionAllowed(false);
-        table.setRowSelectionAllowed(false);
-
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //scrollPane.add(table);
-        add(table);
-        return table;
-    }
 }
