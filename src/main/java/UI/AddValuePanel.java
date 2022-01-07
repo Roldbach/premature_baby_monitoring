@@ -24,22 +24,109 @@ class AddValuePanel extends GeneralPanel
             (11) textField 1: JTextField, enable user to input glucose concentration value
             (12) textField 2: JTextField, enable user to input event detail
          */
-        label_1=setLabel("User ID: ",880,50,80,14,false);
-        label_2=setLabel("Baby ID: ",880,76,80,14,false);
-        label_3=setLabel("Glucose Concentration: ",314,248,126,14,false);
-        label_4=setLabel("Event: ",314,328,35,14,false);
+        setLayout(new BorderLayout());
+        label_1=new JLabel("User ID: ");
+        label_1.setFont(new Font("Arial",Font.PLAIN,16));
+        label_2=new JLabel("Baby ID: ");
+        label_2.setFont(new Font("Arial",Font.PLAIN,16));
+        label_3=new JLabel("Glucose Concentration: ");
+        label_3.setFont(new Font("Arial",Font.PLAIN,16));
+        label_4=new JLabel("Event: ");
+        label_4.setFont(new Font("Arial",Font.PLAIN,16));
 
-        button_1=setButton("Log out",872,102,84,36,true);
-        button_2=setButton("Back",44,44,69,26,true);
-        button_3=setButton("Add",456,466,84,36,true);
+        button_1=new JButton("Log out");
+        button_1.setFont(new Font("Arial",Font.BOLD,16));
+        button_2=new JButton("Back");
+        button_2.setFont(new Font("Arial",Font.BOLD,16));
+        button_3=new JButton("Add");
+        button_3.setFont(new Font("Arial",Font.BOLD,16));
 
-        textField_1=setTextField(314,270,372,36);
-        textField_2=setTextField(314,350,372,36);
-
+        radioButton_1=new JRadioButton("Current");
+        radioButton_1.setFont(new Font("Arial",Font.PLAIN,16));
+        radioButton_2=new JRadioButton("5 minute ago");
+        radioButton_2.setFont(new Font("Arial",Font.PLAIN,16));
+        radioButton_3=new JRadioButton("10 minute ago");
+        radioButton_3.setFont(new Font("Arial",Font.PLAIN,16));
         ButtonGroup group=new ButtonGroup();
-        radioButton_1=setRadioButton(group,"Current",382,408,50,14,false);
-        radioButton_2=setRadioButton(group,"5min Ago",486,408,62,14,false);
-        radioButton_3=setRadioButton(group,"10min Ago",602,408,69,14,false);
+        group.add(radioButton_1);
+        group.add(radioButton_2);
+        group.add(radioButton_3);
+
+        textField_1=new JTextField();
+        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_2=new JTextField();
+        textField_2.setFont(new Font("Arial",Font.PLAIN,16));
+        //Set the panel for labels and buttons
+        JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        userPanel.add(label_1);
+
+        JPanel babyPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        babyPanel.add(label_2);
+
+        JPanel labelPanel_1=new JPanel(new GridLayout(1,2));
+        labelPanel_1.add(label_3);
+        labelPanel_1.add(new JLabel(""));
+
+        JPanel labelPanel_2=new JPanel(new GridLayout(1,2));
+        labelPanel_2.add(label_4);
+        labelPanel_2.add(new JLabel(""));
+
+        JPanel buttonPanel_1=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        buttonPanel_1.add(button_1);
+
+        JPanel buttonPanel_2=new JPanel(new FlowLayout(FlowLayout.LEADING,44,0));
+        buttonPanel_2.add(button_2);
+
+        JPanel buttonPanel_3=new JPanel(new GridLayout(1,5));
+        buttonPanel_3.add(new JLabel(""));
+        buttonPanel_3.add(new JLabel(""));
+        buttonPanel_3.add(button_3);
+        buttonPanel_3.add(new JLabel(""));
+        buttonPanel_3.add(new JLabel(""));
+
+        JPanel radioButtonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,25,0));
+        radioButtonPanel.add(radioButton_1);
+        radioButtonPanel.add(radioButton_2);
+        radioButtonPanel.add(radioButton_3);
+        //Set the north panel in the border layout
+        JPanel northPanel=new JPanel(new GridLayout(9,1));
+        northPanel.add(new JLabel(""));
+        northPanel.add(buttonPanel_2);
+        northPanel.add(userPanel);
+        northPanel.add(babyPanel);
+        northPanel.add(buttonPanel_1);
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        //Set the content panel which display labels, buttons and text field at the central area
+        JPanel middleContentPanel=new JPanel();
+        BoxLayout middleContentLayout=new BoxLayout(middleContentPanel,BoxLayout.Y_AXIS);
+        middleContentPanel.setLayout(middleContentLayout);
+        //Add components into the content panel and set some fixed spaces between them
+        middleContentPanel.add(Box.createVerticalStrut(50));
+        middleContentPanel.add(labelPanel_1);
+        middleContentPanel.add(Box.createRigidArea(new Dimension(0,10)));
+        middleContentPanel.add(textField_1);
+        middleContentPanel.add(Box.createRigidArea(new Dimension(0,50)));
+        middleContentPanel.add(labelPanel_2);
+        middleContentPanel.add(Box.createRigidArea(new Dimension(0,10)));
+        middleContentPanel.add(textField_2);
+        middleContentPanel.add(Box.createRigidArea(new Dimension(0,15)));
+        middleContentPanel.add(radioButtonPanel);
+        middleContentPanel.add(Box.createRigidArea(new Dimension(0,15)));
+        middleContentPanel.add(buttonPanel_3);
+        middleContentPanel.add(Box.createVerticalStrut(180));
+        //Set the center panel as a box layout containing 3 parts horizontally
+        JPanel middlePanel=new JPanel();
+        BoxLayout middleLayout=new BoxLayout(middlePanel,BoxLayout.X_AXIS);
+        middlePanel.setLayout(middleLayout);
+        middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
+        middlePanel.add(middleContentPanel);
+        middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
+        //Add panels to the login page
+        add(northPanel,BorderLayout.NORTH);
+        add(middlePanel,BorderLayout.CENTER);
     }
 
     protected String getDelay()

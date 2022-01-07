@@ -17,7 +17,7 @@ public class Main
         UIController mainController=new UIController(System.getProperty("user.dir")+"/DataBase",System.getProperty("user.dir")+"/DataBase/Baby");
         JFrame frame=new JFrame("Premature Baby Monitoring App");
         //The window is modified to fit the pixel value
-        frame.setSize((int) (1000/0.75),(int)(800/0.75));
+        frame.setSize(1000,800);
         frame.setLocationRelativeTo(null);
         frame.getContentPane().add(mainController.getMainPanel());
         frame.setVisible(true);

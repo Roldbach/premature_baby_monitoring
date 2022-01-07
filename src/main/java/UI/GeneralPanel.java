@@ -137,13 +137,12 @@ class GeneralPanel extends JPanel
                 return false;
             }
         };
-        //table.getPreferredSize();
-        table.setBounds((int) (x/0.75), (int) (y/0.75),table.getPreferredSize().width,table.getPreferredSize().height);
+        //table.setBounds((int) (x/0.75), (int) (y/0.75),table.getPreferredSize().width,table.getPreferredSize().height);
         table.setColumnSelectionAllowed(false);
         table.setRowSelectionAllowed(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         //scrollPane.add(table);
-        add(table);
+        //add(table);
         return table;
     }
 

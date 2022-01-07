@@ -1,6 +1,7 @@
 package UI;
 
 import javax.swing.*;
+import java.awt.*;
 
 class MainMenuPanel extends GeneralPanel
 {
@@ -26,17 +27,71 @@ class MainMenuPanel extends GeneralPanel
             (8) changePasswordButton: JButton, display "Change Password"
             (9) entryButton: JButton, display "Administrator Entry"
          */
-        label_1=setLabel("User ID: ",880,50,80,14,false);
-        label_2=setLabel("Baby ID: ",880,76,80,14,false);
+        setLayout(new BorderLayout());
+        label_1=new JLabel("User ID: ");
+        label_1.setFont(new Font("Arial",Font.PLAIN,16));
+        label_2=new JLabel("Baby ID: ");
+        label_2.setFont(new Font("Arial",Font.PLAIN,16));
 
-        button_1=setButton("Change Baby",872,102,84,36,true);
-        button_2=setButton("Log out",872,150,84,36,true);
+        button_1=new JButton("Change Baby");
+        button_1.setFont(new Font("Arial",Font.BOLD,16));
+        button_2=new JButton("Log out");
+        button_2.setFont(new Font("Arial",Font.BOLD,16));
 
-        addButton=setButton("Add Value/Event",81,310,150,150,true);
-        changeValueButton=setButton("Change Value/Event",253,310,150,150,true);
-        plotButton=setButton("Plot Graph",425,310,150,150,true);
-        changePasswordButton=setButton("Change Password",597,310,150,150,true);
-        entryButton=setButton("Administrator Entry",769,310,150,150,true);
+        addButton=new JButton("Add Value");
+        addButton.setFont(new Font("Arial",Font.BOLD,12));
+        changeValueButton=new JButton("Change Value");
+        changeValueButton.setFont(new Font("Arial",Font.BOLD,12));
+        plotButton=new JButton("Plot Graphs");
+        plotButton.setFont(new Font("Arial",Font.BOLD,12));
+        changePasswordButton=new JButton("Change Password");
+        changePasswordButton.setFont(new Font("Arial",Font.BOLD,12));
+        entryButton=new JButton("Administrator Entry");
+        entryButton.setFont(new Font("Arial",Font.BOLD,12));
+
+        //Set the panel for labels and buttons
+        JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        userPanel.add(label_1);
+
+        JPanel babyPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        babyPanel.add(label_2);
+
+        JPanel buttonPanel_1=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        buttonPanel_1.add(button_1);
+
+        JPanel buttonPanel_2=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        buttonPanel_2.add(button_2);
+        //Set the north panel in the border layout
+        JPanel northPanel=new JPanel(new GridLayout(9,1));
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        northPanel.add(userPanel);
+        northPanel.add(babyPanel);
+        northPanel.add(buttonPanel_1);
+        northPanel.add(buttonPanel_2);
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        northPanel.add(new JLabel(""));
+        //Set the content panel which display buttons at a preferred shape and layout
+        JPanel contentPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,25,0));
+        addButton.setPreferredSize(new Dimension(150,150));
+        changeValueButton.setPreferredSize(new Dimension(150,150));
+        plotButton.setPreferredSize(new Dimension(150,150));
+        changePasswordButton.setPreferredSize(new Dimension(150,150));
+        entryButton.setPreferredSize(new Dimension(150,150));
+        contentPanel.add(addButton);
+        contentPanel.add(changeValueButton);
+        contentPanel.add(plotButton);
+        contentPanel.add(changePasswordButton);
+        contentPanel.add(entryButton);
+        //Set the central panel to display content at the central area
+        JPanel centralPanel=new JPanel(new GridLayout(3,1));
+        centralPanel.add(new JLabel(""));
+        centralPanel.add(contentPanel);
+        centralPanel.add(new JLabel(""));
+        //Add panels to the login page
+        add(northPanel,BorderLayout.NORTH);
+        add(centralPanel,BorderLayout.CENTER);
     }
 
     protected JButton getAddButton()

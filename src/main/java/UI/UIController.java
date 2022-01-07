@@ -199,16 +199,15 @@ public class UIController {
             //Initiates glucose concentration table
             String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
             String[] glucoseColumnName={"Time","Glucose Concentration"};
-            changeValuePanel.table_1=changeValuePanel.setTable(glucoseConcentration,glucoseColumnName,150,210,204,380);
+            changeValuePanel.refreshTable(changeValuePanel.table_1,glucoseConcentration,glucoseColumnName);
             //Initiate skin glucose concentration table
             String[][] skinConcentration= dataBase.formatSkinConcentration(currentBaby);
             String[] skinColumnName= {"Time","Skin Concentration","Skin Current"};
-            changeValuePanel.table_2=changeValuePanel.setTable(skinConcentration,skinColumnName,398,210,204,380);
+            changeValuePanel.refreshTable(changeValuePanel.table_2,skinConcentration,skinColumnName);
             //Initiate event table
-            //Initiate skin glucose concentration table
             String[][] event=dataBase.formatEvent(currentBaby);
             String[] eventColumnName= {"Time","Event"};
-            changeValuePanel.table_3=changeValuePanel.setTable(event,eventColumnName,646,210,204,380);
+            changeValuePanel.refreshTable(changeValuePanel.table_3, event,eventColumnName);
             //Add mouse listener for the glucose concentration table
             changeValuePanel.table_1.addMouseListener(new MouseListener() {
                 @Override
@@ -278,6 +277,49 @@ public class UIController {
                     }
                 }
 
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            });
+            //Add mouse listener for the skin table
+            changeValuePanel.table_2.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //Only response when double-clicking the table
+                    if (e.getClickCount()==2&&!e.isConsumed())
+                    {
+                        int row = changeValuePanel.table_2.getSelectedRow();
+                        int column = changeValuePanel.table_2.getSelectedColumn();
+                        //Show different message according to the user's choice
+                        if (column==1)
+                        {
+                            showMessage("Skin Concentration","Time: "+changeValuePanel.table_2.getValueAt(row,0)+"\n"
+                            +"Skin Concentration: "+changeValuePanel.table_2.getValueAt(row,column),"message");
+                        }
+                        else if (column==2)
+                        {
+                            showMessage("Skin Current","Time: "+changeValuePanel.table_2.getValueAt(row,0)+"\n"
+                                    +"Skin Current: "+changeValuePanel.table_2.getValueAt(row,column),"message");
+                        }
+                        else {showMessage("Time","Time: "+changeValuePanel.table_2.getValueAt(row,column),"message");}
+                    }
+                }
                 @Override
                 public void mouseReleased(MouseEvent e) {
 
@@ -568,10 +610,10 @@ public class UIController {
         //Action listener to jump to the main menu for button 2
         jumpBack(plotGraphPanel.button_2, "main menu");
         //Action listener to refresh images for every radio button
-        refreshImages(plotGraphPanel.getDriftButton_1(), directory);
-        refreshImages(plotGraphPanel.getDriftButton_2(), directory);
-        refreshImages(plotGraphPanel.getFilterButton_1(), directory);
-        refreshImages(plotGraphPanel.getFilterButton_2(), directory);
+        refreshImages(plotGraphPanel.radioButton_1, directory);
+        refreshImages(plotGraphPanel.radioButton_2, directory);
+        refreshImages(plotGraphPanel.radioButton_3, directory);
+        refreshImages(plotGraphPanel.radioButton_4, directory);
         mainPanel.add(plotGraphPanel,"plot graph");
     }
     private void setChangePasswordPanel()
@@ -675,7 +717,7 @@ public class UIController {
             //Initiate and display the log file as a table
             String[][] logFile=dataBase.formatLogFile();
             String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
-            manageLogFilePanel.table_1=manageLogFilePanel.setTable(logFile,columnName,378,210,604,380);
+            manageLogFilePanel.refreshTable(manageLogFilePanel.table_1,logFile,columnName);
             cardLayout.show(mainPanel,"manage log file");
         });
         mainPanel.add(administratorEntryPanel,"administrator entry");

@@ -5,10 +5,6 @@ import java.awt.*;
 
 class PlotGraphPanel extends GeneralPanel
 {
-    private JRadioButton driftButton_1;
-    private JRadioButton driftButton_2;
-    private JRadioButton filterButton_1;
-    private JRadioButton filterButton_2;
     private JLabel plot_1;
     private JLabel plot_2;
     private JLabel plot_3;
@@ -24,10 +20,10 @@ class PlotGraphPanel extends GeneralPanel
             (2) label 2: JLabel, display the current baby ID
             (3) button_1: JButton, display "Log out"
             (4) button_2: JButton, display "Back"
-            (5) driftButton_1: JRadioButton, display "Differentiation"
-            (6) driftButton_2: JRadioButton, display "Linear Regression"
-            (7) filterButton_1: JRadioButton, display "Moving Average"
-            (8) filterButton_2: JRadioButton, display "Savitzky Golay"
+            (5) radioButton_1: JRadioButton, display "Differentiation"
+            (6) radioButton_2: JRadioButton, display "Linear Regression"
+            (7) radioButton_3: JRadioButton, display "Moving Average"
+            (8) radioButton_4: JRadioButton, display "Savitzky Golay"
             (9) plot_1: JLabel, display the plot of glucose concentration with respect to time
             (10) plot_2: JLabel, display the plot of skin concentration with respect to time
             (11) plot_3: JLabel, display the plot of glucose concentration with respect to skin concentration
@@ -36,75 +32,89 @@ class PlotGraphPanel extends GeneralPanel
             Add action listeners to every radio button so each time a new option is selected, the plots could be
             reloaded and displayed
          */
+        setLayout(new BorderLayout());
+        label_1=new JLabel("User ID: ");
+        label_1.setFont(new Font("Arial",Font.PLAIN,16));
+        label_2=new JLabel("Baby ID: ");
+        label_2.setFont(new Font("Arial",Font.PLAIN,16));
+
+        button_1=new JButton("Log out");
+        button_1.setFont(new Font("Arial",Font.BOLD,16));
+        button_2=new JButton("Back");
+        button_2.setFont(new Font("Arial",Font.BOLD,16));
+
+        radioButton_1=new JRadioButton("Differentiation");
+        radioButton_1.setFont(new Font("Arial",Font.PLAIN,16));
+        radioButton_2=new JRadioButton("Linear Regression");
+        radioButton_2.setFont(new Font("Arial",Font.PLAIN,16));
+        radioButton_3=new JRadioButton("Moving Average");
+        radioButton_3.setFont(new Font("Arial",Font.PLAIN,16));
+        radioButton_4=new JRadioButton("Savitzky Golay");
+        radioButton_4.setFont(new Font("Arial",Font.PLAIN,16));
         ButtonGroup driftGroup=new ButtonGroup();
+        driftGroup.add(radioButton_1);
+        driftGroup.add(radioButton_2);
         ButtonGroup filterGroup=new ButtonGroup();
+        filterGroup.add(radioButton_3);
+        filterGroup.add(radioButton_4);
 
-        label_1=setLabel("User ID: ",880,50,80,14,false);
-        label_2=setLabel("Baby ID: ",880,76,80,14,false);
+        plot_1=new JLabel();
+        plot_2=new JLabel();
+        plot_3=new JLabel();
+        plot_4=new JLabel();
+        //Set the panel for labels and buttons
+        JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        userPanel.add(label_1);
 
-        button_1=setButton("Log out",872,102,84,36,true);
-        button_2=setButton("Back",44,44,69,26,true);
+        JPanel babyPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        babyPanel.add(label_2);
 
-        plot_1=setLabel("",213,50,276,218,false);
-        plot_2=setLabel("",511,50,276,218,false);
-        plot_3=setLabel("",213,290,276,216,false);
-        plot_4=setLabel("",511,290,276,218,false);
+        JPanel buttonPanel_1=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        buttonPanel_1.add(button_1);
 
-        //Stupid way to set radio buttons
-        driftButton_1=new JRadioButton("Differentiation");
-        driftButton_1.setBounds(388,672,100,14);
-        driftButton_1.setFont(new Font("Arial", Font.PLAIN, 12));
-        driftGroup.add(driftButton_1);
-        add(driftButton_1);
+        JPanel buttonPanel_2=new JPanel(new FlowLayout(FlowLayout.LEADING,44,0));
+        buttonPanel_2.add(button_2);
 
-        driftButton_2=new JRadioButton("Linear Regression");
-        driftButton_2.setBounds(541,672,125,14);
-        driftButton_2.setFont(new Font("Arial", Font.PLAIN, 12));
-        driftGroup.add(driftButton_2);
-        add(driftButton_2);
+        JPanel radioButtonPanel_1=new JPanel(new GridLayout(1,5));
+        radioButtonPanel_1.add(new Label(""));
+        radioButtonPanel_1.add(radioButton_1);
+        radioButtonPanel_1.add(new Label(""));
+        radioButtonPanel_1.add(radioButton_2);
+        radioButtonPanel_1.add(new Label(""));
 
-        filterButton_1=new JRadioButton("Moving Average");
-        filterButton_1.setBounds(388,708,110,14);
-        filterButton_1.setFont(new Font("Arial", Font.PLAIN, 12));
-        filterGroup.add(filterButton_1);
-        add(filterButton_1);
-
-        filterButton_2=new JRadioButton("Savitzky Golay");
-        filterButton_2.setBounds(541,708,135,14);
-        filterButton_2.setFont(new Font("Arial", Font.PLAIN, 12));
-        filterGroup.add(filterButton_2);
-        add(filterButton_2);
-
-        /*
-        No idea why codes below don't work
-        radioButton_1=setRadioButton(driftGroup,"Linear Regression", 500,500,93,14,false);
-        driftButton_2=setRadioButton(driftGroup,"Linear Regression", 541,672,93,14,false);
-        filterButton_1=setRadioButton(filterGroup,"Moving Average",388,708,87,14,false);
-        filterButton_2=setRadioButton(filterGroup,"Savitzky Golay",541,708,100,14,false);
-         */
-
+        JPanel radioButtonPanel_2=new JPanel(new GridLayout(1,5));
+        radioButtonPanel_2.add(new Label(""));
+        radioButtonPanel_2.add(radioButton_3);
+        radioButtonPanel_2.add(new Label(""));
+        radioButtonPanel_2.add(radioButton_4);
+        radioButtonPanel_2.add(new Label(""));
+        //Set the north panel in the border layout
+        JPanel northPanel=new JPanel(new GridLayout(6,1));
+        northPanel.add(new JLabel(""));
+        northPanel.add(buttonPanel_2);
+        northPanel.add(userPanel);
+        northPanel.add(babyPanel);
+        northPanel.add(buttonPanel_1);
+        northPanel.add(new JLabel(""));
+        //Set the central panel to display content at the central area
+        JPanel centralPanel=new JPanel(new GridLayout(2,2,25,25));
+        centralPanel.add(plot_1);
+        centralPanel.add(plot_2);
+        centralPanel.add(plot_3);
+        centralPanel.add(plot_4);
+        //Set the south panel to display radio buttons at the south area
+        JPanel southPanel=new JPanel(new GridLayout(2,1));
+        southPanel.add(radioButtonPanel_1);
+        southPanel.add(radioButtonPanel_2);
+        //Add panels to the login page
+        add(northPanel,BorderLayout.NORTH);
+        add(Box.createHorizontalStrut(25),BorderLayout.WEST);
+        add(centralPanel,BorderLayout.CENTER);
+        add(Box.createHorizontalStrut(25),BorderLayout.EAST);
+        add(southPanel,BorderLayout.SOUTH);
         //By default, set "Linear Regression" and "Moving Average" as default options
         resetOption();
-    }
 
-    protected JRadioButton getDriftButton_1()
-    {
-        return driftButton_1;
-    }
-
-    protected JRadioButton getDriftButton_2()
-    {
-        return driftButton_2;
-    }
-
-    protected JRadioButton getFilterButton_1()
-    {
-        return filterButton_1;
-    }
-
-    protected JRadioButton getFilterButton_2()
-    {
-        return filterButton_2;
     }
 
     protected String getDriftOption()
@@ -115,7 +125,7 @@ class PlotGraphPanel extends GeneralPanel
         return:
             result: String, either "differentiation" or "linear regression"
          */
-        if (driftButton_1.isSelected()) {return "differentiation";}
+        if (radioButton_1.isSelected()) {return "differentiation";}
         else {return "linear regression";}
     }
 
@@ -127,7 +137,7 @@ class PlotGraphPanel extends GeneralPanel
         return:
             result: String, either "moving average" or "savitzky golay"
          */
-        if (filterButton_1.isSelected()) {return "moving average";}
+        if (radioButton_3.isSelected()) {return "moving average";}
         else {return "savitzky golay";}
     }
 
@@ -136,13 +146,14 @@ class PlotGraphPanel extends GeneralPanel
         /*
             Reset the default option before the user entering this page
          */
-        driftButton_2.setSelected(true);
-        filterButton_1.setSelected(true);
+        radioButton_2.setSelected(true);
+        radioButton_3.setSelected(true);
     }
     protected void loadImage(String directory)
     {
         /*
-            Load plots generated by python scripts from the given directory and display them
+            Load plots generated by python scripts from the given directory and
+        scale them according to the size of the label before displaying them
 
             By default, the plots could be saved under: Base\DataBase\Plots
 
@@ -151,29 +162,28 @@ class PlotGraphPanel extends GeneralPanel
          */
         ImageIcon plot=new ImageIcon(directory+"/DataBase/Plots/GlucoseTime.png");
         Image image=plot.getImage();
-        Image newImage=image.getScaledInstance(276,218, Image.SCALE_SMOOTH);
+        Image newImage=image.getScaledInstance(plot_1.getSize().width,plot_1.getSize().height,Image.SCALE_SMOOTH);
         plot=new ImageIcon(newImage);
         plot_1.setIcon(plot);
 
         plot=new ImageIcon(directory+"/DataBase/Plots/SkinTime.png");
         image=plot.getImage();
-        newImage=image.getScaledInstance(276,218, Image.SCALE_SMOOTH);
+        newImage=image.getScaledInstance(plot_2.getSize().width,plot_2.getSize().height,Image.SCALE_SMOOTH);
         plot=new ImageIcon(newImage);
         plot_2.setIcon(plot);
 
         plot=new ImageIcon(directory+"/DataBase/Plots/correlation.png");
         image=plot.getImage();
-        newImage=image.getScaledInstance(276,218, Image.SCALE_SMOOTH);
+        newImage=image.getScaledInstance(plot_3.getSize().width,plot_3.getSize().height,Image.SCALE_SMOOTH);
         plot=new ImageIcon(newImage);
         plot_3.setIcon(plot);
 
         plot=new ImageIcon(directory+"/DataBase/Plots/BlandAltman.png");
         image=plot.getImage();
-        newImage=image.getScaledInstance(276,218, Image.SCALE_SMOOTH);
+        newImage=image.getScaledInstance(plot_4.getSize().width,plot_4.getSize().height,Image.SCALE_SMOOTH);
         plot=new ImageIcon(newImage);
         plot_4.setIcon(plot);
-
         repaint();
-        System.out.println("Done refresh");
+
     }
 }
