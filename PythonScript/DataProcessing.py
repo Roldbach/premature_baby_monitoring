@@ -191,7 +191,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     event_height=[line_height for i in range(len(event_time_index))]
     
     #Save glucose concentration with timestamp as well as event
-    figure, axis=plt.subplots(figsize=(9,5), dpi=500)
+    figure, axis=plt.subplots(figsize=(9,5), dpi=300)
     axis.vlines(x=event_time_index,ymin=0,ymax=event_height,color="firebrick",alpha=0.7,linewidth=1)  
     axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)    
     axis.plot(glucose_time_index,glucose_concentration,color="black",label="Glucose Concentration")
@@ -211,7 +211,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     line_height=0.5*np.amin(skin_concentration)
     event_height=[line_height for i in range(len(event_time_index))]
     #Save skin concentration with timestamp as well as event
-    figure, axis=plt.subplots(figsize=(9,5), dpi=500)
+    figure, axis=plt.subplots(figsize=(9,5), dpi=300)
     
     axis.vlines(x=event_time_index,ymin=0,ymax=event_height,color="firebrick",alpha=0.7,linewidth=1)
     axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)
@@ -234,14 +234,18 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     score=model.score(np.array(glucose_concentration).reshape((len(glucose_concentration),1)),np.array(new_skin_concentration).reshape((len(new_skin_concentration),1)))
     gradient=np.float64(model.coef_[0])
     intercept=np.float64(model.intercept_[0])
-    #Plot the correlation graph between 2 concentrations
-    figure,axis=plt.subplots(figsize=(9,5),dpi=500)
-    axis.plot(glucose_concentration,new_skin_concentration)
+    #Plot the correlation graph which contains the scatter plot and the ideal plot
+    start=np.amin(skin_concentration).astype(np.int8)
+    end=np.amax(skin_concentration).astype(np.int8)
+    ideal=[i for i in range(start,end+1)]
+    figure,axis=plt.subplots(figsize=(9,5),dpi=300)
+    axis.scatter(glucose_concentration,new_skin_concentration,alpha=0.5,marker="x",color="black")
+    axis.plot(ideal,ideal,linestyle="--",color="red")
     axis.set_title("Score: "+"{:.2f}".format(score)+" "+"Gradient: "+"{:.2f}".format(gradient)+" "+"Intercept: "+"{:.2f}".format(intercept))
     axis.set_ylabel("Skin Glucose Concentration")
     axis.set_xlabel("Glucose Concentration")
     figure.savefig(directory+"/DataBase/Plots/correlation.png")
     #Finally plot the bland-altman graph between 2 concentrations
     pyCompare.blandAltman(glucose_concentration,new_skin_concentration,title="Bland Altman Plot",
-                        figureSize=(9,5),dpi=500,savePath=directory+"/DataBase/Plots/BlandAltman.png")
+                        figureSize=(9,5),dpi=300,savePath=directory+"/DataBase/Plots/BlandAltman.png")
 

@@ -11,31 +11,23 @@ class ChangeBabyPanel extends GeneralPanel
             Initiate the change baby panel given the UI design
 
             This pages requires following components:
-            (1) label 1: JLabel, display the current user ID
-            (2) label 2: JLabel, display the current baby ID
-            (3) label 3: JLabel, display "New ID: "
+            (1) label_1: JLabel, display the current user ID
+            (2) label_2: JLabel, display the current baby ID
+            (3) label_3: JLabel, display "New ID: "
             (4) button_1: JButton, display "Log out"
             (5) button_2: JButton, display "Back"
             (6) button_3: JButton, display "Confirm"
-            (7) textField 1: JTextField, enable user to input new baby ID
+            (7) textField_1: JTextField, enable user to input new baby ID
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("Baby ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
-        label_3=new JLabel("New Baby ID: ");
-        label_3.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("Baby ID: ",false);
+        label_3=setLabel("New Baby ID: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Confirm");
-        button_3.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Confirm",true);
 
-        textField_1=new JTextField();
-        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_1=setTextField();
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -89,7 +81,7 @@ class ChangeBabyPanel extends GeneralPanel
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
         middlePanel.add(middleContentPanel);
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
-        //Add panels to the login page
+        //Add panels to the change baby page
         add(northPanel,BorderLayout.NORTH);
         add(middlePanel,BorderLayout.CENTER);
     }

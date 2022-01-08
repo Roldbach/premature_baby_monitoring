@@ -59,10 +59,7 @@ public class Baby {
                 while (babyReader.hasNextLine())
                 {
                     String currentLine=babyReader.nextLine();
-                    if (currentLine.contains("id"))
-                    {
-                        ID=currentLine.substring(3);
-                    }
+                    if (currentLine.contains("id")) {ID=currentLine.substring(3);}
                     else
                     {
                         int index=currentLine.indexOf(",");
@@ -230,7 +227,7 @@ public class Baby {
             if (oldTime.equals(pair.getKey())) {newGlucoseConcentration.put(newTime,pair.getValue());}
             else {newGlucoseConcentration.put(pair.getKey(),pair.getValue());}
         }
-        this.glucoseConcentration=newGlucoseConcentration;
+        glucoseConcentration=newGlucoseConcentration;
     }
 
     public void changeEventTimestamp(String oldTime, String newTime)
@@ -251,7 +248,7 @@ public class Baby {
             if (oldTime.equals(pair.getKey())) {newEvent.put(newTime,pair.getValue());}
             else {newEvent.put(pair.getKey(),pair.getValue());}
         }
-        this.event=newEvent;
+        event=newEvent;
     }
 
     public void deleteGlucoseConcentration(String targetTime)
@@ -263,8 +260,6 @@ public class Baby {
             targetTime: String, the time of the glucose concentration which requires deletion
          */
         glucoseConcentration.remove(targetTime);
-
-
     }
 
     public void deleteEvent(String targetTime)
@@ -273,7 +268,7 @@ public class Baby {
            Delete the event with timestamp which might be a typo or miss click
 
          input:
-            targetTime: String, the time of the glucose concentration which requires deletion
+            targetTime: String, the time of the event which requires deletion
          */
         event.remove(targetTime);
     }
@@ -283,7 +278,7 @@ public class Baby {
         /*
             Reset the class and load the file which contains data for a specific baby
 
-            By default, the file could be loaded from: Base\DataHandling.DataBase\DataHandling.Baby\name.txt
+            By default, the file could be loaded from: Base\DataBase\Baby\name.txt
 
         input:
             path: String, the file path which contains data for a specific baby
@@ -346,7 +341,7 @@ public class Baby {
             Sort the data first before saving
 
             This will overwrite any previous data file with the same name
-    `       By default, the file could be saved under: Base\DataHandling.DataBase\DataHandling.Baby
+    `       By default, the file could be saved under: Base\DataBase\Baby
 
             Data Formatting:
             (1) The hospital number of the baby is used as the file name

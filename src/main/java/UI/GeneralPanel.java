@@ -1,6 +1,7 @@
 package UI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 class GeneralPanel extends JPanel
@@ -27,146 +28,100 @@ class GeneralPanel extends JPanel
     protected GeneralPanel()
     {
         /*
-            Generally set the layout to null to enable absolute position with coordinates
-        and enable children pages to set components conveniently with less repeated codes
+            Generally set the layout to border layout as the base layout manager
          */
-        setLayout(null);
+        setLayout(new BorderLayout());
     }
 
-    protected JLabel setLabel(String text, int x, int y, int width, int height, boolean bold)
+    protected JLabel setLabel(String text, boolean bold)
     {
         /*
-            Return a label with given text, coordinate and size after adding it to the panel
+            Return a label with given text and add it to the panel
 
-            The input value is pixel value and requires transform into point value by /0.75
-
-            By default, the font is set as "Arial" and the font size is set as 12
+            By default, the font is set as "Arial" and the font size is set as 16
 
         input:
             text: String, the text displayed on the component
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
             bold: boolean, true if the font is BOLD, false otherwise
 
         return:
             label: JLabel, which satisfies all requirements
          */
         JLabel label=new JLabel(text);
-        label.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-        if (bold) {label.setFont(new Font("Arial", Font.BOLD,12));}
-        else {label.setFont(new Font("Arial", Font.PLAIN, 12));}
+        if (bold) {label.setFont(new Font("Arial", Font.BOLD,16));}
+        else {label.setFont(new Font("Arial", Font.PLAIN, 16));}
         add(label);
         return label;
     }
 
-    protected JButton setButton(String text, int x, int y, int width, int height, boolean bold)
+    protected JButton setButton(String text, boolean bold)
     {
         /*
-            Return a button with given text, coordinate and size after adding it to the panel
+            Return a button with given text and add it to the panel
 
-            The input value is pixel value and requires transform into point value by /0.75
-
-            By default, the font is set as "Arial" and the font size is set as 12
+            By default, the font is set as "Arial" and the font size is set as 16
 
         input:
             text: String, the text displayed on the component
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
             bold: boolean, true if the font is BOLD, false otherwise
 
         return:
             button: JButton, which satisfies all requirements
          */
         JButton button=new JButton(text);
-        button.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-        if (bold) {button.setFont(new Font("Arial", Font.BOLD,12));}
-        else {button.setFont(new Font("Arial", Font.PLAIN, 12));}
+        if (bold) {button.setFont(new Font("Arial", Font.BOLD,16));}
+        else {button.setFont(new Font("Arial", Font.PLAIN, 16));}
         add(button);
         return button;
     }
 
-    protected JTextField setTextField(int x, int y, int width, int height)
+    protected JTextField setTextField()
     {
         /*
-            Return a text field with given coordinate and size after adding it to the panel
+            Return a text field and add it to the panel
 
-            The input value is pixel value and requires transform into point value by /0.75
-
-        input:
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
+            By default, the font is set as "Arial" and the font size is set as 16
 
         return:
             textField: JTextField, which satisfies all requirements
          */
         JTextField textField=new JTextField();
-        textField.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
+        textField.setFont(new Font("Arial",Font.PLAIN,16));
         add(textField);
         return textField;
     }
-    protected JTable setTable(String[][] data, String[] columnName, int x, int y, int width, int height)
+    protected JTable setTable()
     {
         /*
-            Return a table with given data, columnName, coordinates and size after adding it to a scroll pane
-        and page panel
+            Return a table which is not editable and allow single cell selection
 
-            The input value is pixel value and requires transform into point value by /0.75
-
-            The table allows single cell selection
-
-       input:
-            data: String[][], 2-d String Array containing timestamp and value
-            columnName: String[], containing names for each column
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
          */
-        //JScrollPane scrollPane=new JScrollPane();
-        //scrollPane.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-
-        JTable table=new JTable(data,columnName){
+        JTable table=new JTable(){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        //table.setBounds((int) (x/0.75), (int) (y/0.75),table.getPreferredSize().width,table.getPreferredSize().height);
         table.setColumnSelectionAllowed(false);
         table.setRowSelectionAllowed(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //scrollPane.add(table);
-        //add(table);
         return table;
     }
 
-    protected JRadioButton setRadioButton(ButtonGroup group, String text, int x, int y, int width, int height, boolean bold)
+    protected JRadioButton setRadioButton(ButtonGroup group, String text,boolean bold)
     {
        /*
-            Return a radio button with given coordinate and size after adding it to the panel and group
+            Return a radio button and add it to the panel and group
 
-            The input value is pixel value and requires transform into point value by /0.75
-
-            By default, the font is set as "Arial" and the font size is set as 12
+            By default, the font is set as "Arial" and the font size is set as 16
 
        input:
             group: ButtonGroup, the group of button to be selected
             text: String, the text displayed on the component
-            x: int, the pixel value of x coordinate relative to the top left corner of the window
-            y: int, the pixel value of y coordinate relative to the top left corner of the window
-            width: int, the pixel value of the width of the component
-            height: int, the pixel value of the height of the component
         */
         JRadioButton radioButton=new JRadioButton(text);
-        radioButton.setBounds((int) (x/0.75), (int) (y/0.75),(int) (width/0.75),(int) (height/0.75));
-        if (bold) {radioButton.setFont(new Font("Arial", Font.BOLD,12));}
-        else {radioButton.setFont(new Font("Arial", Font.PLAIN, 12));}
+        if (bold) {radioButton.setFont(new Font("Arial", Font.BOLD,16));}
+        else {radioButton.setFont(new Font("Arial", Font.PLAIN, 16));}
         group.add(radioButton);
         add(radioButton);
         return radioButton;
@@ -183,5 +138,20 @@ class GeneralPanel extends JPanel
          */
         textField.setText("");
         if (focus) {textField.requestFocusInWindow();}
+    }
+
+    protected void refreshTable(JTable table, String[][] data, String[] columnName)
+    {
+        /*
+            Create a new default table model using given data and column name and set it
+        for the table
+
+       input:
+            table: JTable, the table to present the new table model
+            data: String[][], 2-d String Array containing timestamp and value
+            columnName: String[], containing names for each column
+         */
+        DefaultTableModel tableModel=new DefaultTableModel(data,columnName);
+        table.setModel(tableModel);
     }
 }

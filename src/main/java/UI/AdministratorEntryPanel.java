@@ -17,18 +17,12 @@ class AdministratorEntryPanel extends GeneralPanel
             (4) button_3: JButton, display "Manage Account"
             (5) button_4: JButton, display "Manage Log File"
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Manage Account");
-        button_3.setFont(new Font("Arial",Font.PLAIN,16));
-        button_4=new JButton("Manage Log File");
-        button_4.setFont(new Font("Arial",Font.PLAIN,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Manage Account",true);
+        button_4=setButton("Manage Log File",true);
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -49,7 +43,7 @@ class AdministratorEntryPanel extends GeneralPanel
         northPanel.add(new JLabel(""));
         northPanel.add(new JLabel(""));
         northPanel.add(new JLabel(""));
-        //Set the content panel which display buttons at a preferred shape and layout
+        //Set the content panel which display buttons at a preferred size and position
         JPanel contentPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,200,0));
         button_3.setPreferredSize(new Dimension(250,180));
         button_4.setPreferredSize(new Dimension(250,180));
@@ -60,7 +54,7 @@ class AdministratorEntryPanel extends GeneralPanel
         centralPanel.add(new JLabel(""));
         centralPanel.add(contentPanel);
         centralPanel.add(new JLabel(""));
-        //Add panels to the login page
+        //Add panels to the administrator entry page
         add(northPanel,BorderLayout.NORTH);
         add(centralPanel,BorderLayout.CENTER);
     }

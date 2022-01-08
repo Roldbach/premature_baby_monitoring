@@ -2,6 +2,7 @@ package UI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 class PlotGraphPanel extends GeneralPanel
 {
@@ -20,6 +21,8 @@ class PlotGraphPanel extends GeneralPanel
             (2) label 2: JLabel, display the current baby ID
             (3) button_1: JButton, display "Log out"
             (4) button_2: JButton, display "Back"
+            (5) button_3: JButton, display "Previous"
+            (6) button_4: JButton, display "Next"
             (5) radioButton_1: JRadioButton, display "Differentiation"
             (6) radioButton_2: JRadioButton, display "Linear Regression"
             (7) radioButton_3: JRadioButton, display "Moving Average"
@@ -32,31 +35,20 @@ class PlotGraphPanel extends GeneralPanel
             Add action listeners to every radio button so each time a new option is selected, the plots could be
             reloaded and displayed
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("Baby ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("Baby ID: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Previous",true);
+        button_4=setButton("Next",true);
 
-        radioButton_1=new JRadioButton("Differentiation");
-        radioButton_1.setFont(new Font("Arial",Font.PLAIN,16));
-        radioButton_2=new JRadioButton("Linear Regression");
-        radioButton_2.setFont(new Font("Arial",Font.PLAIN,16));
-        radioButton_3=new JRadioButton("Moving Average");
-        radioButton_3.setFont(new Font("Arial",Font.PLAIN,16));
-        radioButton_4=new JRadioButton("Savitzky Golay");
-        radioButton_4.setFont(new Font("Arial",Font.PLAIN,16));
         ButtonGroup driftGroup=new ButtonGroup();
-        driftGroup.add(radioButton_1);
-        driftGroup.add(radioButton_2);
         ButtonGroup filterGroup=new ButtonGroup();
-        filterGroup.add(radioButton_3);
-        filterGroup.add(radioButton_4);
+        radioButton_1=setRadioButton(driftGroup,"Differentiation",false);
+        radioButton_2=setRadioButton(driftGroup,"Linear Regression",false);
+        radioButton_3=setRadioButton(filterGroup,"Moving Average",false);
+        radioButton_4=setRadioButton(filterGroup,"Savitzky Golay",false);
 
         plot_1=new JLabel();
         plot_2=new JLabel();
@@ -75,46 +67,52 @@ class PlotGraphPanel extends GeneralPanel
         JPanel buttonPanel_2=new JPanel(new FlowLayout(FlowLayout.LEADING,44,0));
         buttonPanel_2.add(button_2);
 
-        JPanel radioButtonPanel_1=new JPanel(new GridLayout(1,5));
-        radioButtonPanel_1.add(new Label(""));
-        radioButtonPanel_1.add(radioButton_1);
-        radioButtonPanel_1.add(new Label(""));
-        radioButtonPanel_1.add(radioButton_2);
-        radioButtonPanel_1.add(new Label(""));
+        JPanel buttonPanel_3=new JPanel(new FlowLayout(FlowLayout.CENTER,200,0));
+        buttonPanel_3.add(button_3);
+        buttonPanel_3.add(button_4);
 
-        JPanel radioButtonPanel_2=new JPanel(new GridLayout(1,5));
-        radioButtonPanel_2.add(new Label(""));
-        radioButtonPanel_2.add(radioButton_3);
-        radioButtonPanel_2.add(new Label(""));
-        radioButtonPanel_2.add(radioButton_4);
-        radioButtonPanel_2.add(new Label(""));
         //Set the north panel in the border layout
-        JPanel northPanel=new JPanel(new GridLayout(6,1));
+        JPanel northPanel=new JPanel(new GridLayout(7,1));
         northPanel.add(new JLabel(""));
         northPanel.add(buttonPanel_2);
         northPanel.add(userPanel);
         northPanel.add(babyPanel);
         northPanel.add(buttonPanel_1);
+        northPanel.add(buttonPanel_3);
         northPanel.add(new JLabel(""));
-        //Set the central panel to display content at the central area
-        JPanel centralPanel=new JPanel(new GridLayout(2,2,25,25));
-        centralPanel.add(plot_1);
-        centralPanel.add(plot_2);
-        centralPanel.add(plot_3);
-        centralPanel.add(plot_4);
+        //Set the content panel using card layout manager to display one plot at a time
+        JPanel contentPanel=new JPanel();
+        CardLayout contentLayout=new CardLayout();
+        contentPanel.setLayout(contentLayout);
+        contentPanel.add(plot_1,"plot 1");
+        contentPanel.add(plot_2,"plot 2");
+        contentPanel.add(plot_3,"plot 3");
+        contentPanel.add(plot_4,"plot 4");
         //Set the south panel to display radio buttons at the south area
-        JPanel southPanel=new JPanel(new GridLayout(2,1));
-        southPanel.add(radioButtonPanel_1);
-        southPanel.add(radioButtonPanel_2);
-        //Add panels to the login page
+        JPanel southPanel=new JPanel(new GridLayout(2,2));
+        southPanel.add(radioButton_1);
+        southPanel.add(radioButton_2);
+        southPanel.add(radioButton_3);
+        southPanel.add(radioButton_4);
+        radioButton_1.setHorizontalAlignment(JLabel.CENTER);
+        radioButton_2.setHorizontalAlignment(JLabel.CENTER);
+        radioButton_3.setHorizontalAlignment(JLabel.CENTER);
+        radioButton_4.setHorizontalAlignment(JLabel.CENTER);
+        //Add panels to the plot graph page
         add(northPanel,BorderLayout.NORTH);
         add(Box.createHorizontalStrut(25),BorderLayout.WEST);
-        add(centralPanel,BorderLayout.CENTER);
+        add(contentPanel,BorderLayout.CENTER);
         add(Box.createHorizontalStrut(25),BorderLayout.EAST);
         add(southPanel,BorderLayout.SOUTH);
         //By default, set "Linear Regression" and "Moving Average" as default options
         resetOption();
-
+        //Add action listener to the button 3 and button 4 so they could change the plot
+        button_3.addActionListener(e->{
+            contentLayout.previous(contentPanel);
+        });
+        button_4.addActionListener(e->{
+            contentLayout.next(contentPanel);
+        });
     }
 
     protected String getDriftOption()
@@ -160,6 +158,7 @@ class PlotGraphPanel extends GeneralPanel
         input:
             directory: String, the directory where plots could be saved
          */
+        System.out.println(plot_1.getSize());
         ImageIcon plot=new ImageIcon(directory+"/DataBase/Plots/GlucoseTime.png");
         Image image=plot.getImage();
         Image newImage=image.getScaledInstance(plot_1.getSize().width,plot_1.getSize().height,Image.SCALE_SMOOTH);
@@ -184,6 +183,5 @@ class PlotGraphPanel extends GeneralPanel
         plot=new ImageIcon(newImage);
         plot_4.setIcon(plot);
         repaint();
-
     }
 }

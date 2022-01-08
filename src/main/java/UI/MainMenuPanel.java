@@ -17,8 +17,8 @@ class MainMenuPanel extends GeneralPanel
             Initiate the main menu panel given the UI design
 
             This pages requires following components:
-            (1) label 1: JLabel, display the current user ID
-            (2) label 2: JLabel, display the current baby ID
+            (1) label_1: JLabel, display the current user ID
+            (2) label_2: JLabel, display the current baby ID
             (3) button_1: JButton, display "Change Baby"
             (4) button_2: JButton, display "Log out"
             (5) addButton: JButton, display "Add Value"
@@ -27,28 +27,22 @@ class MainMenuPanel extends GeneralPanel
             (8) changePasswordButton: JButton, display "Change Password"
             (9) entryButton: JButton, display "Administrator Entry"
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("Baby ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("Baby ID: ",false);
 
-        button_1=new JButton("Change Baby");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Log out");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Change Baby",true);
+        button_2=setButton("Log out",true);
 
-        addButton=new JButton("Add Value");
+        addButton=setButton("Add Value",true);
         addButton.setFont(new Font("Arial",Font.BOLD,12));
-        changeValueButton=new JButton("Change Value");
+        changeValueButton=setButton("Change Value",true);
         changeValueButton.setFont(new Font("Arial",Font.BOLD,12));
-        plotButton=new JButton("Plot Graphs");
+        plotButton=setButton("Plot Graph",true);
         plotButton.setFont(new Font("Arial",Font.BOLD,12));
-        changePasswordButton=new JButton("Change Password");
+        changePasswordButton=setButton("Change Password",true);
         changePasswordButton.setFont(new Font("Arial",Font.BOLD,12));
-        entryButton=new JButton("Administrator Entry");
+        entryButton=setButton("Administrator Entry",true);
         entryButton.setFont(new Font("Arial",Font.BOLD,12));
-
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -89,7 +83,7 @@ class MainMenuPanel extends GeneralPanel
         centralPanel.add(new JLabel(""));
         centralPanel.add(contentPanel);
         centralPanel.add(new JLabel(""));
-        //Add panels to the login page
+        //Add panels to the main menu page
         add(northPanel,BorderLayout.NORTH);
         add(centralPanel,BorderLayout.CENTER);
     }
@@ -136,7 +130,6 @@ class MainMenuPanel extends GeneralPanel
             changePasswordButton: JButton, requires action listener to change page
          */
         return changePasswordButton;
-
     }
 
     protected JButton getEntryButton()

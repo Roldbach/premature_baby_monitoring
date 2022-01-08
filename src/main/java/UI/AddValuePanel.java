@@ -11,51 +11,35 @@ class AddValuePanel extends GeneralPanel
             Initiate the add value panel given the UI design
 
             This pages requires following components:
-            (1) label 1: JLabel, display the current user ID
-            (2) label 2: JLabel, display the current baby ID
-            (3) label 3: JLabel, display "Glucose Concentration: "
-            (4) label 4: JLabel, display "Event: "
+            (1) label_1: JLabel, display the current user ID
+            (2) label_2: JLabel, display the current baby ID
+            (3) label_3: JLabel, display "Glucose Concentration: "
+            (4) label_4: JLabel, display "Event: "
             (5) button_1: JButton, display "Log out"
             (6) button_2: JButton, display "Back"
             (7) button_3: JButton, display "Add"
             (8) radioButton_1: JRadioButton, display "Current"
             (9) radioButton_2: JRadioButton, display "5min Ago"
             (10) radioButton_3: JRadioButton, display "10min Ago"
-            (11) textField 1: JTextField, enable user to input glucose concentration value
-            (12) textField 2: JTextField, enable user to input event detail
+            (11) textField_1: JTextField, enable user to input glucose concentration value
+            (12) textField_2: JTextField, enable user to input event detail
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("Baby ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
-        label_3=new JLabel("Glucose Concentration: ");
-        label_3.setFont(new Font("Arial",Font.PLAIN,16));
-        label_4=new JLabel("Event: ");
-        label_4.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("Baby ID: ",false);
+        label_3=setLabel("Glucose Concentration: ",false);
+        label_4=setLabel("Event: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Add");
-        button_3.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Add",true);
 
-        radioButton_1=new JRadioButton("Current");
-        radioButton_1.setFont(new Font("Arial",Font.PLAIN,16));
-        radioButton_2=new JRadioButton("5 minute ago");
-        radioButton_2.setFont(new Font("Arial",Font.PLAIN,16));
-        radioButton_3=new JRadioButton("10 minute ago");
-        radioButton_3.setFont(new Font("Arial",Font.PLAIN,16));
         ButtonGroup group=new ButtonGroup();
-        group.add(radioButton_1);
-        group.add(radioButton_2);
-        group.add(radioButton_3);
+        radioButton_1=setRadioButton(group,"Current",false);
+        radioButton_2=setRadioButton(group,"5 min ago",false);
+        radioButton_3=setRadioButton(group,"10 min ago",false);
 
-        textField_1=new JTextField();
-        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
-        textField_2=new JTextField();
-        textField_2.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_1=setTextField();
+        textField_2=setTextField();
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -99,7 +83,7 @@ class AddValuePanel extends GeneralPanel
         northPanel.add(new JLabel(""));
         northPanel.add(new JLabel(""));
         northPanel.add(new JLabel(""));
-        //Set the content panel which display labels, buttons and text field at the central area
+        //Set the content panel which display labels, buttons, radio buttons and text field at the central area
         JPanel middleContentPanel=new JPanel();
         BoxLayout middleContentLayout=new BoxLayout(middleContentPanel,BoxLayout.Y_AXIS);
         middleContentPanel.setLayout(middleContentLayout);

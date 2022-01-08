@@ -15,21 +15,6 @@ public class DataBase
     private String lagTime;
     private String permissionTime;
 
-    public DataBase()
-    {
-        /*
-            By initiating the default database, the lag time is set to be 10min and
-        the permission time is set to be 5min
-         */
-        user=new Hashtable<>();
-        administrator=new Hashtable<>();
-        babyList=new Hashtable<>();
-        logFile=new ArrayList<>();
-        calibrationParameter=new ArrayList<>();
-        lagTime="10";
-        permissionTime="5";
-    }
-
     public DataBase(String directory, String babyDirectory)
     {
         /*
@@ -207,6 +192,8 @@ public class DataBase
             The index of an element represents the order and the element represents the coefficient
             For example, the function f(x)=1-2x+3x^2 is represented by {1.0,-2.0,3.0}
 
+            (Might not be used until version 2)
+
         return:
             calibrationParameter: ArrayList<Double>, the calibration curve which could be used to
         predict the concentration data from the current reading
@@ -218,7 +205,7 @@ public class DataBase
     {
         /*
             Return the lag time in minute which could be used to calibrate the timestamp
-         of the skin concentration data
+         of the skin concentration data (Might not be used until version 2)
 
          return:
             lagTime: String, the time in minute which specifies the time difference between the input time
@@ -231,6 +218,7 @@ public class DataBase
     {
         /*
             Return the permission time in minute which limit the modification to the database for protection
+            (Might not be used until version 2)
 
          return:
             permissionTime: String, the time in minute which specifies the time interval the user could
@@ -244,7 +232,7 @@ public class DataBase
     {
         /*
             Return the glucose concentration data with timestamp of the specific baby with the matched hospital number
-
+            (Might not be used until version 2)
         input:
             babyID: String, the unique ID (hospital number) of the baby
 
@@ -273,7 +261,7 @@ public class DataBase
     {
         /*
             Return the skin concentration data with timestamp of the specific baby with the matched hospital number
-
+            (Might not be used until version 2)
         input:
             babyID: String, the unique ID (hospital number) of the baby
 
@@ -369,8 +357,7 @@ public class DataBase
             Add both skin current/concentration reading with timestamp for the baby
         with the matched hospital number and update the log file
 
-            Assume there is no big time difference between the input time and measurement time
-        (The time could be modified later)
+        (Might not be used until version 2)
 
          input:
             userID: String, the unique ID of the user who performed the action
@@ -403,8 +390,6 @@ public class DataBase
         /*
             Verify whether the user could modify this specific input by calculating the
         absolute time difference between the current time and the input time
-
-            Assume the inputTime/currentTime are in the form: yyyy/MM/dd HH:mm:ss
 
         input:
             inputTime: String, in the form yyyy/MM/dd HH:mm:ss, the timestamp of the input value
@@ -456,6 +441,7 @@ public class DataBase
     {
         /*
             Change the calibration parameter of the database and update the log file
+            (Might not be used until version 2)
 
         input:
             userID: String, the unique ID of the user who performed the action
@@ -473,7 +459,7 @@ public class DataBase
             Change the lag time in minute which could be used to calibrate the timestamp
          of the skin concentration data and update the log file
 
-            Assume the new time is in minute
+         (Might not be used until version 2)
 
         input:
             userID: String, the unique ID of the user who performed the action
@@ -490,7 +476,7 @@ public class DataBase
             Change the permission time in minute which limit the modification to
         the database for protection and update the log file
 
-            Assume the new time is in minute
+        (Might not be used until version 2)
 
         input:
             userID: String, the unique ID of the user who performed the action
@@ -582,14 +568,9 @@ public class DataBase
             userID: String, the unique ID of the user who performed the action
             targetID: String, the unique ID of the user which requires deletion
             time: String, the time at which the user performed the action
-
-        return:
-            true if delete successfully, false otherwise
          */
         user.remove(targetID);
         updateLogFile(time,userID,"None","Delete User",targetID);
-
-
     }
 
     public void deleteGlucoseConcentration(String userID, String babyID, String targetTime, String time)
@@ -597,6 +578,8 @@ public class DataBase
         /*
            Delete the glucose concentration using timestamp for the baby with the matched hospital number
        and update the log file using the deleted concentration
+
+       (Might not be used until version 2)
 
          input:
             userID: String, the unique ID of the user who performed the action
@@ -613,7 +596,9 @@ public class DataBase
     {
         /*
            Delete the event using timestamp for the baby with the matched hospital number
-       and update the log file
+        and update the log file
+
+        (Might not be used until version 2)
 
          input:
             userID: String, the unique ID of the user who performed the action
@@ -633,7 +618,7 @@ public class DataBase
 
             This will overwrite any previous data file with the same name
     `
-            By default, the files could be saved under: Base\DataHandling.DataBase
+            By default, the files could be saved under: Base\DataBase
 
 
             Data Formatting:
@@ -641,14 +626,12 @@ public class DataBase
             (2) The user will be added "us:" in the front and the administrator will be added "ad:" in the front
             (3) For any ID-password pair, they are separated by ","
             (4) Each line represents 1 ID-password pair
-
             (5) General settings like calibration parameter, lag time and the permission time will
                 be saved within the same text file named "setting.txt"
             (6) The calibration parameter will be added "cp:" in the front and each item is separated by "," in a line
             (7) The lag time is added "lt:" in the front and the permission time is added "pt:" in the front
             (8) For each baby, it is saved using its method defined in the class DataHandling.Baby, and they are saved under:
                 Base\DataHandling.DataBase\DataHandling.Baby
-
             (9) The log file is saved within the text file named "log file.txt"
             (10) Each line represents 1 full sentence in the log file
         input:
@@ -739,6 +722,8 @@ public class DataBase
             The general setting containing lag time and permission time is loaded from the "setting.txt" file
             Every file containing baby data is loaded within the baby directory
             The log file data is loaded from the "log file.txt" file
+
+            (Might not be used until version 2)
 
         input:
             directory: String, the directory path where files except baby data could be loaded
@@ -832,15 +817,6 @@ public class DataBase
         ArrayList<Double> result=new ArrayList<>();
         for (String item:contentArray) {result.add(Double.parseDouble(item));}
         return result;
-    }
-
-    public void addBaby(String hospitalNumber)
-    {
-        /*
-            Only for testing use
-         */
-        Baby newBaby=new Baby(hospitalNumber);
-        babyList.put(hospitalNumber,newBaby);
     }
 
     public String[][] formatGlucoseConcentration(String babyID)

@@ -13,7 +13,7 @@ class ManageAccountPanel extends GeneralPanel
             Initiate the change value panel given the UI design
 
             This pages requires following components:
-            (1) label 1: JLabel, display the current user ID
+            (1) label_1: JLabel, display the current user ID
             (2) label_2: JLabel, display "User ID: "
             (3) label_3: JLabel, display "Password: "
             (4) button_1: JButton, display "Log out"
@@ -22,29 +22,18 @@ class ManageAccountPanel extends GeneralPanel
             (7) button_4: JButton, display "Delete"
             (8) mainButton: JButton, display "Main"
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("User ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
-        label_3=new JLabel("Password: ");
-        label_3.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("User ID: ",false);
+        label_3=setLabel("Password: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Add");
-        button_3.setFont(new Font("Arial",Font.BOLD,16));
-        button_4=new JButton("Delete");
-        button_4.setFont(new Font("Arial",Font.BOLD,16));
-        mainButton=new JButton("Main");
-        mainButton.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Add",true);
+        button_4=setButton("Delete",true);
+        mainButton=setButton("Main",true);
 
-        textField_1=new JTextField();
-        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
-        textField_2=new JTextField();
-        textField_2.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_1=setTextField();
+        textField_2=setTextField();
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -104,7 +93,7 @@ class ManageAccountPanel extends GeneralPanel
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
         middlePanel.add(middleContentPanel);
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
-        //Add panels to the login page
+        //Add panels to the manage account page
         add(northPanel,BorderLayout.NORTH);
         add(middlePanel,BorderLayout.CENTER);
     }

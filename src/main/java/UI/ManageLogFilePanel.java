@@ -1,8 +1,6 @@
 package UI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 class ManageLogFilePanel extends GeneralPanel
@@ -20,27 +18,13 @@ class ManageLogFilePanel extends GeneralPanel
             (4) button_3: JButton, display "Main"
             (5) table_1: JTable, display detailed modification to the database
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Main");
-        button_3.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Main",true);
 
-        table_1=new JTable(){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        table_1.setColumnSelectionAllowed(false);
-        table_1.setRowSelectionAllowed(false);
-        table_1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        table_1=setTable();
         JScrollPane scrollPane=new JScrollPane();
         scrollPane.setViewportView(table_1);
         //Set the panel for labels and buttons
@@ -68,7 +52,7 @@ class ManageLogFilePanel extends GeneralPanel
         JPanel middleContentPanel=new JPanel();
         BoxLayout middleContentLayout=new BoxLayout(middleContentPanel,BoxLayout.Y_AXIS);
         middleContentPanel.setLayout(middleContentLayout);
-        //Add components into the content panel and set some fixed spaces between them
+        //Add spaces adn the table into the content panel
         middleContentPanel.add(Box.createVerticalStrut(50));
         middleContentPanel.add(scrollPane);
         middleContentPanel.add(Box.createVerticalStrut(200));
@@ -79,23 +63,8 @@ class ManageLogFilePanel extends GeneralPanel
         middlePanel.add(Box.createRigidArea(new Dimension(120,0)));
         middlePanel.add(middleContentPanel);
         middlePanel.add(Box.createRigidArea(new Dimension(120,0)));
-        //Add panels to the login page
+        //Add panels to the manage log file page
         add(northPanel,BorderLayout.NORTH);
         add(middlePanel,BorderLayout.CENTER);
-    }
-
-    protected void refreshTable(JTable table, String[][] data, String[] columnName)
-    {
-        /*
-            Create a new default table model using given data and column name and set it
-        for the table
-
-       input:
-            table: JTable, the table to present the new table model
-            data: String[][], 2-d String Array containing timestamp and value
-            columnName: String[], containing names for each column
-         */
-        DefaultTableModel tableModel=new DefaultTableModel(data,columnName);
-        table.setModel(tableModel);
     }
 }

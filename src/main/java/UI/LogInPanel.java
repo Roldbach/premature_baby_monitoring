@@ -11,36 +11,29 @@ class LogInPanel extends GeneralPanel
             Initiate the login panel given the UI design
 
             This pages requires following components:
-            (1) label 1: JLabel, display the name of the App
-            (2) label 2: JLabel, display "User ID: "
-            (3) label 3: JLabel, display "Password: "
+            (1) label_1: JLabel, display the name of the App
+            (2) label_2: JLabel, display "User ID: "
+            (3) label_3: JLabel, display "Password: "
             (4) button_1: JButton, display "Log in"
             (5) button_2: JButton, display "Quit"
-            (6) textField 1: JTextField, enable user to input user ID
-            (7) textField 2: JTextField, enable user to input password
+            (6) textField_1: JTextField, enable user to input user ID
+            (7) textField_2: JTextField, enable user to input password
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("Premature Baby Monitoring App");
+        label_1=setLabel("Premature Baby Monitoring APP",true);
         label_1.setFont(new Font("Arial",Font.BOLD,22));
         label_1.setHorizontalAlignment(JLabel.CENTER);
-        label_2=new JLabel("User ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
-        label_3=new JLabel("Password: ");
-        label_3.setFont(new Font("Arial",Font.PLAIN,16));
+        label_2=setLabel("User ID: ",false);
+        label_3=setLabel("Password: ", false);
 
-        button_1=new JButton("Log in");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Quit");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log in",true);
+        button_2=setButton("Quit",true);
 
-        textField_1=new JTextField();
-        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
-        textField_2=new JTextField();
-        textField_2.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_1=setTextField();
+        textField_2=setTextField();
 
         //Set the north panel in the border layout
         JPanel northPanel=new JPanel(new GridLayout(9,1));
-        for (int i=0;i<8;i++) {        northPanel.add(new JLabel(""));}
+        for (int i=0;i<8;i++) {northPanel.add(new JLabel(""));}
         northPanel.add(label_1);
 
         //Set the panel for labels and buttons

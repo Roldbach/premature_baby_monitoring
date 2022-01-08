@@ -47,14 +47,13 @@ public class UIController {
         currentUser=null;
         currentBaby=null;
         priority=false;
-
-        //Initiate all pages
+        //Initiate all pages and the card layout
         cardLayout=new CardLayout();
         mainPanel=new JPanel(cardLayout);
         logInPanel=new LogInPanel();
         setLogInPanel(directory,babyDirectory);
         mainMenuPanel=new MainMenuPanel();
-        setMainMenuPanel(directory,babyDirectory);
+        setMainMenuPanel(directory);
         changeBabyPanel=new ChangeBabyPanel();
         setChangeBabyPanel();
         addValuePanel=new AddValuePanel();
@@ -88,7 +87,8 @@ public class UIController {
     {
         /*
         Save the database before closing the frame
-         input:
+
+        input:
             directory: String, the directory path where files except baby data could be loaded
             babyDirectory: String, the directory path where all baby data could be loaded
          */
@@ -113,7 +113,6 @@ public class UIController {
            (2) button 2: save the database to the local and quit the App when click the button
                          By default, the database is saved under: Base\DataBase
                                      the baby data is saved under: Base\DataBase\Baby
-
          */
         //Action listener to log in for button 1
         logInPanel.button_1.addActionListener(e -> {
@@ -149,7 +148,7 @@ public class UIController {
         mainPanel.add(logInPanel, "log in");
     }
 
-    private void setMainMenuPanel(String directory, String babyDirectory)
+    private void setMainMenuPanel(String directory)
     {
        /*
            Set the main menu panel, the page where the user could choose various function here
@@ -161,7 +160,7 @@ public class UIController {
                         matched labels and then set the default focus to the text field in the new page
           (2) button 2: jump to the login page and the reset the current user ID and current baby ID
           (3) addValueButton: jump to the add value page, set the default focus for text field 1 and
-                              set option button 1 as default selected radio button
+                              set radio button 1 as default selected radio button
           (4) changeValueButton: jump to the change value page, acquire array-format data from the
                                  database and refresh tables to display data
           (5) plotGraphButton: jump to the plot graph page, get options from user, call python script
@@ -208,6 +207,8 @@ public class UIController {
             String[][] event=dataBase.formatEvent(currentBaby);
             String[] eventColumnName= {"Time","Event"};
             changeValuePanel.refreshTable(changeValuePanel.table_3, event,eventColumnName);
+            //Set the default selection to the radio button 1 for change model
+            changeValuePanel.radioButton_1.setSelected(true);
             //Add mouse listener for the glucose concentration table
             changeValuePanel.table_1.addMouseListener(new MouseListener() {
                 @Override
@@ -217,11 +218,11 @@ public class UIController {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    //Only response when the user double-click the table
-                    if (e.getClickCount()==2&&!e.isConsumed())
+                    int row=changeValuePanel.table_1.getSelectedRow();
+                    int column=changeValuePanel.table_1.getSelectedColumn();
+                    //Only response when the user double-click the table under change value
+                    if (e.getClickCount()==2&&!e.isConsumed()&&changeValuePanel.radioButton_1.isSelected())
                     {
-                        int row=changeValuePanel.table_1.getSelectedRow();
-                        int column=changeValuePanel.table_1.getSelectedColumn();
                         //According to the column show different message box to ask for input
                         if (column==1)
                         {
@@ -275,6 +276,53 @@ public class UIController {
                             }
                         }
                     }
+                    //Only response when double-click the table under delete model
+                    else if (e.getClickCount()==2&&!e.isConsumed()&&changeValuePanel.radioButton_2.isSelected())
+                    {
+                        //Show different messages according to the column
+                        if (column==1)
+                        {
+                            int result=JOptionPane.showConfirmDialog(mainPanel,
+                                    "Glucose Concentration: "+changeValuePanel.table_1.getValueAt(row,column)+"\n" +"Would you like to delete this concentration?",
+                                    "Confirmation",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (result==JOptionPane.YES_OPTION)
+                            {
+                                //Check permission if the user choose the yes option
+                                if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,0),formatTime("0"))|priority)
+                                {
+                                    //Delete the data and update if given permission or priority
+                                    dataBase.deleteGlucoseConcentration(currentUser,currentBaby,(String) changeValuePanel.table_1.getValueAt(row,0),formatTime("0"));
+                                    String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
+                                    String[] glucoseColumnName= {"Time","Glucose Concentration"};
+                                    changeValuePanel.refreshTable(changeValuePanel.table_1,glucoseConcentration,glucoseColumnName);
+                                    showMessage("Message","Delete concentration successfully","message");
+                                }
+                                else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                            }
+                        }
+                        else
+                        {
+                            int result=JOptionPane.showConfirmDialog(mainPanel,
+                                    "Timestamp: "+changeValuePanel.table_1.getValueAt(row,column)+"\n" +"Would you like to delete this timestamp?",
+                                    "Confirmation",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (result==JOptionPane.YES_OPTION)
+                            {
+                                //Check permission if the user choose the yes option
+                                if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,0),formatTime("0"))|priority)
+                                {
+                                    //Delete the timestamp and update if given permission or priority
+                                    dataBase.deleteGlucoseConcentration(currentUser,currentBaby,(String) changeValuePanel.table_1.getValueAt(row,0),formatTime("0"));
+                                    String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
+                                    String[] glucoseColumnName= {"Time","Glucose Concentration"};
+                                    changeValuePanel.refreshTable(changeValuePanel.table_1,glucoseConcentration,glucoseColumnName);
+                                    showMessage("Message","Delete timestamp successfully","message");
+                                }
+                                else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                            }
+                        }
+                    }
                 }
 
                 @Override
@@ -301,11 +349,11 @@ public class UIController {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    int row=changeValuePanel.table_2.getSelectedRow();
+                    int column=changeValuePanel.table_2.getSelectedColumn();
                     //Only response when double-clicking the table
                     if (e.getClickCount()==2&&!e.isConsumed())
                     {
-                        int row = changeValuePanel.table_2.getSelectedRow();
-                        int column = changeValuePanel.table_2.getSelectedColumn();
                         //Show different message according to the user's choice
                         if (column==1)
                         {
@@ -344,11 +392,11 @@ public class UIController {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    //Only response when double-clicking the table
-                    if (e.getClickCount()==2&&!e.isConsumed())
+                    int row=changeValuePanel.table_3.getSelectedRow();
+                    int column=changeValuePanel.table_3.getSelectedColumn();
+                    //Only response when double-clicking the table under the change mode
+                    if (e.getClickCount()==2&&!e.isConsumed()&&changeValuePanel.radioButton_1.isSelected())
                     {
-                        int row=changeValuePanel.table_3.getSelectedRow();
-                        int column=changeValuePanel.table_3.getSelectedColumn();
                         //According to the column show different message box to ask for input
                         if (column==1)
                         {
@@ -401,8 +449,54 @@ public class UIController {
                             }
                         }
                     }
+                    //Only response when double-click the table under delete model
+                    else if (e.getClickCount()==2&&!e.isConsumed()&&changeValuePanel.radioButton_2.isSelected())
+                    {
+                        //Show different messages according to the column
+                        if (column==1)
+                        {
+                            int result=JOptionPane.showConfirmDialog(mainPanel,
+                                    "Event: "+changeValuePanel.table_3.getValueAt(row,column)+"\n" +"Would you like to delete this event?",
+                                    "Confirmation",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (result==JOptionPane.YES_OPTION)
+                            {
+                                //Check permission if the user choose the yes option
+                                if (dataBase.checkPermission((String) changeValuePanel.table_3.getValueAt(row,0),formatTime("0"))|priority)
+                                {
+                                    //Delete the data and update if given permission or priority
+                                    dataBase.deleteEvent(currentUser,currentBaby,(String) changeValuePanel.table_3.getValueAt(row,0),formatTime("0"));
+                                    String[][] event=dataBase.formatEvent(currentBaby);
+                                    String[] eventColumnName= {"Time","Event"};
+                                    changeValuePanel.refreshTable(changeValuePanel.table_3,event,eventColumnName);
+                                    showMessage("Message","Delete event successfully","message");
+                                }
+                                else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                            }
+                        }
+                        else
+                        {
+                            int result=JOptionPane.showConfirmDialog(mainPanel,
+                                    "Timestamp: "+changeValuePanel.table_3.getValueAt(row,column)+"\n" +"Would you like to delete this timestamp?",
+                                    "Confirmation",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (result==JOptionPane.YES_OPTION)
+                            {
+                                //Check permission if the user choose the yes option
+                                if (dataBase.checkPermission((String) changeValuePanel.table_3.getValueAt(row,0),formatTime("0"))|priority)
+                                {
+                                    //Delete the timestamp and update if given permission or priority
+                                    dataBase.deleteEvent(currentUser,currentBaby,(String) changeValuePanel.table_3.getValueAt(row,0),formatTime("0"));
+                                    String[][] event=dataBase.formatEvent(currentBaby);
+                                    String[] eventColumnName= {"Time","Event"};
+                                    changeValuePanel.refreshTable(changeValuePanel.table_3,event,eventColumnName);
+                                    showMessage("Message","Delete timestamp successfully","message");
+                                }
+                                else {showMessage("Error","Permission denied. You haven't given priority.","error");}
+                            }
+                        }
+                    }
                 }
-
                 @Override
                 public void mouseReleased(MouseEvent e) {
 
@@ -444,7 +538,6 @@ public class UIController {
             } catch (IOException | InterruptedException exception) {
                 showMessage("Error","Something really bad happened. Please call the emergency number.","Error");
             }
-
         });
 
         //Action listener to jump to change password page for change password button
@@ -574,34 +667,29 @@ public class UIController {
            This page contains those action listeners:
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
            (2) button 2: jump to the main menu page without any change
-
-           This page contains those mouse listeners:
-           (1) glucose table: show confirm message box when double-click the table, if the permission is given
-                              then edit the data and refresh the table when clicking yes option
-           (2) skin table: the same as glucose table
-           (3) event table: the same as glucose table
         */
         //Action listener to log out for button 1
         jumpBack(changeValuePanel.button_1,"log in");
         //Action listener to jump to the main menu for button 2
         jumpBack(changeValuePanel.button_2, "main menu");
         mainPanel.add(changeValuePanel,"change value");
-
     }
 
     private void setPlotGraphPanel(String directory)
     {
       /*
-           Set the change password panel, the page where the user could change its own password and the administrator
-       could change all user's password
+           Set the plot graph panel, the page where the user could choose the drift
+       and noise removal option and all plots are automatically generated and refreshed
+       when a new option is chosen
 
            This page contains those action listeners:
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
            (2) button 2: jump to the main menu page without any change
-           (3) driftButton_1: Obtain user's choice for drift/noise removal and refresh the label
-           (4) driftButton_2: the same as driftButton_1
-           (5) filterButton_1: the same as driftButton_1
-           (6) filterButton_2: the same as driftButton_1
+           (3) radio button 1: Obtain user's choice for drift/noise removal and refresh the label
+           (4) radio button 2: the same as radio button 1
+           (5) radio button 3: the same as radio button 1
+           (6) radio button 4: the same as radio button 1
+
         input:
             directory: String, the directory path where files except baby data could be loaded
         */
@@ -718,6 +806,61 @@ public class UIController {
             String[][] logFile=dataBase.formatLogFile();
             String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
             manageLogFilePanel.refreshTable(manageLogFilePanel.table_1,logFile,columnName);
+            //Add mouse listener for the table to show detailed information when double-clicking the table
+            manageLogFilePanel.table_1.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //Only response when double-click the table
+                    if (e.getClickCount()==2&&!e.isConsumed())
+                    {
+                        int row=manageLogFilePanel.table_1.getSelectedRow();
+                        int column=manageLogFilePanel.table_1.getSelectedColumn();
+                        String content= (String) manageLogFilePanel.table_1.getValueAt(row, column);
+                        //Show different messages when selecting different columns
+                        switch (column)
+                        {
+                            case 0:
+                                showMessage("Time","Time: "+content,"message");
+                                break;
+                            case 1:
+                                showMessage("User ID","User ID: "+content,"message");
+                                break;
+                            case 2:
+                                showMessage("Baby ID","Baby ID: "+content,"message");
+                                break;
+                            case 3:
+                                showMessage("Action","Action: "+content,"message");
+                                break;
+                            case 4:
+                                showMessage("Result","Result: "+content,"message");
+                                break;
+                            default:
+                                showMessage("Error","System crashed. Please call the emergency number.","error");
+                                break;
+                        }
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            });
             cardLayout.show(mainPanel,"manage log file");
         });
         mainPanel.add(administratorEntryPanel,"administrator entry");
@@ -828,10 +971,14 @@ public class UIController {
         jumpBack(manageLogFilePanel.button_3, "main menu");
         mainPanel.add(manageLogFilePanel,"manage log file");
     }
+
     private void showMessage(String title, String message, String type)
     {
         /*
-            Show message dialog given title, message and type
+            Show different message dialog given title, message and type
+            if "error", show error dialog
+            if "input", show input dialog
+            else show information dialog
 
         input:
             title: String, the title of the message box
@@ -857,7 +1004,6 @@ public class UIController {
         LocalDateTime time = LocalDateTime.now().minusMinutes(Long.parseLong(minute));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         return formatter.format(time);
-
     }
 
     private void setUserID(JLabel label, String userID)
@@ -949,13 +1095,12 @@ public class UIController {
         {
             e.printStackTrace();
         }
-
     }
 
     protected void refreshImages(JRadioButton radioButton, String directory)
     {
         /*
-            Add action listener for the given JRadio button so that every time the
+            Add action listener to the given JRadio button so that every time the
         user choose a new option in the plot graph page, the plots could be generated
         according to the new instruction file and refreshed
 

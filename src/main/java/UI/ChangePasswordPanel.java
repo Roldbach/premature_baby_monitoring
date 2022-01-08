@@ -20,25 +20,16 @@ class ChangePasswordPanel extends GeneralPanel
             (7) textField 1: JTextField, enable user to input user ID
             (8) textField 2: JTextField, enable user to input new password
          */
-        setLayout(new BorderLayout());
-        label_1=new JLabel("User ID: ");
-        label_1.setFont(new Font("Arial",Font.PLAIN,16));
-        label_2=new JLabel("User ID: ");
-        label_2.setFont(new Font("Arial",Font.PLAIN,16));
-        label_3=new JLabel("New Password: ");
-        label_3.setFont(new Font("Arial",Font.PLAIN,16));
+        label_1=setLabel("User ID: ",false);
+        label_2=setLabel("User ID: ",false);
+        label_3=setLabel("New Passwrord",false);
 
-        button_1=new JButton("Log out");
-        button_1.setFont(new Font("Arial",Font.BOLD,16));
-        button_2=new JButton("Back");
-        button_2.setFont(new Font("Arial",Font.BOLD,16));
-        button_3=new JButton("Confirm");
-        button_3.setFont(new Font("Arial",Font.BOLD,16));
+        button_1=setButton("Log out",true);
+        button_2=setButton("Back",true);
+        button_3=setButton("Confirm",true);
 
-        textField_1=new JTextField();
-        textField_1.setFont(new Font("Arial",Font.PLAIN,16));
-        textField_2=new JTextField();
-        textField_2.setFont(new Font("Arial",Font.PLAIN,16));
+        textField_1=setTextField();
+        textField_2=setTextField();
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -97,7 +88,7 @@ class ChangePasswordPanel extends GeneralPanel
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
         middlePanel.add(middleContentPanel);
         middlePanel.add(Box.createRigidArea(new Dimension(275,0)));
-        //Add panels to the login page
+        //Add panels to the change password page
         add(northPanel,BorderLayout.NORTH);
         add(middlePanel,BorderLayout.CENTER);
     }
