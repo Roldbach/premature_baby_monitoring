@@ -1,15 +1,19 @@
 package UI;
 
 import DataHandling.DataBase;
+import com.sun.tools.javac.util.ArrayUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class UIController {
@@ -18,18 +22,18 @@ public class UIController {
     private String currentBaby;
     private Boolean priority;
 
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
-    private LogInPanel logInPanel;
-    private MainMenuPanel mainMenuPanel;
-    private ChangeBabyPanel changeBabyPanel;
-    private AddValuePanel addValuePanel;
-    private ChangeValuePanel changeValuePanel;
-    private PlotGraphPanel plotGraphPanel;
-    private ChangePasswordPanel changePasswordPanel;
-    private AdministratorEntryPanel administratorEntryPanel;
-    private ManageAccountPanel manageAccountPanel;
-    private ManageLogFilePanel manageLogFilePanel;
+    private final CardLayout cardLayout;
+    private final JPanel mainPanel;
+    private final LogInPanel logInPanel;
+    private final MainMenuPanel mainMenuPanel;
+    private final ChangeBabyPanel changeBabyPanel;
+    private final AddValuePanel addValuePanel;
+    private final ChangeValuePanel changeValuePanel;
+    private final PlotGraphPanel plotGraphPanel;
+    private final ChangePasswordPanel changePasswordPanel;
+    private final AdministratorEntryPanel administratorEntryPanel;
+    private final ManageAccountPanel manageAccountPanel;
+    private final ManageLogFilePanel manageLogFilePanel;
 
     public UIController(String directory, String babyDirectory) {
         /*
@@ -113,6 +117,10 @@ public class UIController {
            (2) button 2: save the database to the local and quit the App when click the button
                          By default, the database is saved under: Base\DataBase
                                      the baby data is saved under: Base\DataBase\Baby
+
+         input:
+            directory: String, the directory path where files except baby data could be loaded
+            babyDirectory: String, the directory path where all baby data could be loaded
          */
         //Action listener to log in for button 1
         logInPanel.button_1.addActionListener(e -> {
@@ -159,15 +167,21 @@ public class UIController {
           (1) button 1: jump to the change baby page and set current user ID and current baby ID to the
                         matched labels and then set the default focus to the text field in the new page
           (2) button 2: jump to the login page and the reset the current user ID and current baby ID
-          (3) addValueButton: jump to the add value page, set the default focus for text field 1 and
+          (3) button 3: load skin current data from the given directory and ask permission to overwrite
+                        current data
+          (4) addValueButton: jump to the add value page, set the default focus for text field 1 and
                               set radio button 1 as default selected radio button
-          (4) changeValueButton: jump to the change value page, acquire array-format data from the
+          (5) changeValueButton: jump to the change value page, acquire array-format data from the
                                  database and refresh tables to display data
-          (5) plotGraphButton: jump to the plot graph page, get options from user, call python script
+          (6) plotGraphButton: jump to the plot graph page, get options from user, call python script
                                to run data processing and plotting automatically and load the image
                                results to each label
-          (6) changePasswordButton: jump to the change password page
-          (7) entryButton: jump to the administrator entry page
+          (7) changePasswordButton: jump to the change password page
+          (8) entryButton: jump to the administrator entry page
+
+        input:
+            directory: String, the directory path where files except baby data could be loaded
+
         */
         //Action listener to jump to change baby page for button 1
         mainMenuPanel.button_1.addActionListener(e -> {
@@ -179,6 +193,50 @@ public class UIController {
         });
         //Action listener to jump to log in page for button 2
         jumpBack(mainMenuPanel.button_2, "log in");
+        //Action listener to load skin current data for button 3
+        mainMenuPanel.button_3.addActionListener(e->{
+            //Open the current file and find all skin current file
+            File currentFile=new File(directory+"/Current");
+            String[] currentFileList=currentFile.list();
+            if (currentFileList.length!=0)
+            {
+                //For every file in this directory, check whether the baby is in the database
+                for (String fileName:currentFileList)
+                {
+                    String babyID=fileName.substring(0, fileName.length()-4);
+                    //If the baby is not in the database, load data for this baby
+                    if (!dataBase.getBabyList().contains(babyID))
+                    {
+                        boolean result= dataBase.loadSkinCurrent(directory+"/Current/"+fileName,babyID);
+                        //According to the result, show different message
+                        if (result) {showMessage("Message","Load data for "+babyID+" successfully!","message");}
+                        else {showMessage("Error","Can not load data for "+babyID+". Please try again.","error");}
+                    }
+                    else
+                    {
+                        //if the baby is in the database, check permission to overwrite the current data first
+                        int option=JOptionPane.showConfirmDialog(mainPanel,
+                                "Would you like to overwrite data for "+babyID+"?",
+                                "Confirmation",
+                                JOptionPane.YES_NO_OPTION);
+                        if (option==JOptionPane.YES_OPTION)
+                        {
+                            boolean result= dataBase.loadSkinCurrent(directory+"/Current/"+fileName,babyID);
+                            //According to the result, show different message
+                            if (result) {showMessage("Message","Load data for "+babyID+" successfully!","message");}
+                            else {showMessage("Error","Can not load data for "+babyID+". Please try again.","error");}
+                        }
+                    }
+                }
+            }
+            else
+            {
+               //If no current data under this directory, show error message to the user
+                showMessage("Error","No skin current data found. Please try again.","error");
+            }
+
+
+        });
         //Action listener to jump to add value page for add value button
         mainMenuPanel.getAddButton().addActionListener(e->{
             setUserID(addValuePanel.label_1, currentUser);
@@ -204,7 +262,7 @@ public class UIController {
             String[] skinColumnName= {"Time","Skin Concentration","Skin Current"};
             changeValuePanel.refreshTable(changeValuePanel.table_2,skinConcentration,skinColumnName);
             //Initiate event table
-            String[][] event=dataBase.formatEvent(currentBaby);
+            String[][] event = dataBase.formatEvent(currentBaby);
             String[] eventColumnName= {"Time","Event"};
             changeValuePanel.refreshTable(changeValuePanel.table_3, event,eventColumnName);
             //Set the default selection to the radio button 1 for change model
@@ -237,6 +295,7 @@ public class UIController {
                                     String targetTime=(String) changeValuePanel.table_1.getValueAt(row,0);
                                     if (dataBase.checkPermission(targetTime,formatTime("0"))||priority)
                                     {
+                                        //No need to sort the timestamp as only the concentration is modified
                                         changeValuePanel.table_1.setValueAt(input,row,column);
                                         dataBase.changeGlucoseConcentration(currentUser,currentBaby,targetTime,newValue,formatTime("0"));
                                         showMessage("Message","Change glucose concentration successfully!","message");
@@ -264,7 +323,9 @@ public class UIController {
                                     {
                                         dataBase.changeGlucoseConcentrationTimestamp(currentUser,currentBaby,
                                                 (String) changeValuePanel.table_1.getValueAt(row,column),input,formatTime("0"));
-                                        changeValuePanel.table_1.setValueAt(input,row,column);
+                                        //Sort the data in the database and update the table
+                                        String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
+                                        changeValuePanel.refreshTable(changeValuePanel.table_1,glucoseConcentration,glucoseColumnName);
                                         showMessage("Message","Change timestamp successfully!","message");
                                     }
                                     else {showMessage("Error","Permission denied. You haven't given priority.","error");}
@@ -410,6 +471,7 @@ public class UIController {
                                     String targetTime=(String) changeValuePanel.table_3.getValueAt(row,0);
                                     if (dataBase.checkPermission(targetTime,formatTime("0"))||priority)
                                     {
+                                        //No need to sort the timestamp as only the event is modified
                                         changeValuePanel.table_3.setValueAt(input,row,column);
                                         dataBase.changeEvent(currentUser,currentBaby,targetTime,input.trim(),formatTime("0"));
                                         showMessage("Message","Change event successfully!","message");
@@ -437,7 +499,9 @@ public class UIController {
                                     {
                                         dataBase.changeEventTimestamp(currentUser,currentBaby,
                                                 (String) changeValuePanel.table_3.getValueAt(row,column),input,formatTime("0"));
-                                        changeValuePanel.table_3.setValueAt(input,row,column);
+                                        //Sort the data and update the table
+                                        String[][] event=dataBase.formatEvent(currentBaby);
+                                        changeValuePanel.refreshTable(changeValuePanel.table_3,event,eventColumnName);
                                         showMessage("Message","Change timestamp successfully!","message");
                                     }
                                     else {showMessage("Error","Permission denied. You haven't given priority.","error");}
@@ -780,6 +844,7 @@ public class UIController {
            Set the administrator panel, the page where the administrator could jump to the manage account page
        or the manage log file page
 
+
            This page contains those action listeners:
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
            (2) button 2: jump to the main menu page without any change
@@ -802,7 +867,123 @@ public class UIController {
         administratorEntryPanel.button_4.addActionListener(e -> {
             //Update the current user ID
             setUserID(manageLogFilePanel.label_1, currentUser);
-            //Initiate and display the log file as a table
+            //Initiate and display the setting for table 2
+            String[][] setting=dataBase.formatSetting();
+            String[] settingName={"Lag Time","Permission Time","Calibration Parameter"};
+            manageLogFilePanel.refreshTable(manageLogFilePanel.table_2, setting,settingName);
+            //Add mouse listener for the table to allow administrator to modify the setting
+            manageLogFilePanel.table_2.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //Only response when the user double-click the table
+                    if (e.getClickCount()==2&&!e.isConsumed())
+                    {
+                        int row=manageLogFilePanel.table_2.getSelectedRow();
+                        int column=manageLogFilePanel.table_2.getSelectedColumn();
+                        //According to the column number show different message to the user
+                        if (column==0)
+                        {
+                            String input=JOptionPane.showInputDialog("Lag Time: " + manageLogFilePanel.table_2.getValueAt(row, column),
+                                    manageLogFilePanel.table_2.getValueAt(row, column));
+                            if (input!=null)
+                            {
+                                try
+                                {
+                                    Integer newValue=Integer.parseInt(input.trim());
+                                    manageLogFilePanel.table_2.setValueAt(input,row,column);
+                                    dataBase.changeLagTime(currentUser,input,formatTime("0"));
+                                    //Update the log file table at the same time
+                                    String[][] logFile=dataBase.formatLogFile();
+                                    String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
+                                    manageLogFilePanel.refreshTable(manageLogFilePanel.table_1, logFile,columnName);
+                                    showMessage("Message","Change lag time successfully!","message");
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    //The lag time only allows an integer number as an input
+                                    showMessage("Error","Invalid lag time value. Please try again.","error");
+                                }
+                            }
+                        }
+                        else if (column==1)
+                        {
+                            String input=JOptionPane.showInputDialog("Permission Time: " + manageLogFilePanel.table_2.getValueAt(row, column),
+                                    manageLogFilePanel.table_2.getValueAt(row, column));
+                            if (input!=null)
+                            {
+                                try
+                                {
+                                    Integer newValue=Integer.parseInt(input.trim());
+                                    manageLogFilePanel.table_2.setValueAt(input,row,column);
+                                    dataBase.changePermissionTime(currentUser,input,formatTime("0"));
+                                    //Update the log file table at the same time
+                                    String[][] logFile=dataBase.formatLogFile();
+                                    String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
+                                    manageLogFilePanel.refreshTable(manageLogFilePanel.table_1, logFile,columnName);
+                                    showMessage("Message","Change permission time successfully!","message");
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    //The permission time only allows an integer number as an input
+                                    showMessage("Error","Invalid permission time value. Please try again.","error");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            String input=JOptionPane.showInputDialog("Calibration Parameter: " + manageLogFilePanel.table_2.getValueAt(row, column)+"\n"
+                                    +"Please enter the new parameter in the format: value 1,value 2,value 3...",
+                                    manageLogFilePanel.table_2.getValueAt(row, column));
+                            if (input!=null)
+                            {
+                                try
+                                {
+                                    String[] parameterList=input.trim().split(",");
+                                    ArrayList<Double> parameter=new ArrayList<>();
+                                    //Transform each value into double type
+                                    for (String value:parameterList)
+                                    {
+                                        parameter.add(Double.parseDouble(value));
+                                    }
+                                    manageLogFilePanel.table_2.setValueAt(input,row,column);
+                                    dataBase.changeCalibrationParameter(currentUser,parameter,formatTime("0"));
+                                    //Update the log file table at the same time
+                                    String[][] logFile=dataBase.formatLogFile();
+                                    String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
+                                    manageLogFilePanel.refreshTable(manageLogFilePanel.table_1, logFile,columnName);
+                                    showMessage("Message","Change calibration parameter successfully!","message");
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    //The permission time only allows an integer number as an input
+                                    showMessage("Error","Invalid calibration parameter. Please try again.","error");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            });
+            //Initiate and display the log file for table 1
             String[][] logFile=dataBase.formatLogFile();
             String[] columnName={"Time", "User ID", "Baby ID", "Action", "Result"};
             manageLogFilePanel.refreshTable(manageLogFilePanel.table_1,logFile,columnName);
@@ -954,6 +1135,9 @@ public class UIController {
     {
        /*
            Set the manage log file panel, the page where the administrator could check detailed records in the log file
+       and change general settings containing lag time, permission time and calibration parameter
+
+           The lag time and permission time for now only supports integer input
 
            This page contains those action listeners:
            (1) button 1: jump to the login page and then reset the current user ID and current baby ID
@@ -1034,7 +1218,7 @@ public class UIController {
     {
         /*
             Add an action listener to the given button that enable it to jump to the
-        main menu page or the login page, a helper function for jumping to those pages
+        main menu page or the login page, a helper function for jumping to those pages only
 
             If it jumps to the main menu page, update the current user ID and baby ID
             If it jumps to the login page, reset the current user ID and baby ID of the controller,
@@ -1105,7 +1289,7 @@ public class UIController {
         according to the new instruction file and refreshed
 
         input:
-            radioButton: JRadioButton, allows user to choose different options
+            radioButton: JRadioButton, allows user to choose different option
             directory: String, the directory path where files except baby data could be loaded
          */
         radioButton.addActionListener(e->{

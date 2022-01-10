@@ -88,7 +88,6 @@ def noise_removement_by_moving_average(data, window_size=5):
             result.append(1/window_size*np.sum(data[index-(window_size-1):index+1]).astype(np.float32))
     return result
         
-
 def noise_removement_by_savitzky_golay(data, window_size=5):
     '''
         Apply the savitzky golay filter to the time series(data) and
@@ -148,7 +147,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
         This function will be improved if real data could be given from the professor
 
         By default, the plot images could be saved under: Base\DataBase\Plots
-    
+   
     input:
         babyID: String, the unique ID of the baby who is monitored
         date: String, date in the format: yyyy/MM/dd

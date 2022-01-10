@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Baby {
     private String ID;
@@ -432,7 +429,6 @@ public class Baby {
         }
         skinCurrent=newSkinCurrent;
         skinConcentration=newSkinConcentration;
-
         //Do the same for the event
         String[] eventTimestamp=new String[event.size()];
         index=0;
@@ -445,5 +441,28 @@ public class Baby {
         LinkedHashMap<String,String> newEvent=new LinkedHashMap<>();
         for (int i=0;i<event.size();i++) {newEvent.put(eventTimestamp[i],event.get(eventTimestamp[i]));}
         event=newEvent;
+    }
+
+    public void resetSkinConcentration(ArrayList<String> timestamp, ArrayList<Double> current, ArrayList<Double> concentration)
+    {
+        /*
+            Reset the stored skin current/concentration data using the new skinData given
+
+            The timestamp and the skinData have the same row number and assume they are both in order
+
+        input:
+            timestamp: String[], array that contains the timestamp of each measurement in order
+            current: Double[], array that contains the skin current data in order
+            concentration: Double[], array that contains the skin concentration data in order
+         */
+        LinkedHashMap<String, Double> newSkinCurrent=new LinkedHashMap<>();
+        LinkedHashMap<String, Double> newSkinConcentration=new LinkedHashMap<>();
+        for (int i=0;i< timestamp.size();i++)
+        {
+            newSkinCurrent.put(timestamp.get(i), current.get(i));
+            newSkinConcentration.put(timestamp.get(i), concentration.get(i));
+        }
+        skinCurrent=newSkinCurrent;
+        skinConcentration=newSkinConcentration;
     }
 }

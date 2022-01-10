@@ -21,17 +21,19 @@ class MainMenuPanel extends GeneralPanel
             (2) label_2: JLabel, display the current baby ID
             (3) button_1: JButton, display "Change Baby"
             (4) button_2: JButton, display "Log out"
-            (5) addButton: JButton, display "Add Value"
-            (6) changeValueButton: JButton, display "Change Value"
-            (7) plotButton: JButton, display "Plot Graph"
-            (8) changePasswordButton: JButton, display "Change Password"
-            (9) entryButton: JButton, display "Administrator Entry"
+            (5) button_3: JButton, display "Load Baby"
+            (6) addButton: JButton, display "Add Value"
+            (7) changeValueButton: JButton, display "Change Value"
+            (8) plotButton: JButton, display "Plot Graph"
+            (9) changePasswordButton: JButton, display "Change Password"
+            (10) entryButton: JButton, display "Administrator Entry"
          */
         label_1=setLabel("User ID: ",false);
         label_2=setLabel("Baby ID: ",false);
 
         button_1=setButton("Change Baby",true);
         button_2=setButton("Log out",true);
+        button_3=setButton("Load Skin Current Data",true);
 
         addButton=setButton("Add Value",true);
         addButton.setFont(new Font("Arial",Font.BOLD,12));
@@ -51,6 +53,7 @@ class MainMenuPanel extends GeneralPanel
         babyPanel.add(label_2);
 
         JPanel buttonPanel_1=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
+        buttonPanel_1.add(button_3);
         buttonPanel_1.add(button_1);
 
         JPanel buttonPanel_2=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));

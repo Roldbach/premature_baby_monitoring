@@ -5,8 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class DataBase
-{
+public class DataBase {
     private Hashtable<String, String> user;
     private Hashtable<String, String> administrator;
     private Hashtable<String, Baby> babyList;
@@ -15,8 +14,7 @@ public class DataBase
     private String lagTime;
     private String permissionTime;
 
-    public DataBase(String directory, String babyDirectory)
-    {
+    public DataBase(String directory, String babyDirectory) {
         /*
             Load the database from the given directory and the baby data
         from the baby directory
@@ -38,25 +36,27 @@ public class DataBase
          */
 
         //Reset the database
-        user=new Hashtable<>();
-        administrator=new Hashtable<>();
-        babyList=new Hashtable<>();
-        logFile=new ArrayList<>();
-        calibrationParameter=new ArrayList<>();
-        lagTime=null;
-        permissionTime=null;
+        user = new Hashtable<>();
+        administrator = new Hashtable<>();
+        babyList = new Hashtable<>();
+        logFile = new ArrayList<>();
+        calibrationParameter = new ArrayList<>();
+        lagTime = null;
+        permissionTime = null;
 
         //Load the user and administrator
         try {
-            File userFile=new File(directory+"/account.txt");
-            Scanner userReader=new Scanner(userFile);
+            File userFile = new File(directory + "/account.txt");
+            Scanner userReader = new Scanner(userFile);
             //Read line by line and add formatted data according to the flag in each line
-            while (userReader.hasNextLine())
-            {
-                String content=userReader.nextLine();
-                int index=content.indexOf(",");
-                if (content.contains("us:")) {user.put(content.substring(3,index),content.substring(index+1));}
-                else if (content.contains("ad:")) {administrator.put(content.substring(3,index),content.substring(index+1));}
+            while (userReader.hasNextLine()) {
+                String content = userReader.nextLine();
+                int index = content.indexOf(",");
+                if (content.contains("us:")) {
+                    user.put(content.substring(3, index), content.substring(index + 1));
+                } else if (content.contains("ad:")) {
+                    administrator.put(content.substring(3, index), content.substring(index + 1));
+                }
             }
             userReader.close();
         } catch (FileNotFoundException e) {
@@ -64,16 +64,18 @@ public class DataBase
         }
 
         //Load general settings
-        try
-        {
-            File settingFile=new File(directory+"/setting.txt");
-            Scanner settingReader=new Scanner(settingFile);
-            while (settingReader.hasNextLine())
-            {
-                String content=settingReader.nextLine();
-                if (content.contains("cp:")) {calibrationParameter=loadCalibrationParameter(content.substring(3));}
-                else if (content.contains("lt:")) {lagTime=content.substring(3);}
-                else if (content.contains("pt:")) {permissionTime=content.substring(3);}
+        try {
+            File settingFile = new File(directory + "/setting.txt");
+            Scanner settingReader = new Scanner(settingFile);
+            while (settingReader.hasNextLine()) {
+                String content = settingReader.nextLine();
+                if (content.contains("cp:")) {
+                    calibrationParameter = loadCalibrationParameter(content.substring(3));
+                } else if (content.contains("lt:")) {
+                    lagTime = content.substring(3);
+                } else if (content.contains("pt:")) {
+                    permissionTime = content.substring(3);
+                }
             }
             settingReader.close();
         } catch (FileNotFoundException e) {
@@ -81,32 +83,30 @@ public class DataBase
         }
 
         //Load every baby under the baby directory
-        File babyFile=new File(babyDirectory);
-        String[] babyNames=babyFile.list();
-        if (babyNames!=null)
-        {
-            for (String babyName:babyNames)
-            {
-                Baby baby=new Baby(babyDirectory+"/"+babyName,true);
-                babyList.put(baby.getID(),baby);
+        File babyFile = new File(babyDirectory);
+        String[] babyNames = babyFile.list();
+        if (babyNames != null) {
+            for (String babyName : babyNames) {
+                Baby baby = new Baby(babyDirectory + "/" + babyName, true);
+                babyList.put(baby.getID(), baby);
             }
         }
 
         //Load the log file
-        try
-        {
-            File log=new File(directory+"/log file.txt");
-            Scanner logFileReader=new Scanner(log);
+        try {
+            File log = new File(directory + "/log file.txt");
+            Scanner logFileReader = new Scanner(log);
             //Read line by line and directly save the content into the ArrayList
-            while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
+            while (logFileReader.hasNextLine()) {
+                logFile.add(logFileReader.nextLine());
+            }
             logFileReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public Boolean[] logIn(String userID, String password)
-    {
+    public Boolean[] logIn(String userID, String password) {
         /*
             Verify whether the ID and the password are matched and set the status and priority
         according to this result and the account
@@ -122,19 +122,21 @@ public class DataBase
             result: Boolean[], item 0: whether the user could log in successfully
                                item 1: whether the user is an administrator or not
           */
-        Boolean[] result={false, false};
-        if (userID==null||password==null) {return result;}
-        if (password.equals(user.get(userID))) {result[0]=true;}
-        if (password.equals(administrator.get(userID)))
-        {
-            result[0]=true;
-            result[1]=true;
+        Boolean[] result = {false, false};
+        if (userID == null || password == null) {
+            return result;
+        }
+        if (password.equals(user.get(userID))) {
+            result[0] = true;
+        }
+        if (password.equals(administrator.get(userID))) {
+            result[0] = true;
+            result[1] = true;
         }
         return result;
     }
 
-    public Hashtable<String, String> getUser()
-    {
+    public Hashtable<String, String> getUser() {
         /*
             Return the whole list of user id and matching password
 
@@ -144,8 +146,7 @@ public class DataBase
         return user;
     }
 
-    public Hashtable<String, String> getAdministrator()
-    {
+    public Hashtable<String, String> getAdministrator() {
         /*
             Return the whole list of administrator id and matching password (Might not be used until version 2)
 
@@ -155,25 +156,22 @@ public class DataBase
         return administrator;
     }
 
-    public ArrayList<String> getBabyList()
-    {
+    public ArrayList<String> getBabyList() {
         /*
             Return the whole list of baby id
 
         return:
             result: ArrayList<String>, the list of ID of all babies saved in the database
          */
-        ArrayList<String> result=new ArrayList<>();
-        Enumeration<String> keys=babyList.keys();
-        while(keys.hasMoreElements())
-        {
+        ArrayList<String> result = new ArrayList<>();
+        Enumeration<String> keys = babyList.keys();
+        while (keys.hasMoreElements()) {
             result.add(keys.nextElement());
         }
         return result;
     }
 
-    public ArrayList<String> getLogFile()
-    {
+    public ArrayList<String> getLogFile() {
         /*
             Return the log file which records every detailed modification to the database
 
@@ -183,8 +181,7 @@ public class DataBase
         return logFile;
     }
 
-    public ArrayList<Double> getCalibrationParameter()
-    {
+    public ArrayList<Double> getCalibrationParameter() {
         /*
             Return the calibration parameter which could be used for calibration of current reading
 
@@ -201,8 +198,7 @@ public class DataBase
         return calibrationParameter;
     }
 
-    public String getLagTime()
-    {
+    public String getLagTime() {
         /*
             Return the lag time in minute which could be used to calibrate the timestamp
          of the skin concentration data (Might not be used until version 2)
@@ -214,8 +210,7 @@ public class DataBase
         return lagTime;
     }
 
-    public String getPermissionTime()
-    {
+    public String getPermissionTime() {
         /*
             Return the permission time in minute which limit the modification to the database for protection
             (Might not be used until version 2)
@@ -228,8 +223,7 @@ public class DataBase
 
     }
 
-    public LinkedHashMap<String, Double> getGlucoseConcentration(String babyID)
-    {
+    public LinkedHashMap<String, Double> getGlucoseConcentration(String babyID) {
         /*
             Return the glucose concentration data with timestamp of the specific baby with the matched hospital number
             (Might not be used until version 2)
@@ -242,8 +236,7 @@ public class DataBase
         return babyList.get(babyID).getGlucoseConcentration();
     }
 
-    public LinkedHashMap<String, Double> getSkinCurrent(String babyID)
-    {
+    public LinkedHashMap<String, Double> getSkinCurrent(String babyID) {
         /*
             Return the skin current data with timestamp of the specific baby with the matched hospital number
             (Might not be used until version 2)
@@ -257,8 +250,7 @@ public class DataBase
         return babyList.get(babyID).getSkinCurrent();
     }
 
-    public LinkedHashMap<String, Double> getSkinConcentration(String babyID)
-    {
+    public LinkedHashMap<String, Double> getSkinConcentration(String babyID) {
         /*
             Return the skin concentration data with timestamp of the specific baby with the matched hospital number
             (Might not be used until version 2)
@@ -271,8 +263,7 @@ public class DataBase
         return babyList.get(babyID).getSkinConcentration();
     }
 
-    public LinkedHashMap<String, String> getEvent(String babyID)
-    {
+    public LinkedHashMap<String, String> getEvent(String babyID) {
         /*
             Return the event data with timestamp of the specific baby with the matched hospital number
 
@@ -285,8 +276,7 @@ public class DataBase
         return babyList.get(babyID).getEvent();
     }
 
-    public void updateLogFile(String time, String userID, String babyID, String action, String result)
-    {
+    public void updateLogFile(String time, String userID, String babyID, String action, String result) {
         /*
             Record the detailed modification to the database for management
             The sentence is in the format: time,userID,babyID,action,result if related to baby data modification
@@ -299,12 +289,11 @@ public class DataBase
             action: String, description of the action done
             result: String, the object of the action
          */
-        String sentence=time+","+userID+","+babyID+","+action+","+result;
+        String sentence = time + "," + userID + "," + babyID + "," + action + "," + result;
         logFile.add(sentence);
     }
 
-    public void addUser(String userID, String newID, String password, boolean givePriority, String time)
-    {
+    public void addUser(String userID, String newID, String password, boolean givePriority, String time) {
         /*
             Add a new user to the system and update the log file
             The user would become an administrator if given priority
@@ -320,20 +309,16 @@ public class DataBase
             result: boolean, true if added successfully, false otherwise
          */
         //Add the new ID and the matched password into the database according to the result and the givenPriority
-        if (givePriority)
-        {
+        if (givePriority) {
             administrator.put(newID, password);
-            updateLogFile(time,userID,"None","Add Administrator",newID);
-        }
-        else
-        {
+            updateLogFile(time, userID, "None", "Add Administrator", newID);
+        } else {
             user.put(newID, password);
-            updateLogFile(time,userID,"None","Add User",newID);
+            updateLogFile(time, userID, "None", "Add User", newID);
         }
     }
 
-    public void addGlucoseConcentration(String userID, String babyID, double value, String time)
-    {
+    public void addGlucoseConcentration(String userID, String babyID, double value, String time) {
         /*
             Add a glucose concentration reading with timestamp for the baby
         with the matched hospital number and update the log file
@@ -348,11 +333,10 @@ public class DataBase
             time: String, the time at which the user performed the action
          */
         babyList.get(babyID).addGlucoseConcentration(value, time);
-        updateLogFile(time, userID, babyID, "Add Glucose Concentration",Double.toString(value));
+        updateLogFile(time, userID, babyID, "Add Glucose Concentration", Double.toString(value));
     }
 
-    public void addSkinConcentration(String userID, String babyID, double current, double concentration, String time)
-    {
+    public void addSkinConcentration(String userID, String babyID, double current, double concentration, String time) {
         /*
             Add both skin current/concentration reading with timestamp for the baby
         with the matched hospital number and update the log file
@@ -367,11 +351,10 @@ public class DataBase
             time: String, the time which has taken lag time into account
          */
         babyList.get(babyID).addSkinConcentration(current, concentration, time);
-        updateLogFile(time, userID, babyID, "Add Skin Current/Concentration", current +"/"+ concentration);
+        updateLogFile(time, userID, babyID, "Add Skin Current/Concentration", current + "/" + concentration);
     }
 
-    public void addEvent(String userID, String babyID, String detail, String time)
-    {
+    public void addEvent(String userID, String babyID, String detail, String time) {
         /*
             Add an event with timestamp for the baby with the matched hospital number and update the log file
 
@@ -381,12 +364,11 @@ public class DataBase
             detail: String, information about the event which might influence the concentration measurement
             time: String, the time at which the user performed the action
          */
-        babyList.get(babyID).addEvent(detail,time);
-        updateLogFile(time, userID, babyID, "Add Event",detail);
+        babyList.get(babyID).addEvent(detail, time);
+        updateLogFile(time, userID, babyID, "Add Event", detail);
     }
 
-    public boolean checkPermission(String inputTime, String currentTime)
-    {
+    public boolean checkPermission(String inputTime, String currentTime) {
         /*
             Verify whether the user could modify this specific input by calculating the
         absolute time difference between the current time and the input time
@@ -402,27 +384,27 @@ public class DataBase
             ParseException: the string doesn't match the time pattern designed
          */
         //Make sure the date is matched first
-        if (!inputTime.substring(0,10).equals(currentTime.substring(0,10))) {return false;}
+        if (!inputTime.substring(0, 10).equals(currentTime.substring(0, 10))) {
+            return false;
+        }
 
         //Format the input time and the current time to the form HH:mm:ss
-        SimpleDateFormat format=new SimpleDateFormat("HH:mm:ss");
-        String current=currentTime.substring(11);
-        String target=inputTime.substring(11);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        String current = currentTime.substring(11);
+        String target = inputTime.substring(11);
         //Calculate the time difference in millisecond
         try {
-            Date currentDate=format.parse(current);
-            Date targetDate=format.parse(target);
-            float difference=currentDate.getTime()-targetDate.getTime();
+            Date currentDate = format.parse(current);
+            Date targetDate = format.parse(target);
+            float difference = currentDate.getTime() - targetDate.getTime();
             return !(Math.abs(difference) >= Long.parseLong(permissionTime) * 60000);
-        } catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public void changePassword(String userID, String targetID, String newPassword, String time)
-    {
+    public void changePassword(String userID, String targetID, String newPassword, String time) {
         /*
             Check whether the target ID is in the user list and change
         the password as well as updating log file if it exists
@@ -433,12 +415,11 @@ public class DataBase
             newPassword: String, the new password for the target ID
             time: String, the time at which the user performed the action
          */
-            user.put(targetID, newPassword);
-            updateLogFile(time,userID,"None","Change Password",targetID);
+        user.put(targetID, newPassword);
+        updateLogFile(time, userID, "None", "Change Password", targetID);
     }
 
-    public void changeCalibrationParameter(String userID, ArrayList<Double> newCalibrationParameter, String time)
-    {
+    public void changeCalibrationParameter(String userID, ArrayList<Double> newCalibrationParameter, String time) {
         /*
             Change the calibration parameter of the database and update the log file
             (Might not be used until version 2)
@@ -450,11 +431,10 @@ public class DataBase
             time: String, the time at which the user performed the action
          */
         calibrationParameter=newCalibrationParameter;
-        updateLogFile(time,userID,"None","Change Calibration Parameter", "None");
+        updateLogFile(time, userID, "None", "Change Calibration Parameter", "None");
     }
 
-    public void changeLagTime(String userID, String newLagTime, String time)
-    {
+    public void changeLagTime(String userID, String newLagTime, String time) {
         /*
             Change the lag time in minute which could be used to calibrate the timestamp
          of the skin concentration data and update the log file
@@ -466,12 +446,11 @@ public class DataBase
             newLagTime: String, new lag time in minute
             time: String, the time at which the user performed the action
          */
-        lagTime=newLagTime;
-        updateLogFile(time, userID, "None","Change Lag Time", newLagTime);
+        lagTime = newLagTime;
+        updateLogFile(time, userID, "None", "Change Lag Time", newLagTime);
     }
 
-    public void changePermissionTime(String userID, String newPermissionTime, String time)
-    {
+    public void changePermissionTime(String userID, String newPermissionTime, String time) {
         /*
             Change the permission time in minute which limit the modification to
         the database for protection and update the log file
@@ -483,12 +462,11 @@ public class DataBase
             new time: String, new permission time in minute
             time: String, the time at which the user performed the action
          */
-        permissionTime=newPermissionTime;
-        updateLogFile(time, userID, "None","Change Permission Time", newPermissionTime);
+        permissionTime = newPermissionTime;
+        updateLogFile(time, userID, "None", "Change Permission Time", newPermissionTime);
     }
 
-    public void changeGlucoseConcentration(String userID, String babyID, String targetTime, double newValue, String time)
-    {
+    public void changeGlucoseConcentration(String userID, String babyID, String targetTime, double newValue, String time) {
         /*
             Change a glucose concentration reading using timestamp for the baby
         with the matched hospital number and update the log file
@@ -504,8 +482,7 @@ public class DataBase
         updateLogFile(time, userID, babyID, "Change Glucose Concentration", Double.toString(newValue));
     }
 
-    public void changeEvent(String userID, String babyID, String targetTime, String newEvent, String time)
-    {
+    public void changeEvent(String userID, String babyID, String targetTime, String newEvent, String time) {
         /*
             Change an event using timestamp for the baby with the matched hospital number
         and update the log file
@@ -521,8 +498,7 @@ public class DataBase
         updateLogFile(time, userID, babyID, "Change Event", newEvent);
     }
 
-    public void changeGlucoseConcentrationTimestamp(String userID, String babyID, String oldTime, String newTime, String time)
-    {
+    public void changeGlucoseConcentrationTimestamp(String userID, String babyID, String oldTime, String newTime, String time) {
         /*
             Change the glucose concentration timestamp for the baby with the matched hospital number
         due to the difference between measurement time and input time and then update the log file
@@ -538,8 +514,7 @@ public class DataBase
         updateLogFile(time, userID, babyID, "Change Glucose Concentration Timestamp", newTime);
     }
 
-    public void changeEventTimestamp(String userID, String babyID, String oldTime, String newTime, String time)
-    {
+    public void changeEventTimestamp(String userID, String babyID, String oldTime, String newTime, String time) {
         /*
             Change the event timestamp for the baby with the matched hospital number
         due to the difference between measurement time and input time and then update the log file
@@ -555,8 +530,7 @@ public class DataBase
         updateLogFile(time, userID, babyID, "Change Event Timestamp", newTime);
     }
 
-    public void deleteUser(String userID, String targetID, String time)
-    {
+    public void deleteUser(String userID, String targetID, String time) {
         /*
             Delete the user with given target ID and update the log file
         only if the target ID is in the database
@@ -570,11 +544,10 @@ public class DataBase
             time: String, the time at which the user performed the action
          */
         user.remove(targetID);
-        updateLogFile(time,userID,"None","Delete User",targetID);
+        updateLogFile(time, userID, "None", "Delete User", targetID);
     }
 
-    public void deleteGlucoseConcentration(String userID, String babyID, String targetTime, String time)
-    {
+    public void deleteGlucoseConcentration(String userID, String babyID, String targetTime, String time) {
         /*
            Delete the glucose concentration using timestamp for the baby with the matched hospital number
        and update the log file using the deleted concentration
@@ -587,13 +560,12 @@ public class DataBase
             targetTime: String, the time of the glucose concentration which requires deletion
             time: String, the time at which the user performed the action
          */
-        Double result=babyList.get(babyID).getGlucoseConcentration().get(targetTime);
-        updateLogFile(time, userID, babyID,"Delete Glucose Concentration",Double.toString(result));
+        Double result = babyList.get(babyID).getGlucoseConcentration().get(targetTime);
+        updateLogFile(time, userID, babyID, "Delete Glucose Concentration", Double.toString(result));
         babyList.get(babyID).deleteGlucoseConcentration(targetTime);
     }
 
-    public void deleteEvent(String userID, String babyID, String targetTime, String time)
-    {
+    public void deleteEvent(String userID, String babyID, String targetTime, String time) {
         /*
            Delete the event using timestamp for the baby with the matched hospital number
         and update the log file
@@ -606,13 +578,12 @@ public class DataBase
             targetTime: String, the time of the glucose concentration which requires deletion
             time: String, the time at which the user performed the action
          */
-        String result=babyList.get(babyID).getEvent().get(targetTime);
-        updateLogFile(time, userID, babyID,"Delete Event", result);
+        String result = babyList.get(babyID).getEvent().get(targetTime);
+        updateLogFile(time, userID, babyID, "Delete Event", result);
         babyList.get(babyID).deleteEvent(targetTime);
     }
 
-    public void saveDataBase(String directory, String babyDirectory)
-    {
+    public void saveDataBase(String directory, String babyDirectory) {
         /*
             Save the formatted data for database to the target directory
 
@@ -643,74 +614,68 @@ public class DataBase
         */
 
         //Save the user and administrator data
-        try
-        {
-            String fileName="account.txt";
+        try {
+            String fileName = "account.txt";
             //Create a new file that is named "account.txt"
-            FileWriter userWriter=new FileWriter(directory+"/"+fileName,false);
+            FileWriter userWriter = new FileWriter(directory + "/" + fileName, false);
             //Loop through both hash table and add those data
-            for (Map.Entry<String, String> pair:user.entrySet())
-            {
-                userWriter.write("us:"+pair.getKey()+","+pair.getValue()+"\n");
+            for (Map.Entry<String, String> pair : user.entrySet()) {
+                userWriter.write("us:" + pair.getKey() + "," + pair.getValue() + "\n");
             }
-            for (Map.Entry<String, String> pair:administrator.entrySet())
-            {
-                userWriter.write("ad:"+pair.getKey()+","+pair.getValue()+"\n");
+            for (Map.Entry<String, String> pair : administrator.entrySet()) {
+                userWriter.write("ad:" + pair.getKey() + "," + pair.getValue() + "\n");
             }
             userWriter.close();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         //Save the general setting data
-        try
-        {
-            String fileName="setting.txt";
+        try {
+            String fileName = "setting.txt";
             //Create a new file that is named "setting.txt"
-            FileWriter settingWriter=new FileWriter(directory+"/"+fileName,false);
+            FileWriter settingWriter = new FileWriter(directory + "/" + fileName, false);
             //Save the calibration parameters in one line
             settingWriter.write("cp:");
-            int index=0;
-            while (index<calibrationParameter.size())
-            {
-                if (index==calibrationParameter.size()-1) {settingWriter.write(calibrationParameter.get(index)+"\n");}
-                else {settingWriter.write(calibrationParameter.get(index)+",");}
+            int index = 0;
+            while (index < calibrationParameter.size()) {
+                if (index == calibrationParameter.size() - 1) {
+                    settingWriter.write(calibrationParameter.get(index) + "\n");
+                } else {
+                    settingWriter.write(calibrationParameter.get(index) + ",");
+                }
                 index++;
             }
             //Save lag time
-            settingWriter.write("lt:"+lagTime+"\n");
+            settingWriter.write("lt:" + lagTime + "\n");
             //Save permission time
-            settingWriter.write("pt:"+permissionTime+"\n");
+            settingWriter.write("pt:" + permissionTime + "\n");
             settingWriter.close();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         //Save all baby to the baby directory
-        for (String key:babyList.keySet())
-        {
+        for (String key : babyList.keySet()) {
             babyList.get(key).saveBaby(babyDirectory);
         }
 
         //Save the log file
-        try
-        {
-            String fileName="log file.txt";
+        try {
+            String fileName = "log file.txt";
             //Create a new file that is named "log file.txt"
-            FileWriter logWriter=new FileWriter(directory+"/"+fileName,false);
+            FileWriter logWriter = new FileWriter(directory + "/" + fileName, false);
             //Loop through the log file list and save each line
-            for (String line:logFile) {logWriter.write(line+"\n");}
+            for (String line : logFile) {
+                logWriter.write(line + "\n");
+            }
             logWriter.close();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void loadDataBase(String directory, String babyDirectory)
-    {
+    public void loadDataBase(String directory, String babyDirectory) {
         /*
             Reset the database and load the database from the given directory and the baby data
         from the baby directory
@@ -734,25 +699,27 @@ public class DataBase
          */
 
         //Reset the database
-        user=new Hashtable<>();
-        administrator=new Hashtable<>();
-        babyList=new Hashtable<>();
-        logFile=new ArrayList<>();
-        calibrationParameter=new ArrayList<>();
-        lagTime=null;
-        permissionTime=null;
+        user = new Hashtable<>();
+        administrator = new Hashtable<>();
+        babyList = new Hashtable<>();
+        logFile = new ArrayList<>();
+        calibrationParameter = new ArrayList<>();
+        lagTime = null;
+        permissionTime = null;
 
         //Load the user and administrator
         try {
-            File userFile=new File(directory+"/account.txt");
-            Scanner userReader=new Scanner(userFile);
+            File userFile = new File(directory + "/account.txt");
+            Scanner userReader = new Scanner(userFile);
             //Read line by line and add formatted data according to the flag in each line
-            while (userReader.hasNextLine())
-            {
-                String content=userReader.nextLine();
-                int index=content.indexOf(",");
-                if (content.contains("us:")) {user.put(content.substring(3,index),content.substring(index+1));}
-                else if (content.contains("ad:")) {administrator.put(content.substring(3,index),content.substring(index+1));}
+            while (userReader.hasNextLine()) {
+                String content = userReader.nextLine();
+                int index = content.indexOf(",");
+                if (content.contains("us:")) {
+                    user.put(content.substring(3, index), content.substring(index + 1));
+                } else if (content.contains("ad:")) {
+                    administrator.put(content.substring(3, index), content.substring(index + 1));
+                }
             }
             userReader.close();
         } catch (FileNotFoundException e) {
@@ -760,16 +727,18 @@ public class DataBase
         }
 
         //Load general settings
-        try
-        {
-            File settingFile=new File(directory+"/setting.txt");
-            Scanner settingReader=new Scanner(settingFile);
-            while (settingReader.hasNextLine())
-            {
-                String content=settingReader.nextLine();
-                if (content.contains("cp:")) {calibrationParameter=loadCalibrationParameter(content.substring(3));}
-                else if (content.contains("lt:")) {lagTime=content.substring(3);}
-                else if (content.contains("pt:")) {permissionTime=content.substring(3);}
+        try {
+            File settingFile = new File(directory + "/setting.txt");
+            Scanner settingReader = new Scanner(settingFile);
+            while (settingReader.hasNextLine()) {
+                String content = settingReader.nextLine();
+                if (content.contains("cp:")) {
+                    calibrationParameter = loadCalibrationParameter(content.substring(3));
+                } else if (content.contains("lt:")) {
+                    lagTime = content.substring(3);
+                } else if (content.contains("pt:")) {
+                    permissionTime = content.substring(3);
+                }
             }
             settingReader.close();
         } catch (FileNotFoundException e) {
@@ -777,32 +746,30 @@ public class DataBase
         }
 
         //Load every baby under the baby directory
-        File babyFile=new File(babyDirectory);
-        String[] babyNames=babyFile.list();
-        if (babyNames!=null)
-        {
-            for (String babyName:babyNames)
-            {
-                Baby baby=new Baby(babyDirectory+"/"+babyName,true);
-                babyList.put(baby.getID(),baby);
+        File babyFile = new File(babyDirectory);
+        String[] babyNames = babyFile.list();
+        if (babyNames != null) {
+            for (String babyName : babyNames) {
+                Baby baby = new Baby(babyDirectory + "/" + babyName, true);
+                babyList.put(baby.getID(), baby);
             }
         }
 
         //Load the log file
-        try
-        {
-            File log=new File(directory+"/log file.txt");
-            Scanner logFileReader=new Scanner(log);
+        try {
+            File log = new File(directory + "/log file.txt");
+            Scanner logFileReader = new Scanner(log);
             //Read line by line and directly save the content into the ArrayList
-            while (logFileReader.hasNextLine()) {logFile.add(logFileReader.nextLine());}
+            while (logFileReader.hasNextLine()) {
+                logFile.add(logFileReader.nextLine());
+            }
             logFileReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<Double> loadCalibrationParameter(String content)
-    {
+    public ArrayList<Double> loadCalibrationParameter(String content) {
         /*
             Return an ArrayList<Double> after splitting the content and converting into Double,
         a helper function of constructor and loadDataBase()
@@ -813,17 +780,20 @@ public class DataBase
         return:
             result: ArrayList<Double>, the calibration parameter
          */
-        String[] contentArray=content.split(",");
-        ArrayList<Double> result=new ArrayList<>();
-        for (String item:contentArray) {result.add(Double.parseDouble(item));}
+        String[] contentArray = content.split(",");
+        ArrayList<Double> result = new ArrayList<>();
+        for (String item : contentArray) {
+            result.add(Double.parseDouble(item));
+        }
         return result;
     }
 
-    public String[][] formatGlucoseConcentration(String babyID)
-    {
+    public String[][] formatGlucoseConcentration(String babyID) {
         /*
             Return a 2-d Array<String> containing glucose concentration data of the specific baby and
         then could be used to build a JTable directly
+
+            Sort the timestamp for the baby before formatting into table data
 
         input:
             babyID: String, the unique ID of the baby who is monitored
@@ -831,26 +801,28 @@ public class DataBase
         return:
             result: String[][], the glucose concentration with timestamp
          */
+        //Sort the timestamp for the baby
+        babyList.get(babyID).sortTimestamp();
         //Initiate a new array according to the size of the data
-        LinkedHashMap<String, Double> glucoseConcentration=babyList.get(babyID).getGlucoseConcentration();
-        String[][] result=new String[glucoseConcentration.size()][2];
+        LinkedHashMap<String, Double> glucoseConcentration = babyList.get(babyID).getGlucoseConcentration();
+        String[][] result = new String[glucoseConcentration.size()][2];
         //Add glucose concentration with timestamp into the array in order
-        int rowNumber=0;
-        for(Map.Entry<String, Double> pair:glucoseConcentration.entrySet())
-        {
+        int rowNumber = 0;
+        for (Map.Entry<String, Double> pair : glucoseConcentration.entrySet()) {
             //Save the concentration as String type for displaying
-            result[rowNumber][0]=pair.getKey();
-            result[rowNumber][1]=Double.toString(pair.getValue());
+            result[rowNumber][0] = pair.getKey();
+            result[rowNumber][1] = Double.toString(pair.getValue());
             rowNumber++;
         }
         return result;
     }
 
-    public String[][] formatSkinConcentration(String babyID)
-    {
+    public String[][] formatSkinConcentration(String babyID) {
         /*
             Return a 2-d Array<String> containing skin current/concentration data of the specific baby and
         then could be used to build a JTable directly
+
+            Sort the timestamp for the baby before formatting into table data
 
         input:
             babyID: String, the unique ID of the baby who is monitored
@@ -858,36 +830,37 @@ public class DataBase
         return:
             result: String[][], the skin current/concentration with timestamp
          */
+        //Sort the timestamp for the baby
+        babyList.get(babyID).sortTimestamp();
         //Initiate a new array according to the size of the data
-        LinkedHashMap<String, Double> skinCurrent=babyList.get(babyID).getSkinCurrent();
-        LinkedHashMap<String, Double> skinConcentration=babyList.get(babyID).getSkinConcentration();
-        String[][] result=new String[skinConcentration.size()][3];
+        LinkedHashMap<String, Double> skinCurrent = babyList.get(babyID).getSkinCurrent();
+        LinkedHashMap<String, Double> skinConcentration = babyList.get(babyID).getSkinConcentration();
+        String[][] result = new String[skinConcentration.size()][3];
         //Add skin concentration with timestamp into the array in order
-        int rowNumber=0;
-        for(Map.Entry<String, Double> pair:skinConcentration.entrySet())
-        {
+        int rowNumber = 0;
+        for (Map.Entry<String, Double> pair : skinConcentration.entrySet()) {
             //Save the concentration as String type for
-            result[rowNumber][0]=pair.getKey();
-            result[rowNumber][1]=Double.toString(pair.getValue());
+            result[rowNumber][0] = pair.getKey();
+            result[rowNumber][1] = Double.toString(pair.getValue());
             rowNumber++;
         }
         //Add skin current with timestamp into the array in order
-        rowNumber=0;
-        for(Map.Entry<String, Double> pair:skinCurrent.entrySet())
-        {
+        rowNumber = 0;
+        for (Map.Entry<String, Double> pair : skinCurrent.entrySet()) {
             //Save the current as String type for displaying
-            result[rowNumber][0]=pair.getKey();
-            result[rowNumber][2]=Double.toString(pair.getValue());
+            result[rowNumber][0] = pair.getKey();
+            result[rowNumber][2] = Double.toString(pair.getValue());
             rowNumber++;
         }
         return result;
     }
 
-    public String[][] formatEvent(String babyID)
-    {
+    public String[][] formatEvent(String babyID) {
         /*
             Return a 2-d Array<String> containing glucose concentration data of the specific baby and
         then could be used to build a JTable directly
+
+            Sort the timestamp for the data before formatting into table data
 
         input:
             babyID: String, the unique ID of the baby who is monitored
@@ -895,23 +868,23 @@ public class DataBase
         return:
             result: String[][], the glucose concentration with timestamp
          */
+        //Sort the timestamp for the baby
+        babyList.get(babyID).sortTimestamp();
         //Initiate a new array according to the size of the data
-        LinkedHashMap<String, String> event=babyList.get(babyID).getEvent();
-        String[][] result=new String[event.size()][2];
+        LinkedHashMap<String, String> event = babyList.get(babyID).getEvent();
+        String[][] result = new String[event.size()][2];
         //Add glucose concentration with timestamp into the array in order
-        int rowNumber=0;
-        for(Map.Entry<String, String> pair:event.entrySet())
-        {
+        int rowNumber = 0;
+        for (Map.Entry<String, String> pair : event.entrySet()) {
             //Save the concentration as String type for displaying
-            result[rowNumber][0]=pair.getKey();
-            result[rowNumber][1]=pair.getValue();
+            result[rowNumber][0] = pair.getKey();
+            result[rowNumber][1] = pair.getValue();
             rowNumber++;
         }
         return result;
     }
 
-    public String[][] formatLogFile()
-    {
+    public String[][] formatLogFile() {
         /*
             Return a 2-d Array<String> recording details of modification to the database and
         then could be used to build a JTable directly
@@ -921,32 +894,114 @@ public class DataBase
         return:
             result: String[][], the detailed log file
          */
-        ArrayList<String> logFile=getLogFile();
-        String[][] result=new String[logFile.size()][5];
-        int rowNumber=0;
-        for (String content:logFile)
-        {
-            String[] splitContent=content.split(",");
-            for (int i=0;i<5;i++)
-            {
-                if (!splitContent[i].equals("None")) {result[rowNumber][i]=splitContent[i];}
-                else {result[rowNumber][i]=" ";}
+        ArrayList<String> logFile = getLogFile();
+        String[][] result = new String[logFile.size()][5];
+        int rowNumber = 0;
+        for (String content : logFile) {
+            String[] splitContent = content.split(",");
+            for (int i = 0; i < 5; i++) {
+                if (!splitContent[i].equals("None")) {
+                    result[rowNumber][i] = splitContent[i];
+                } else {
+                    result[rowNumber][i] = " ";
+                }
             }
             rowNumber++;
         }
         return result;
     }
 
-    public void sortTimestamp()
+    public String[][] formatSetting()
     {
+        /*
+            Return a 2-d Array<String> containing lag time, permission time and calibration parameter
+        and then could be used to build a JTable directly
+
+        return:
+            result: String[][], general setting of the database
+         */
+        String[][] result=new String[1][3];
+        String parameter="";
+        for (Double value:calibrationParameter)
+        {
+            parameter+=value +",";
+        }
+        result[0][0]=lagTime;
+        result[0][1]=permissionTime;
+        result[0][2]=parameter.substring(0,parameter.length()-1);
+        return result;
+    }
+
+    public void sortTimestamp() {
         /*
             Sort data for every baby saved within the database before displaying
         tables or moving on to data processing
          */
-        for(Baby baby: babyList.values())
-        {
+        for (Baby baby : babyList.values()) {
             baby.sortTimestamp();
         }
     }
 
+    public boolean loadSkinCurrent(String path, String babyID)
+    {
+        /*
+            Create a new baby class and load the skin current data associated
+        with this baby into the database if the baby ID is not stored within
+        the database
+
+            Reset the skin current/concentration data and update the log file
+        if the baby ID is already stored in the database
+
+            Assume the file saves the data in order as it is generated by the sensor
+        directly
+
+            The skin data is stored using the baby hospital number as name and in the file
+        each line represents a pair of timestamp and current data separated by a ","
+
+        input:
+            path: String, the file path of the skin current data
+            babyID: String, the unique ID of the baby who is monitored
+
+        return:
+            true if the data is successfully loaded, false otherwise
+        throws:
+            FileNotFoundException, file is not successfully loaded due to the incorrect path
+            IOException: there is something wrong with the input/output operations
+         */
+
+        //Load data from this file and assign it to the new baby
+        ArrayList<String> timestamp = new ArrayList<>();
+        ArrayList<Double> current = new ArrayList<>();
+        ArrayList<Double> concentration = new ArrayList<>();
+        File skinFile = new File(path);
+        try {
+            Scanner skinFileReader = new Scanner(skinFile);
+            while (skinFileReader.hasNextLine()) {
+                String[] content = skinFileReader.nextLine().split(",");
+                timestamp.add(content[0]);
+                current.add(Double.parseDouble(content[1]));
+            }
+            //For every current data, calibrate into concentration data
+            for (Double currentValue : current) {
+                double result = 0;
+                for (int i = 0; i < calibrationParameter.size(); i++) {
+                    result += Math.pow(currentValue, i) * calibrationParameter.get(i);
+                }
+                concentration.add(result);
+            }
+            if (!babyList.containsKey(babyID)) {
+                //Create a new baby and call the method to assign the skin data
+                Baby baby = new Baby(babyID);
+                baby.resetSkinConcentration(timestamp, current, concentration);
+                babyList.put(babyID, baby);
+            } else {
+                //Reset the skin data for a current baby in the database already
+                babyList.get(babyID).resetSkinConcentration(timestamp, current, concentration);
+            }
+            skinFileReader.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
 }

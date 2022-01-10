@@ -25,8 +25,12 @@ class ManageLogFilePanel extends GeneralPanel
         button_3=setButton("Main",true);
 
         table_1=setTable();
-        JScrollPane scrollPane=new JScrollPane();
-        scrollPane.setViewportView(table_1);
+        JScrollPane scrollPane_1=new JScrollPane();
+        scrollPane_1.setViewportView(table_1);
+
+        table_2=setTable();
+        JScrollPane scrollPane_2=new JScrollPane();
+        scrollPane_2.setViewportView(table_2);
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
@@ -53,9 +57,11 @@ class ManageLogFilePanel extends GeneralPanel
         BoxLayout middleContentLayout=new BoxLayout(middleContentPanel,BoxLayout.Y_AXIS);
         middleContentPanel.setLayout(middleContentLayout);
         //Add spaces adn the table into the content panel
-        middleContentPanel.add(Box.createVerticalStrut(50));
-        middleContentPanel.add(scrollPane);
-        middleContentPanel.add(Box.createVerticalStrut(200));
+        middleContentPanel.add(Box.createVerticalStrut(25));
+        middleContentPanel.add(scrollPane_2);
+        middleContentPanel.add(Box.createVerticalStrut(25));
+        middleContentPanel.add(scrollPane_1);
+        middleContentPanel.add(Box.createVerticalStrut(100));
         //Set the center panel as a box layout containing 3 parts horizontally
         JPanel middlePanel=new JPanel();
         BoxLayout middleLayout=new BoxLayout(middlePanel,BoxLayout.X_AXIS);

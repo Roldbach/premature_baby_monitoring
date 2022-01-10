@@ -1,3 +1,4 @@
+import DataHandling.DataBase;
 import UI.UIController;
 
 import javax.swing.*;
@@ -6,7 +7,7 @@ import java.awt.event.WindowEvent;
 
 public class Main
 {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         /*
             Initiate the main controller and the frame
 
@@ -28,5 +29,4 @@ public class Main
             }
         });
     }
-
 }

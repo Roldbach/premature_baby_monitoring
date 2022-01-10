@@ -22,7 +22,7 @@ class AdministratorEntryPanel extends GeneralPanel
         button_1=setButton("Log out",true);
         button_2=setButton("Back",true);
         button_3=setButton("Manage Account",true);
-        button_4=setButton("Manage Log File",true);
+        button_4=setButton("Setting/Log File",true);
         //Set the panel for labels and buttons
         JPanel userPanel=new JPanel(new FlowLayout(FlowLayout.TRAILING,44,0));
         userPanel.add(label_1);
