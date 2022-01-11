@@ -1,0 +1,3 @@
+  I took part in the all design phases from gathering user requirements
+to final system maintenance. I contributed the most to the design of
+database and the GUI coding
