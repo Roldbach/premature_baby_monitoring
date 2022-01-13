@@ -1,0 +1,4 @@
+Presentation intro and formatting 
+Use-Case diagram for data processing and plotting 
+Unit-Testing for all Java backend 
+READ ME description file
