@@ -1,0 +1,1 @@
+I took part in the GUI design and coding the Bland-Altman plot and Moving Average filter.
