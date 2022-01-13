@@ -1,0 +1,6 @@
+Idea-crafting
+Presentation page 7-9
+UI/UX Design
+Python Visualisation plot codes for all Bland-altman plots + Gluocse/skin-glucose concentration comparison graph
+Use-case diagram for UI/UX pages 
+User-case diagram for patient's plots

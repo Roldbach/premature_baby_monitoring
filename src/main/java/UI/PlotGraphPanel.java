@@ -158,7 +158,6 @@ class PlotGraphPanel extends GeneralPanel
         input:
             directory: String, the directory where plots could be saved
          */
-        System.out.println(plot_1.getSize());
         ImageIcon plot=new ImageIcon(directory+"/DataBase/Plots/GlucoseTime.png");
         Image image=plot.getImage();
         Image newImage=image.getScaledInstance(plot_1.getSize().width,plot_1.getSize().height,Image.SCALE_SMOOTH);

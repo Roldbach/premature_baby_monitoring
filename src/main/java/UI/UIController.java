@@ -57,7 +57,7 @@ public class UIController {
         logInPanel=new LogInPanel();
         setLogInPanel(directory,babyDirectory);
         mainMenuPanel=new MainMenuPanel();
-        setMainMenuPanel(directory);
+        setMainMenuPanel(directory,babyDirectory);
         changeBabyPanel=new ChangeBabyPanel();
         setChangeBabyPanel();
         addValuePanel=new AddValuePanel();
@@ -156,7 +156,7 @@ public class UIController {
         mainPanel.add(logInPanel, "log in");
     }
 
-    private void setMainMenuPanel(String directory)
+    private void setMainMenuPanel(String directory, String babyDirectory)
     {
        /*
            Set the main menu panel, the page where the user could choose various function here
@@ -181,6 +181,7 @@ public class UIController {
 
         input:
             directory: String, the directory path where files except baby data could be loaded
+            babyDirectory: String, the directory path where all baby data could be loaded
 
         */
         //Action listener to jump to change baby page for button 1
@@ -310,8 +311,9 @@ public class UIController {
                         }
                         else
                         {
-                            String input=JOptionPane.showInputDialog("Timestamp: "+changeValuePanel.table_1.getValueAt(row,column),
-                                    changeValuePanel.table_1.getValueAt(row,column));
+                            String targetTimestamp= (String) changeValuePanel.table_1.getValueAt(row, column);
+                            String input=JOptionPane.showInputDialog("Timestamp: "+targetTimestamp,
+                                    targetTimestamp);
                             if (input!=null)
                             {
                                 //Check whether the input timestamp is valid and permission
@@ -319,10 +321,10 @@ public class UIController {
                                 {
                                     DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                                     formatter.parse(input.trim());
-                                    if (dataBase.checkPermission((String) changeValuePanel.table_1.getValueAt(row,column),formatTime("0"))||priority)
+                                    if (dataBase.checkPermission(targetTimestamp,formatTime("0"))||priority)
                                     {
                                         dataBase.changeGlucoseConcentrationTimestamp(currentUser,currentBaby,
-                                                (String) changeValuePanel.table_1.getValueAt(row,column),input,formatTime("0"));
+                                                targetTimestamp,input,formatTime("0"));
                                         //Sort the data in the database and update the table
                                         String[][] glucoseConcentration=dataBase.formatGlucoseConcentration(currentBaby);
                                         changeValuePanel.refreshTable(changeValuePanel.table_1,glucoseConcentration,glucoseColumnName);
@@ -384,6 +386,7 @@ public class UIController {
                             }
                         }
                     }
+                    e.consume();
                 }
 
                 @Override
@@ -458,6 +461,7 @@ public class UIController {
                     //Only response when double-clicking the table under the change mode
                     if (e.getClickCount()==2&&!e.isConsumed()&&changeValuePanel.radioButton_1.isSelected())
                     {
+
                         //According to the column show different message box to ask for input
                         if (column==1)
                         {
@@ -486,8 +490,9 @@ public class UIController {
                         }
                         else
                         {
-                            String input=JOptionPane.showInputDialog("Timestamp: "+changeValuePanel.table_3.getValueAt(row,column),
-                                    changeValuePanel.table_3.getValueAt(row,column));
+                            String targetTimestamp=(String) changeValuePanel.table_3.getValueAt(row,column);
+                            String input=JOptionPane.showInputDialog("Timestamp: "+targetTimestamp,
+                                    targetTimestamp);
                             if (input!=null)
                             {
                                 //Check whether the input timestamp is valid and permission
@@ -495,10 +500,10 @@ public class UIController {
                                 {
                                     DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                                     formatter.parse(input.trim());
-                                    if (dataBase.checkPermission((String) changeValuePanel.table_3.getValueAt(row,column),formatTime("0"))||priority)
+                                    if (dataBase.checkPermission(targetTimestamp,formatTime("0"))||priority)
                                     {
                                         dataBase.changeEventTimestamp(currentUser,currentBaby,
-                                                (String) changeValuePanel.table_3.getValueAt(row,column),input,formatTime("0"));
+                                                targetTimestamp,input,formatTime("0"));
                                         //Sort the data and update the table
                                         String[][] event=dataBase.formatEvent(currentBaby);
                                         changeValuePanel.refreshTable(changeValuePanel.table_3,event,eventColumnName);
@@ -560,6 +565,7 @@ public class UIController {
                             }
                         }
                     }
+                    e.consume();
                 }
                 @Override
                 public void mouseReleased(MouseEvent e) {
@@ -583,6 +589,8 @@ public class UIController {
             //Update the current user ID and current baby ID
             setUserID(plotGraphPanel.label_1,currentUser);
             setBabyID(plotGraphPanel.label_2, currentBaby);
+            //Save the database first before loading the images
+            saveDataBase(directory,babyDirectory);
             //Reset the option
             plotGraphPanel.resetOption();
             //According to the user's choice, write the instruction file
