@@ -197,7 +197,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
 
     axis.set_title("Data: "+date+" "+"Blood Glucose Concentration")
     axis.set_ylabel("Concentration (mmol/L)")
-    axis.set_xlabel("Time")
+    axis.set_xlabel("Time (hour)")
     axis.set_xticks(skin_time_index)
     axis.set_xticklabels(time_scale,fontsize="large",rotation=60)
     axis.set_ylim(0,np.amax(skin_concentration)+5)
@@ -216,9 +216,9 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)
     axis.plot(skin_time_index,skin_concentration,color="red",label="Skin Glucose Concentration")
 
-    axis.set_title("Data: "+date+" "+"Skin Concentration")
-    axis.set_ylabel("Concentration")
-    axis.set_xlabel("Time")
+    axis.set_title("Data: "+date+" "+"Skin GLucose Concentration")
+    axis.set_ylabel("Concentration (mmol/L)")
+    axis.set_xlabel("Time (hour)")
     axis.set_xticks(skin_time_index)
     axis.set_xticklabels(time_scale,fontsize="large",rotation=60)
     axis.set_ylim(0,np.amax(skin_concentration)+5)
