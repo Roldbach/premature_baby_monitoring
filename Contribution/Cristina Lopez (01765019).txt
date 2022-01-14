@@ -1,0 +1,3 @@
+Use case diagram for permission control
+Linear regression and 1st order differentiation filters (Python)
+Data plot formatting
