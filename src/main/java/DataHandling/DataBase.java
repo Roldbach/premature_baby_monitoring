@@ -98,8 +98,14 @@ public class DataBase {
         String[] babyNames = babyFile.list();
         if (babyNames != null) {
             for (String babyName : babyNames) {
-                Baby baby = new Baby(babyDirectory + "/" + babyName, true);
-                babyList.put(baby.getID(), baby);
+                if(!babyName.contains(".DS_Store")) {
+                    /*
+                    ".DS_Store" files are Mac system (and hence invisible), read-only files that sometimes exist
+                    in folders and prevent normal operation
+                     */
+                    Baby baby = new Baby(babyDirectory + "/" + babyName, true);
+                    babyList.put(baby.getID(), baby);
+                }
             }
         }
 

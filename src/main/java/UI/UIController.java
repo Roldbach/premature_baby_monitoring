@@ -1249,6 +1249,7 @@ public class UIController {
             button.addActionListener(e->{
                 currentUser=null;
                 currentBaby=null;
+                priority = false;
                 cardLayout.show(mainPanel,"log in");
                 logInPanel.resetText(logInPanel.textField_1,true);
                 logInPanel.resetText(logInPanel.textField_2, false);
