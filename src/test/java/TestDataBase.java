@@ -11,7 +11,7 @@ import java.util.Hashtable;
 import java.util.Scanner;
 
 
-public class TestDataBase {
+public class TestDataBase { /*
 
     //Setters and getters are not useful to test, we would be testing the language rather than actual code
 
@@ -38,7 +38,7 @@ public class TestDataBase {
         ArrayList<String> expectedBabyList = new ArrayList<>(Arrays.asList("baby3","baby2","baby1"));
         Assertions.assertEquals(expectedBabyList,db.getBabyList());
     }*/
-
+    /*
     @Test
     public void testUpdateLogFile(){
         DataBase db = new DataBase();
@@ -233,4 +233,6 @@ public class TestDataBase {
 
     //@Test
     //public void testLoadSkinCurrent()
+
+    */
 }

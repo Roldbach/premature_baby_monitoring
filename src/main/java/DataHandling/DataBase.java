@@ -14,7 +14,7 @@ public class DataBase {
     private String lagTime;
     private String permissionTime;
 
-    public DataBase(){
+    /*public DataBase(){
         //This constructor exists for testing purposes
         user = new Hashtable<>();
         administrator = new Hashtable<>();
@@ -23,7 +23,7 @@ public class DataBase {
         calibrationParameter = new ArrayList<>();
         lagTime = null;
         permissionTime = null;
-    }
+    }*/
 
     public DataBase(String directory, String babyDirectory) {
         /*
