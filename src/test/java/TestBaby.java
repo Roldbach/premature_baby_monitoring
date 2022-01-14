@@ -8,18 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class TestBaby {
-
     /*Setters & Getters (a little redundant)
     @Test
     public void testGetID(){
-        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("expected"); //instantiates an object of class Baby
         String id = baby.getID(); //calls getID method and stores output in string id
         Assertions.assertEquals("expected",id); //compares real output with expected output
     }
-
     @Test
     public void testGetAndAddGlucoseConcentration(){
-        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("expected"); //instantiates an object of class Baby
         LinkedHashMap<String, Double> expected = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, Double> glucoseConcentration; //creates a LinkedHashMap object to store real output values
         baby.addGlucoseConcentration(0.3,"10:30");
@@ -27,10 +25,9 @@ public class TestBaby {
         glucoseConcentration = baby.getGlucoseConcentration(); //stores real output from get method in test
         Assertions.assertEquals(expected,glucoseConcentration); //compares real output with expected output
     }
-
     @Test
     public void testGetAndAddSkinCurrentAndConcentration(){
-        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("expected"); //instantiates an object of class Baby
         LinkedHashMap<String, Double> expectedCurrent = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, Double> expectedConcentration = new LinkedHashMap<>();
         LinkedHashMap<String, Double> skinCurrent; //creates a LinkedHashMap object to store real output values
@@ -43,10 +40,9 @@ public class TestBaby {
         Assertions.assertEquals(expectedCurrent,skinCurrent); //compares real output with expected output
         Assertions.assertEquals(expectedConcentration,skinConcentration);
     }
-
     @Test
     public void testGetAndAddEvent(){
-        DataHandling.Baby baby = new DataHandling.Baby("expected"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("expected"); //instantiates an object of class Baby
         LinkedHashMap<String, String> expected = new LinkedHashMap<>(); //creates a LinkedHashMap object to store expected values
         LinkedHashMap<String, String> event; //creates a LinkedHashMap object to store real output values
         baby.addEvent("food intake","10:30");
@@ -58,7 +54,7 @@ public class TestBaby {
     //Change methods
     @Test
     public void testChangeGlucoseConcentration(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:35");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -69,7 +65,7 @@ public class TestBaby {
 
     @Test
     public void testChangeEvent(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -80,7 +76,7 @@ public class TestBaby {
 
     @Test
     public void testChangeGlucoseConcentrationTimestamp(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -91,7 +87,7 @@ public class TestBaby {
 
     @Test
     public void testChangeEventTimestamp(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -103,10 +99,10 @@ public class TestBaby {
         Assertions.assertEquals("breakfast",baby.getEvent().get("9:00"));
     }
 
-    //Delete methods
+    /*Delete methods, quite redundant too
     @Test
     public void testDeleteGlucoseConcentration(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addGlucoseConcentration(0.1,"10:30");
         baby.addGlucoseConcentration(0.4,"10:33");
         baby.addGlucoseConcentration(0.3,"10:40");
@@ -118,10 +114,9 @@ public class TestBaby {
         //Tests expected LinkedHashMap against output LinkedHashMap
         Assertions.assertEquals(expectedOutput,baby.getGlucoseConcentration());
     }
-
     @Test
     public void testDeleteEvent(){
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addEvent("breakfast","8:30");
         baby.addEvent("lunch","13:00");
         baby.addEvent("dinner","19:00");
@@ -133,11 +128,12 @@ public class TestBaby {
         //Tests expected LinkedHashMap against output LinkedHashMap
         Assertions.assertEquals(expectedOutput,baby.getEvent());
     }
+    */
 
     //Load & save methods
     @Test
     public void testSaveBaby() throws FileNotFoundException {
-        Baby baby = new Baby("baby1"); //instantiates an object of class DataHandling.Baby
+        Baby baby = new Baby("baby1"); //instantiates an object of class Baby
         baby.addGlucoseConcentration(0.921,"8:30");
         baby.addGlucoseConcentration(0.922,"8:40");
         baby.addGlucoseConcentration(0.923,"8:50");
@@ -150,28 +146,29 @@ public class TestBaby {
         baby.saveBaby(System.getProperty("user.home")+ "/Downloads/");
         File babyFile = new File(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //opens created file
         Scanner babyReader = new Scanner(babyFile);
-        //Tests all lines of the file to make sure data formatting is correct
-        Assertions.assertEquals(babyReader.nextLine(),"id:baby1");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:30,0.921");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:40,0.922");
-        Assertions.assertEquals(babyReader.nextLine(),"gc:8:50,0.923");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:30,0.1");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:40,0.2");
-        Assertions.assertEquals(babyReader.nextLine(),"sa:8:50,0.3");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:30,0.01");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:40,0.02");
-        Assertions.assertEquals(babyReader.nextLine(),"sc:8:50,0.03");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:8:30,breakfast");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:13:00,lunch");
-        Assertions.assertEquals(babyReader.nextLine(),"ev:19:00,dinner");
+        //Tests all lines of the file to make sure data has been saved and formatting is correct
+        Assertions.assertEquals("id:baby1",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:30,0.921",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:40,0.922",babyReader.nextLine());
+        Assertions.assertEquals("gc:8:50,0.923",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:30,0.1",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:40,0.2",babyReader.nextLine());
+        Assertions.assertEquals("sa:8:50,0.3",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:30,0.01",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:40,0.02",babyReader.nextLine());
+        Assertions.assertEquals("sc:8:50,0.03",babyReader.nextLine());
+        Assertions.assertEquals("ev:8:30,breakfast",babyReader.nextLine());
+        Assertions.assertEquals("ev:13:00,lunch",babyReader.nextLine());
+        Assertions.assertEquals("ev:19:00,dinner",babyReader.nextLine());
     }
 
     @Test
     public void testLoadBaby(){
         Baby baby = new Baby("baby1"); //instantiates an object of class baby
-        baby.loadBaby(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt"); //loads pre-made file
+        //Loads existing file
+        baby.loadBaby(System.getProperty("user.home")+ "/Downloads/" + "\\baby1.txt");
+        //Creates expected String & LinkedHashMaps for later comparison against output
         String id = "baby1";
-        //Creates expected LinkedHashMaps for later comparison against output
         LinkedHashMap<String,Double> glucoseConcentration = new LinkedHashMap<>();
         LinkedHashMap<String,Double> skinCurrent = new LinkedHashMap<>();
         LinkedHashMap<String,Double> skinConcentration = new LinkedHashMap<>();
@@ -188,10 +185,18 @@ public class TestBaby {
         event.put("8:30","breakfast");
         event.put("13:00","lunch");
         event.put("19:00","dinner");
-        //Compares the expected LinkedHashMaps with output ones formed by loadBaby method
+        //Compares the expected String & LinkedHashMaps with the ones created by loadBaby method
+        Assertions.assertEquals(id,baby.getID());
         Assertions.assertEquals(glucoseConcentration,baby.getGlucoseConcentration());
         Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
         Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());
         Assertions.assertEquals(event,baby.getEvent());
     }
-    }
+
+    //@Test
+    //public void testSortTimestamp()
+
+    //@Test
+    //public void testResetSkinConcentration()
+
+}

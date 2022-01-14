@@ -14,6 +14,17 @@ public class DataBase {
     private String lagTime;
     private String permissionTime;
 
+    public DataBase(){
+        //This constructor exists for testing purposes
+        user = new Hashtable<>();
+        administrator = new Hashtable<>();
+        babyList = new Hashtable<>();
+        logFile = new ArrayList<>();
+        calibrationParameter = new ArrayList<>();
+        lagTime = null;
+        permissionTime = null;
+    }
+
     public DataBase(String directory, String babyDirectory) {
         /*
             Load the database from the given directory and the baby data
