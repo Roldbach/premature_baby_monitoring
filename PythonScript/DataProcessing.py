@@ -195,7 +195,8 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)    
     axis.plot(glucose_time_index,glucose_concentration,color="black",label="Glucose Concentration")
 
-    axis.set_title("Data: "+date+" "+"Blood Glucose Concentration")
+    # axis.set_title("Data: "+date+" "+"Blood Glucose Concentration")
+    axis.set_title("Blood Glucose Concentration over time on "+date)
     axis.set_ylabel("Concentration (mmol/L)")
     axis.set_xlabel("Time (hour)")
     axis.set_xticks(skin_time_index)
@@ -216,7 +217,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.scatter(x=event_time_index,y=event_height,color="firebrick",alpha=0.7)
     axis.plot(skin_time_index,skin_concentration,color="red",label="Skin Glucose Concentration")
 
-    axis.set_title("Data: "+date+" "+"Skin GLucose Concentration")
+    axis.set_title("Skin Glucose Concentration over time on "+date)
     axis.set_ylabel("Concentration (mmol/L)")
     axis.set_xlabel("Time (hour)")
     axis.set_xticks(skin_time_index)
@@ -241,8 +242,10 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.scatter(glucose_concentration,new_skin_concentration,alpha=0.5,marker="x",color="black")
     axis.plot(ideal,ideal,linestyle="--",color="red")
     axis.set_title("Score: "+"{:.2f}".format(score)+" "+"Gradient: "+"{:.2f}".format(gradient)+" "+"Intercept: "+"{:.2f}".format(intercept))
+    # axis.set_title("Skin Glucose over Blood Glucose Concentration")
+    plt.figtext(.8, .8, "Score: "+"{:.2f}".format(score)+" "+"Gradient: "+"{:.2f}".format(gradient)+" "+"Intercept: "+"{:.2f}".format(intercept))
     axis.set_ylabel("Skin Glucose Concentration")
-    axis.set_xlabel("Glucose Concentration")
+    axis.set_xlabel("Blood Glucose Concentration")
     figure.savefig(directory+"/DataBase/Plots/correlation.png")
     #Finally plot the bland-altman graph between 2 concentrations
     pyCompare.blandAltman(glucose_concentration,new_skin_concentration,title="Bland Altman Plot",
