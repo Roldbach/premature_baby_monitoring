@@ -241,11 +241,10 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     figure,axis=plt.subplots(figsize=(9,5),dpi=300)
     axis.scatter(glucose_concentration,new_skin_concentration,alpha=0.5,marker="x",color="black")
     axis.plot(ideal,ideal,linestyle="--",color="red")
-    axis.set_title("Score: "+"{:.2f}".format(score)+" "+"Gradient: "+"{:.2f}".format(gradient)+" "+"Intercept: "+"{:.2f}".format(intercept))
-    # axis.set_title("Skin Glucose over Blood Glucose Concentration")
-    plt.figtext(.8, .8, "Score: "+"{:.2f}".format(score)+" "+"Gradient: "+"{:.2f}".format(gradient)+" "+"Intercept: "+"{:.2f}".format(intercept))
-    axis.set_ylabel("Skin Glucose Concentration")
-    axis.set_xlabel("Blood Glucose Concentration")
+    axis.set_title("Skin Glucose over Blood Glucose Concentration")
+    plt.figtext(.8, .2, "Score: "+"{:.2f}".format(score)+" "+"\nGradient: "+"{:.2f}".format(gradient)+" "+"\nIntercept: "+"{:.2f}".format(intercept))
+    axis.set_ylabel("Skin Glucose Concentration (mmol/L)")
+    axis.set_xlabel("Blood Glucose Concentration (mmol/L)")
     figure.savefig(directory+"/DataBase/Plots/correlation.png")
     #Finally plot the bland-altman graph between 2 concentrations
     pyCompare.blandAltman(glucose_concentration,new_skin_concentration,title="Bland Altman Plot",
