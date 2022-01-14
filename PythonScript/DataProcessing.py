@@ -242,7 +242,7 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
     axis.scatter(glucose_concentration,new_skin_concentration,alpha=0.5,marker="x",color="black")
     axis.plot(ideal,ideal,linestyle="--",color="red")
     axis.set_title("Skin Glucose over Blood Glucose Concentration")
-    plt.figtext(.8, .2, "Score: "+"{:.2f}".format(score)+" "+"\nGradient: "+"{:.2f}".format(gradient)+" "+"\nIntercept: "+"{:.2f}".format(intercept))
+    plt.figtext(.65, .2, "Score: "+"{:.2f}".format(score)+" "+"\nGradient: "+"{:.2f}".format(gradient)+" "+"\nIntercept: "+"{:.2f}".format(intercept))
     axis.set_ylabel("Skin Glucose Concentration (mmol/L)")
     axis.set_xlabel("Blood Glucose Concentration (mmol/L)")
     figure.savefig(directory+"/DataBase/Plots/correlation.png")
