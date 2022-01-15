@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -193,10 +195,69 @@ public class TestBaby {
         Assertions.assertEquals(event,baby.getEvent());
     }
 
-    //@Test
-    //public void testSortTimestamp()
+    @Test
+    public void testSortTimestamp(){
+        Baby baby = new Baby("baby 1");
+        //Adding blood glucose, skin glucose and events with disordered timestamps
+        baby.addGlucoseConcentration(0.921,"2022/01/04 16:41:00");
+        baby.addGlucoseConcentration(0.922,"2022/01/04 16:39:00");
+        baby.addGlucoseConcentration(0.923,"2022/01/04 16:40:00");
+        baby.addSkinConcentration(0.1,0.01,"2022/01/04 16:41:00");
+        baby.addSkinConcentration(0.2,0.02,"2022/01/04 16:39:00");
+        baby.addSkinConcentration(0.3,0.03,"2022/01/04 16:40:00");
+        baby.addEvent("breakfast","2022/01/04 16:41:00");
+        baby.addEvent("lunch","2022/01/04 16:39:00");
+        baby.addEvent("dinner","2022/01/04 16:40:00");
+        //Ordering the timestamps
+        baby.sortTimestamp();
+        //Creating ordered linked hash maps for comparison
+        LinkedHashMap<String,Double> glucoseConcentration = new LinkedHashMap<>();
+        LinkedHashMap<String,Double> skinCurrent = new LinkedHashMap<>();
+        LinkedHashMap<String,Double> skinConcentration = new LinkedHashMap<>();
+        LinkedHashMap<String,String> event = new LinkedHashMap<>();
+        glucoseConcentration.put("2022/01/04 16:39:00",0.922);
+        glucoseConcentration.put("2022/01/04 16:40:00",0.923);
+        glucoseConcentration.put("2022/01/04 16:41:00",0.921);
+        skinCurrent.put("2022/01/04 16:39:00",0.2);
+        skinCurrent.put("2022/01/04 16:40:00",0.3);
+        skinCurrent.put("2022/01/04 16:41:00",0.1);
+        skinConcentration.put("2022/01/04 16:39:00",0.02);
+        skinConcentration.put("2022/01/04 16:40:00",0.03);
+        skinConcentration.put("2022/01/04 16:41:00",0.01);
+        event.put("2022/01/04 16:39:00","lunch");
+        event.put("2022/01/04 16:40:00","dinner");
+        event.put("2022/01/04 16:41:00","breakfast");
+        //Checking if sort method ordered as expected
+        Assertions.assertEquals(glucoseConcentration,baby.getGlucoseConcentration());
+        Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
+        Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());
+        Assertions.assertEquals(event,baby.getEvent());
+    }
 
-    //@Test
-    //public void testResetSkinConcentration()
-
+    @Test
+    public void testResetSkinConcentration(){
+        Baby baby = new Baby("baby 1");
+        //Adding skin current & concentration values
+        baby.addSkinConcentration(0.1,0.01,"2022/01/04 16:39:00");
+        baby.addSkinConcentration(0.2,0.02,"2022/01/04 16:40:00");
+        baby.addSkinConcentration(0.3,0.03,"2022/01/04 16:41:00");
+        //Creating arrays for reset
+        ArrayList<String> newTimestamps = new ArrayList<>(Arrays.asList("2022/01/04 16:50:00","2022/01/04 16:51:00","2022/01/04 16:52:00"));
+        ArrayList<Double> newSkinCurrent = new ArrayList<>(Arrays.asList(0.4,0.5,0.6));
+        ArrayList<Double> newSkinConcentration = new ArrayList<>(Arrays.asList(0.04,0.05,0.06));
+        //Resetting skin values
+        baby.resetSkinConcentration(newTimestamps,newSkinCurrent,newSkinConcentration);
+        //Creating expected linked hash maps for comparison
+        LinkedHashMap<String,Double> skinCurrent = new LinkedHashMap<>();
+        LinkedHashMap<String,Double> skinConcentration = new LinkedHashMap<>();
+        skinCurrent.put("2022/01/04 16:50:00",0.4);
+        skinCurrent.put("2022/01/04 16:51:00",0.5);
+        skinCurrent.put("2022/01/04 16:52:00",0.6);
+        skinConcentration.put("2022/01/04 16:50:00",0.04);
+        skinConcentration.put("2022/01/04 16:51:00",0.05);
+        skinConcentration.put("2022/01/04 16:52:00",0.06);
+        //Checking if reset method worked as expected
+        Assertions.assertEquals(skinCurrent,baby.getSkinCurrent());
+        Assertions.assertEquals(skinConcentration,baby.getSkinConcentration());
+    }
 }

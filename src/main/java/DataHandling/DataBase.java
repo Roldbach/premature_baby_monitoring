@@ -14,16 +14,18 @@ public class DataBase {
     private String lagTime;
     private String permissionTime;
 
-    /*public DataBase(){
-        //This constructor exists for testing purposes
+    public DataBase(){
+        /*
+            Only for testing use
+         */
         user = new Hashtable<>();
         administrator = new Hashtable<>();
         babyList = new Hashtable<>();
         logFile = new ArrayList<>();
         calibrationParameter = new ArrayList<>();
-        lagTime = null;
-        permissionTime = null;
-    }*/
+        lagTime = "10";
+        permissionTime = "5";
+    }
 
     public DataBase(String directory, String babyDirectory) {
         /*
@@ -1020,5 +1022,14 @@ public class DataBase {
         } catch (FileNotFoundException e) {
             return false;
         }
+    }
+
+    public void addBaby(String hospitalNumber)
+    {
+        /*
+            Only for testing use
+         */
+        Baby newBaby=new Baby(hospitalNumber);
+        babyList.put(hospitalNumber,newBaby);
     }
 }

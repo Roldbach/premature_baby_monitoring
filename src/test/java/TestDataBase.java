@@ -11,7 +11,7 @@ import java.util.Hashtable;
 import java.util.Scanner;
 
 
-public class TestDataBase { /*
+public class TestDataBase {
 
     //Setters and getters are not useful to test, we would be testing the language rather than actual code
 
@@ -29,7 +29,7 @@ public class TestDataBase { /*
         Assertions.assertFalse(db.logIn("notAdmin","password")[1]);
     }
 
-    /*@Test
+    @Test
     public void testGetBabyList(){
         DataBase db = new DataBase();
         db.addBaby("baby1");
@@ -37,8 +37,8 @@ public class TestDataBase { /*
         db.addBaby("baby3");
         ArrayList<String> expectedBabyList = new ArrayList<>(Arrays.asList("baby3","baby2","baby1"));
         Assertions.assertEquals(expectedBabyList,db.getBabyList());
-    }*/
-    /*
+    }
+
     @Test
     public void testUpdateLogFile(){
         DataBase db = new DataBase();
@@ -210,11 +210,12 @@ public class TestDataBase { /*
         Assertions.assertEquals(calibrationParameter,db.getCalibrationParameter());
     }
 
-    //@Test
-    //public void testLoadCalibrationParameter()
-
-    //@Test
-    //public void testFormatGlucoseConcentration()
+    /*@Test
+    public void testFormatGlucoseConcentration(){
+        DataBase db = new DataBase();
+        Baby baby = new Baby("baby 1");
+        baby.addGlucoseConcentration();
+    }*/
 
     //@Test
     //public void testFormatSkinConcentration()
@@ -234,5 +235,5 @@ public class TestDataBase { /*
     //@Test
     //public void testLoadSkinCurrent()
 
-    */
+
 }
