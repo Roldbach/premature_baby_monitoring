@@ -73,63 +73,6 @@ public class TestDataBase {
     }
 
     @Test
-    public void testChangePassword(){
-        DataBase db = new DataBase();
-        db.addUser("Admin","notAdmin","password",false,"10:30");
-        db.changePassword("Admin","notAdmin","newPassword","10:35");
-        //Tests if value at key "notAdmin" has changed to "newPassword"
-        Assertions.assertEquals("newPassword",db.getUser().get("notAdmin"));
-    }
-
-    @Test
-    public void testChangeCalibrationParameters(){
-        DataBase db = new DataBase();
-        db.loadCalibrationParameter("0.4,0.4,0.4,0.4");
-        ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1,0.2,0.3,0.4));
-        db.changeCalibrationParameter("Admin",cParameters,"10:30");
-        //Tests output list of parameters against expected list to see if change has been implemented
-        Assertions.assertEquals(cParameters,db.getCalibrationParameter());
-    }
-
-    @Test
-    public void testChangeLagTime(){
-        DataBase db = new DataBase();
-        //Value of lagTime initially set to 10 minutes
-        db.changeLagTime("Admin","12","10:30");
-        //Tests if value of lagTime has changed to "12"
-        Assertions.assertEquals("12",db.getLagTime());
-    }
-
-    @Test
-    public void testChangePermissionTime(){
-        DataBase db = new DataBase();
-        //Value of permissionTime initially set to 5 minutes
-        db.changePermissionTime("Admin","12","10:30");
-        //Tests if value of permissionTime has changed to "10"
-        Assertions.assertEquals("12",db.getPermissionTime());
-    }
-
-    @Test
-    public void testLoadCalibrationParameter() {
-        DataBase db = new DataBase();
-        ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1,0.2,0.3,0.4));
-        //Tests if output is equal to an ArrayList of the input values
-        Assertions.assertEquals(cParameters, db.loadCalibrationParameter("0.1,0.2,0.3,0.4"));
-    }
-
-    @Test
-    public void testDeleteUser(){
-        DataBase db = new DataBase();
-        db.addUser("Admin", "notAdmin", "password", false, "10:30");
-        db.deleteUser("Admin","notAdmin","10:34");
-        Hashtable<String,String> empty = new Hashtable<>();
-        //Tests if "notAdmin" was deleted and hence User Hashtable is empty
-        Assertions.assertEquals(empty,db.getUser());
-        //Tests if deleteUser method returns false when user ID does not exist
-        //Assertions.assertFalse(db.deleteUser("Admin","notAdmin2","10:34"));
-    }
-
-    @Test
     public void testSaveDataBase() throws FileNotFoundException {
         DataBase db = new DataBase();
         //Adds info to class to test it has been correctly saved posteriorly
@@ -183,14 +126,14 @@ public class TestDataBase {
         Hashtable<String, String> administrator = new Hashtable<>();
         administrator.put("Admin2","adminPassword");
         ArrayList<String> babyList = new ArrayList<>();
-        babyList.add("baby2");
+        babyList.add("baby 1");
         ArrayList<String> logFile = new ArrayList<>();
         logFile.add("10:30,Admin,None,Add Administrator,Admin2");
         logFile.add("10:31,Admin,None,Add User,notAdmin");
         logFile.add("10:31,Admin,None,Change Calibration Parameter,None");
-        logFile.add("10:32,notAdmin,baby2,Add Glucose Concentration,0.1");
-        logFile.add("10:32,notAdmin,baby2,Add Skin Current/Concentration,0.01/0.1");
-        logFile.add("10:32,notAdmin,baby2,Add Event,breakfast");
+        logFile.add("10:32,notAdmin,baby 1,Add Glucose Concentration,0.1");
+        logFile.add("10:32,notAdmin,baby 1,Add Skin Current/Concentration,0.01/0.1");
+        logFile.add("10:32,notAdmin,baby 1,Add Event,breakfast");
         ArrayList<Double> calibrationParameter = new ArrayList<>();
         calibrationParameter.add(0.1);
         calibrationParameter.add(0.2);
@@ -204,6 +147,14 @@ public class TestDataBase {
         Assertions.assertEquals(babyList,db.getBabyList());
         Assertions.assertEquals(logFile,db.getLogFile());
         Assertions.assertEquals(calibrationParameter,db.getCalibrationParameter());
+    }
+
+    @Test
+    public void testLoadCalibrationParameter() {
+        DataBase db = new DataBase();
+        ArrayList<Double> cParameters = new ArrayList<>(Arrays.asList(0.1,0.2,0.3,0.4));
+        //Tests if output is equal to an ArrayList of the input values
+        Assertions.assertEquals(cParameters, db.loadCalibrationParameter("0.1,0.2,0.3,0.4"));
     }
 
     @Test
@@ -288,14 +239,20 @@ public class TestDataBase {
     @Test
     public void testLoadSkinCurrent(){
         DataBase db = new DataBase();
-        //Creating expected linked hash map
-        LinkedHashMap<String, Double> skinConcentration = new LinkedHashMap<>();
-        skinConcentration.put("2022/01/04 16:40:00",1.0);
-        skinConcentration.put("2022/01/04 16:41:00",2.0);
         //For new baby name
-        db.loadSkinCurrent(System.getProperty("user.dir")+"/Testfiles/Current","baby 3");
-        Assertions.assertEquals(skinConcentration,db.getSkinCurrent("baby 3"));
+        //Creating expected linked hash map
+        LinkedHashMap<String, Double> skinCurrentNew = new LinkedHashMap<>();
+        skinCurrentNew.put("2022/01/04 16:40:00",1.0);
+        skinCurrentNew.put("2022/01/04 16:41:00",2.0);
+        db.loadSkinCurrent(System.getProperty("user.dir")+"/Testfiles/Current/baby 3.txt","baby 3");
+        Assertions.assertEquals(skinCurrentNew,db.getSkinCurrent("baby 3"));
+        //For existing baby name
+        db.addBaby("baby 4");
+        //Creating expected linked hash map
+        LinkedHashMap<String, Double> skinCurrentExisting = new LinkedHashMap<>();
+        skinCurrentExisting.put("2022/01/04 16:40:00",3.0);
+        skinCurrentExisting.put("2022/01/04 16:41:00",4.0);
+        db.loadSkinCurrent(System.getProperty("user.dir")+"/Testfiles/Current/baby 4.txt","baby 4");
+        Assertions.assertEquals(skinCurrentExisting,db.getSkinCurrent("baby 4"));
     }
-
-
 }
