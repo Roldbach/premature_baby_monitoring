@@ -136,17 +136,17 @@ public class TestDataBase {
         db.addUser("Admin", "Admin2", "adminPassword", true, "10:30");
         db.addUser("Admin", "notAdmin", "password", false, "10:31");
         db.changeCalibrationParameter("Admin",db.loadCalibrationParameter("0.1,0.2,0.3,0.4"),"10:31");
-        //db.addBaby("baby2");
-        db.addGlucoseConcentration("notAdmin", "baby2", 0.1, "10:32");
-        db.addSkinConcentration("notAdmin", "baby2", 0.01, 0.1, "10:32");
-        db.addEvent("notAdmin", "baby2", "breakfast", "10:32");
+        db.addBaby("baby 1");
+        db.addGlucoseConcentration("notAdmin", "baby 1" , 0.1, "10:32");
+        db.addSkinConcentration("notAdmin", "baby 1", 0.01, 0.1, "10:32");
+        db.addEvent("notAdmin", "baby 1", "breakfast", "10:32");
         //Saves the dataBase
-        db.saveDataBase(System.getProperty("user.home") + "/Desktop/Database/", System.getProperty("user.home") + "/Desktop/Database/Babies/");
+        db.saveDataBase(System.getProperty("user.dir") + "/Testfiles/Database", System.getProperty("user.dir") + "/Testfiles/Database/Baby");
         //Loads the saved files
-        File dBAccountFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\account.txt"); //opens created user&admin dataBase file
-        File dBSettingsFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\setting.txt"); //opens created user&admin dataBase file
-        File babyFile = new File(System.getProperty("user.home") + "/Desktop/Database/Babies/" + "\\baby2.txt"); //opens created baby file
-        File logFile = new File(System.getProperty("user.home") + "/Desktop/Database/" + "\\log file.txt"); //opens created baby file
+        File dBAccountFile = new File(System.getProperty("user.dir") + "/Testfiles/Database" + "/account.txt"); //opens created user&admin dataBase file
+        File dBSettingsFile = new File(System.getProperty("user.dir") + "/Testfiles/Database" + "/setting.txt"); //opens created user&admin dataBase file
+        File babyFile = new File(System.getProperty("user.dir") + "/Testfiles/Database/Baby" + "/baby 1.txt"); //opens created baby file
+        File logFile = new File(System.getProperty("user.dir") + "/Testfiles/Database" + "/log file.txt"); //opens created baby file
         Scanner accountReader = new Scanner(dBAccountFile);
         Scanner settingsReader = new Scanner(dBSettingsFile);
         Scanner babyReader = new Scanner(babyFile);
@@ -157,7 +157,7 @@ public class TestDataBase {
         Assertions.assertEquals("cp:0.1,0.2,0.3,0.4",settingsReader.nextLine());
         Assertions.assertEquals("lt:10",settingsReader.nextLine());
         Assertions.assertEquals("pt:5",settingsReader.nextLine());
-        Assertions.assertEquals("id:baby2",babyReader.nextLine());
+        Assertions.assertEquals("id:baby 1",babyReader.nextLine());
         Assertions.assertEquals("gc:10:32,0.1",babyReader.nextLine());
         Assertions.assertEquals("sa:10:32,0.01",babyReader.nextLine());
         Assertions.assertEquals("sc:10:32,0.1",babyReader.nextLine());
@@ -165,16 +165,16 @@ public class TestDataBase {
         Assertions.assertEquals("10:30,Admin,None,Add Administrator,Admin2",logReader.nextLine());
         Assertions.assertEquals("10:31,Admin,None,Add User,notAdmin",logReader.nextLine());
         Assertions.assertEquals("10:31,Admin,None,Change Calibration Parameter,None",logReader.nextLine());
-        Assertions.assertEquals("10:32,notAdmin,baby2,Add Glucose Concentration,0.1",logReader.nextLine());
-        Assertions.assertEquals("10:32,notAdmin,baby2,Add Skin Current/Concentration,0.01/0.1",logReader.nextLine());
-        Assertions.assertEquals("10:32,notAdmin,baby2,Add Event,breakfast",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby 1,Add Glucose Concentration,0.1",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby 1,Add Skin Current/Concentration,0.01/0.1",logReader.nextLine());
+        Assertions.assertEquals("10:32,notAdmin,baby 1,Add Event,breakfast",logReader.nextLine());
     }
 
     @Test
     public void testLoadDataBase(){
         DataBase db = new DataBase();
         //Loads dataBase from existing files
-        db.loadDataBase(System.getProperty("user.dir") + "/Testfiles/Database", System.getProperty("user.dir") + "/Testfiles/Database");
+        db.loadDataBase(System.getProperty("user.dir") + "/Testfiles/Database", System.getProperty("user.dir") + "/Testfiles/Database/Baby");
         //Creates expected Hashtables, Arraylists & strings for later comparison
         String lagTime = "10";
         String permissionTime = "5";
@@ -285,17 +285,17 @@ public class TestDataBase {
         Assertions.assertEquals("0.1,0.2,0.3,0.4",output[0][2]);
     }
 
-    /*@Test
+    @Test
     public void testLoadSkinCurrent(){
         DataBase db = new DataBase();
         //Creating expected linked hash map
         LinkedHashMap<String, Double> skinConcentration = new LinkedHashMap<>();
         skinConcentration.put("2022/01/04 16:40:00",1.0);
+        skinConcentration.put("2022/01/04 16:41:00",2.0);
         //For new baby name
         db.loadSkinCurrent(System.getProperty("user.dir")+"/Testfiles/Current","baby 3");
-        Assertions.assertEquals("baby 3",db.getBabyList().get(0));
-
-    }*/
+        Assertions.assertEquals(skinConcentration,db.getSkinCurrent("baby 3"));
+    }
 
 
 }

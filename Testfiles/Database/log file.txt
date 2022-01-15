@@ -1,6 +1,6 @@
 10:30,Admin,None,Add Administrator,Admin2
 10:31,Admin,None,Add User,notAdmin
 10:31,Admin,None,Change Calibration Parameter,None
-10:32,notAdmin,baby2,Add Glucose Concentration,0.1
-10:32,notAdmin,baby2,Add Skin Current/Concentration,0.01/0.1
-10:32,notAdmin,baby2,Add Event,breakfast
+10:32,notAdmin,baby 1,Add Glucose Concentration,0.1
+10:32,notAdmin,baby 1,Add Skin Current/Concentration,0.01/0.1
+10:32,notAdmin,baby 1,Add Event,breakfast
