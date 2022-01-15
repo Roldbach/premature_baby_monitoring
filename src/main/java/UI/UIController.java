@@ -1,7 +1,6 @@
 package UI;
 
 import DataHandling.DataBase;
-import com.sun.tools.javac.util.ArrayUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1249,7 +1248,7 @@ public class UIController {
             button.addActionListener(e->{
                 currentUser=null;
                 currentBaby=null;
-                priority = false;
+                priority=false;
                 cardLayout.show(mainPanel,"log in");
                 logInPanel.resetText(logInPanel.textField_1,true);
                 logInPanel.resetText(logInPanel.textField_2, false);
