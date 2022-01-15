@@ -42,15 +42,21 @@ Just to the left, there is a “Load Skin Concentration Data” button. This wil
 
 The user is also presented with five main options in the middle of the screen: 
 
-	- The “Add Value” button takes the user to a separate page that enables the addition of new 	blood glucose concentration values for the current baby (more detail on section [3]).
+	- The “Add Value” button takes the user to a separate page that enables the addition 
+	of new blood glucose concentration values for the current baby (more detail on section [3]).
 
-	- The “Change Value” button takes the user to a separate page where added concentration 	values, events, and their respective times can be edited (more detail on section [4]).
+	- The “Change Value” button takes the user to a separate page where added concentration 
+	values, events, and their respective times can be edited (more detail on section [4]).
 
-	- The “Plot Graph” button takes the user to a separate page where different graphs relating 	blood and skin glucose concentrations can be visualised (more detail on section [5]).
+	- The “Plot Graph” button takes the user to a separate page where different graphs relating 
+	blood and skin glucose concentrations can be visualised (more detail on section [5]).
 
-	- The “Change Password” button takes the user to a separate page where their current 	password can be modified (more detail on section [6]).
+	- The “Change Password” button takes the user to a separate page where their current 
+	password can be modified (more detail on section [6]).
 
-	- The “Administrator Entry” button takes the user, if an administrator, to a separate page where 	he can manage user accounts, access a log file with all recorded activity, and edit the app’s 	settings (more detail on section [7]).
+	- The “Administrator Entry” button takes the user, if an administrator, to a separate page where 
+	he can manage user accounts, access a log file with all recorded activity, and edit the app’s 
+	settings (more detail on section [7]).
 
 All daughter pages branching from the Main Menu will contain a “back” button on the top left corner so as to return to the Main Menu. For deeper pages, both a “back” button and a “main” button will show on this top left corner, to go to the previous page or directly to the Main Menu, respectively. 
 
@@ -102,7 +108,9 @@ Please note this function might take some time to load. In addition, the python 
 
 The user is presented with two fields:
 
-	- “User ID” for specifying the user ID that the password change will be applied to. If the user is a 	regular user, this field can only be the current user, if not, an error window will pop up. If the user 	is an administrator, he/she can 	select the user ID the change will apply to.
+	- “User ID” for specifying the user ID that the password change will be applied to. If the user is a 
+	regular user, this field can only be the current user, if not, an error window will pop up. If the user 
+	is an administrator, he/she can select the user ID the change will apply to.
 
 	- “New Password” for specifying the new password associated to the user ID. 
 
@@ -112,17 +120,23 @@ After clicking confirm, the change will apply.
 
 This page is only accessible for administrators. If a regular user tries to enter, an error window will pop up. The administrator is presented with two buttons: 
 
-	- “Manage Account” for adding/deleting new/existing user accounts. The administrator will be 	presented with two fields:
+	- “Manage Account” for adding/deleting new/existing user accounts. The administrator will be 
+	presented with two fields:
 
 		- “User ID” for specifying a new/existing user. 
 
 		- “Password” for specifying the corresponding new/existing password. 
 
-	If the administrator tries to add an already existing user, the system will recognise this and offer 	a password change instead. 
+	If the administrator tries to add an already existing user, the system will recognise this 
+	and offer a password change instead. 
 
-	- “Setting/Log File” for changing settings and accessing the activity log file. The administrator will 	be presented with two tables:
+	- “Setting/Log File” for changing settings and accessing the activity log file. The administrator 
+	will be presented with two tables:
 
-		- The upper table shows the Lag Time (time passed between skin current concentration 		data is collected until it arrives to the app), the Permission Time (for allowing input data 		changes to regular users) and the Calibration Parameters (for converting skin current to 		skin concentration). The administrator can 	edit these values by double clicking on them. 
+		- The upper table shows the Lag Time (time passed between skin current concentration 
+		data is collected until it arrives to the app), the Permission Time (for allowing input data 
+		changes to regular users) and the Calibration Parameters (for converting skin current to 
+		skin concentration). The administrator can edit these values by double clicking on them. 
 
 		- The lower table shows the Log File, which contains all activity information. 
     
