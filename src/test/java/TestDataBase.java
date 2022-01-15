@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class TestDataBase {
@@ -177,7 +174,7 @@ public class TestDataBase {
     public void testLoadDataBase(){
         DataBase db = new DataBase();
         //Loads dataBase from existing files
-        db.loadDataBase(System.getProperty("user.home") + "/Desktop/Database/", System.getProperty("user.home") + "/Desktop/Database/Babies/");
+        db.loadDataBase(System.getProperty("user.dir") + "/Testfiles/Database", System.getProperty("user.dir") + "/Testfiles/Database");
         //Creates expected Hashtables, Arraylists & strings for later comparison
         String lagTime = "10";
         String permissionTime = "5";
@@ -288,11 +285,17 @@ public class TestDataBase {
         Assertions.assertEquals("0.1,0.2,0.3,0.4",output[0][2]);
     }
 
-    //@Test
-    //public void testSortTimestamp()
+    /*@Test
+    public void testLoadSkinCurrent(){
+        DataBase db = new DataBase();
+        //Creating expected linked hash map
+        LinkedHashMap<String, Double> skinConcentration = new LinkedHashMap<>();
+        skinConcentration.put("2022/01/04 16:40:00",1.0);
+        //For new baby name
+        db.loadSkinCurrent(System.getProperty("user.dir")+"/Testfiles/Current","baby 3");
+        Assertions.assertEquals("baby 3",db.getBabyList().get(0));
 
-    //@Test
-    //public void testLoadSkinCurrent()
+    }*/
 
 
 }
