@@ -107,9 +107,9 @@ public class TestDataBase {
     public void testChangePermissionTime(){
         DataBase db = new DataBase();
         //Value of permissionTime initially set to 5 minutes
-        db.changePermissionTime("Admin","10","10:30");
+        db.changePermissionTime("Admin","12","10:30");
         //Tests if value of permissionTime has changed to "10"
-        Assertions.assertEquals("10",db.getPermissionTime());
+        Assertions.assertEquals("12",db.getPermissionTime());
     }
 
     @Test
@@ -186,7 +186,6 @@ public class TestDataBase {
         Hashtable<String, String> administrator = new Hashtable<>();
         administrator.put("Admin2","adminPassword");
         ArrayList<String> babyList = new ArrayList<>();
-        Baby baby = new Baby("baby2");
         babyList.add("baby2");
         ArrayList<String> logFile = new ArrayList<>();
         logFile.add("10:30,Admin,None,Add Administrator,Admin2");
@@ -210,24 +209,84 @@ public class TestDataBase {
         Assertions.assertEquals(calibrationParameter,db.getCalibrationParameter());
     }
 
-    /*@Test
+    @Test
     public void testFormatGlucoseConcentration(){
         DataBase db = new DataBase();
-        Baby baby = new Baby("baby 1");
-        baby.addGlucoseConcentration();
-    }*/
+        db.addBaby("baby 1");
+        //Adding blood glucose values
+        db.addGlucoseConcentration("Admin","baby 1",0.922,"2022/01/04 16:40:00");
+        db.addGlucoseConcentration("Admin","baby 1",0.921,"2022/01/04 16:39:00");
+        //Formatting and checking if array is as expected
+        String[][] output = db.formatGlucoseConcentration("baby 1");
+        Assertions.assertEquals("2022/01/04 16:39:00",output[0][0]);
+        Assertions.assertEquals("0.921",output[0][1]);
+        Assertions.assertEquals("2022/01/04 16:40:00",output[1][0]);
+        Assertions.assertEquals("0.922",output[1][1]);
+    }
 
-    //@Test
-    //public void testFormatSkinConcentration()
+    @Test
+    public void testFormatSkinConcentration(){
+        DataBase db = new DataBase();
+        db.addBaby("baby 1");
+        //Adding skin glucose values
+        db.addSkinConcentration("Admin","baby 1",0.2,0.02,"2022/01/04 16:40:00");
+        db.addSkinConcentration("Admin","baby 1",0.1,0.01,"2022/01/04 16:39:00");
+        //Formatting and checking if array is as expected
+        String[][] output = db.formatSkinConcentration("baby 1");
+        Assertions.assertEquals("2022/01/04 16:39:00",output[0][0]);
+        Assertions.assertEquals("0.01",output[0][1]);
+        Assertions.assertEquals("0.1",output[0][2]);
+        Assertions.assertEquals("2022/01/04 16:40:00",output[1][0]);
+        Assertions.assertEquals("0.02",output[1][1]);
+        Assertions.assertEquals("0.2",output[1][2]);
+    }
 
-    //@Test
-    //public void testFormatEvent()
+    @Test
+    public void testFormatEvent(){
+        DataBase db = new DataBase();
+        db.addBaby("baby 1");
+        //Adding events
+        db.addEvent("Admin","baby 1","lunch","2022/01/04 14:00:00");
+        db.addEvent("Admin","baby 1","breakfast","2022/01/04 09:30:00");
+        //Formatting and checking if array is as expected
+        String[][] output = db.formatEvent("baby 1");
+        Assertions.assertEquals("2022/01/04 09:30:00",output[0][0]);
+        Assertions.assertEquals("breakfast",output[0][1]);
+        Assertions.assertEquals("2022/01/04 14:00:00",output[1][0]);
+        Assertions.assertEquals("lunch",output[1][1]);
+    }
 
-    //@Test
-    //public void testFormatLogFile()
+    @Test
+    public void testFormatLogFile(){
+        DataBase db = new DataBase();
+        //Adding to log file
+        db.updateLogFile("10:30","Admin","None","Add User","notAdmin");
+        db.updateLogFile("10:35","Admin","None","Add User","notAdmin2");
+        //Formatting and checking if array is as expected
+        String[][] output = db.formatLogFile();
+        Assertions.assertEquals("10:30",output[0][0]);
+        Assertions.assertEquals("Admin",output[0][1]);
+        Assertions.assertEquals(" ",output[0][2]);
+        Assertions.assertEquals("Add User",output[0][3]);
+        Assertions.assertEquals("notAdmin",output[0][4]);
+        Assertions.assertEquals("10:35",output[1][0]);
+        Assertions.assertEquals("Admin",output[1][1]);
+        Assertions.assertEquals(" ",output[1][2]);
+        Assertions.assertEquals("Add User",output[1][3]);
+        Assertions.assertEquals("notAdmin2",output[1][4]);
+    }
 
-    //@Test
-    //public void testFormatSetting()
+    @Test
+    public void testFormatSetting(){
+        DataBase db = new DataBase();
+        //Adding calibration parameters
+        db.changeCalibrationParameter("Admin",db.loadCalibrationParameter("0.1,0.2,0.3,0.4"),"10:31");
+        //Formatting and checking if array is as expected
+        String[][] output = db.formatSetting();
+        Assertions.assertEquals("10",output[0][0]); //default lag time
+        Assertions.assertEquals("5",output[0][1]); //default permission time
+        Assertions.assertEquals("0.1,0.2,0.3,0.4",output[0][2]);
+    }
 
     //@Test
     //public void testSortTimestamp()
