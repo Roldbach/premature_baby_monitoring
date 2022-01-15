@@ -184,15 +184,9 @@ def plot_concentration(babyID, glucose_concentration, glucose_timestamp, skin_co
             if (time[:-3] in skin_timestmap[index]):
                 event_time_index.append(index)
                 limit=index
-    
-    
-    if glucose_time_index[0] > skin_time_index[0]:
-        glucose_time_index.insert(0,skin_time_index[0])
-    
     #Set bar property: line height is the height to display the event at certain time
     line_height=0.5*np.amin(glucose_concentration)
     event_height=[line_height for i in range(len(event_time_index))]
-    
     #Save glucose concentration with timestamp as well as event
     figure, axis=plt.subplots(figsize=(9,5), dpi=300)
     axis.vlines(x=event_time_index,ymin=0,ymax=event_height,color="firebrick",alpha=0.7,linewidth=1)  
