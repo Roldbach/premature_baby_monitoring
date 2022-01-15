@@ -10,7 +10,7 @@ import java.util.*;
 
 public class TestDataBase {
 
-    //Setters and getters are not useful to test, we would be testing the language rather than actual code
+    //Setters, getters, change & delete methods have not been tested since they do not rely on any coding logic
 
     @Test
     public void testLogIn(){
